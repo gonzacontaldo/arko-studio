@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>404 – Página no encontrada | ARKO Studio</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
+    <style>
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+      body {
+        background-color: #2d3435;
+        color: #f5f0eb;
+        font-family: 'Inter', sans-serif;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem;
+        text-align: center;
+      }
+
+      .logo {
+        font-family: 'Montserrat', sans-serif;
+        font-weight: 800;
+        font-size: 1rem;
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        color: #f5f0eb;
+        text-decoration: none;
+        margin-bottom: 3rem;
+        opacity: 0.6;
+      }
+
+      .number {
+        font-family: 'Montserrat', sans-serif;
+        font-weight: 800;
+        font-size: clamp(6rem, 20vw, 10rem);
+        line-height: 1;
+        color: #C5A059;
+        letter-spacing: -0.04em;
+      }
+
+      .title {
+        font-family: 'Montserrat', sans-serif;
+        font-weight: 700;
+        font-size: clamp(1.2rem, 4vw, 1.8rem);
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        margin-top: 1rem;
+        margin-bottom: 0.75rem;
+      }
+
+      .subtitle {
+        font-size: 1rem;
+        color: #a8a29e;
+        font-weight: 300;
+        max-width: 360px;
+        line-height: 1.6;
+        margin-bottom: 2.5rem;
+      }
+
+      .btn {
+        display: inline-block;
+        background: linear-gradient(135deg, #C5A059, #785a1a);
+        color: #fff;
+        font-family: 'Montserrat', sans-serif;
+        font-weight: 700;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.15em;
+        padding: 0.875rem 2rem;
+        border-radius: 0.5rem;
+        text-decoration: none;
+        transition: opacity 0.2s, transform 0.15s;
+      }
+
+      .btn:hover { opacity: 0.85; transform: scale(1.03); }
+      .btn:active { transform: scale(0.97); }
+
+      .divider {
+        width: 48px;
+        height: 2px;
+        background: #C5A059;
+        margin: 1.5rem auto;
+        opacity: 0.5;
+      }
+    </style>
+  </head>
+  <body>
+    <a href="/" class="logo">ARKO Studio</a>
+    <div class="number">404</div>
+    <div class="divider"></div>
+    <h1 class="title">Página no encontrada</h1>
+    <p class="subtitle">La página que buscás no existe o fue movida. Volvé al inicio y explorá el sitio.</p>
+    <a href="/" class="btn">Volver al inicio</a>
+  </body>
+</html>
