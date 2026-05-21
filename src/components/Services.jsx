@@ -128,10 +128,10 @@ export default function Services({ onOpenBudget }) {
                 onClick={() => setSelectedService(service)}
                 className="mt-auto flex items-center gap-1.5 text-secondary font-headline font-bold text-xs uppercase tracking-widest hover:gap-3 transition-all duration-200 group"
               >
-                Ver ejemplos
+                {/* Ver ejemplos
                 <span className="material-symbols-outlined text-base transition-transform duration-200 group-hover:translate-x-0.5">
                   arrow_forward
-                </span>
+                </span> */}
               </button>
             </div>
           ))}

@@ -4,7 +4,7 @@ import Hero from './components/Hero';
 import ValueSection from './components/ValueSection';
 import Portfolio from './components/Portfolio';
 import Services from './components/Services';
-import Pricing from './components/Pricing';
+// import Pricing from './components/Pricing';
 import BeforeAfter from './components/BeforeAfter';
 import DevelopersSection from './components/DevelopersSection';
 import InteractivePreview from './components/InteractivePreview';
@@ -34,7 +34,6 @@ export default function App() {
       <FadeIn><DevelopersSection /></FadeIn>
       <FadeIn><InteractivePreview /></FadeIn>
       <FadeIn><Process /></FadeIn>
-      <FadeIn><Pricing onOpenModal={open} /></FadeIn>
       <FadeIn><About /></FadeIn>
       <FadeIn><FinalCTA onOpenModal={open} /></FadeIn>
       <FadeIn direction="none"><Footer /></FadeIn>

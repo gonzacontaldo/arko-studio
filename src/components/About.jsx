@@ -1,5 +1,4 @@
-const ABOUT_IMAGE =
-  'https://lh3.googleusercontent.com/aida-public/AB6AXuDXxztFNvBbRBqlUtaaXmvDccd5aH1Pjr4bnmoNOMxKCx7Dkci0SepjpKpIIL7oIy0aWTmGiheFVeXkkRQcAln7dMkELcq27mESL_m9UPH1GF86wWIvsNF8G2YQQKuEdh4QkQqUWwVdNiiZGIPsndYRs1BhlFwBmQoZXPcjU5HsWjI9w9myCRGW05a6NJ9AF1dUCsTo44lBeLVU';
+import ABOUT_IMAGE from '../assets/1.png';
 
 export default function About() {
   return (
@@ -21,12 +20,12 @@ export default function About() {
               justicia a cada inversión.
             </p>
             <p>
-              Nuestro equipo está formado por fotógrafos y realizadores apasionados por la arquitectura, que creen que
+              Nuestro equipo está formado por fotógrafos, filmmakers y editores apasionados por la arquitectura, que creen que
               toda propiedad —desde un departamento de entrada hasta un desarrollo de lujo— merece ser mostrada con
               nivel profesional.
             </p>
             <p>
-              Nos comprometemos con la calidad absoluta, la entrega rápida y ser una extensión natural de tu equipo de
+              Nos comprometemos con la calidad absoluta y la entrega rápida para ser una extensión natural de tu equipo de
               marketing.
             </p>
           </div>

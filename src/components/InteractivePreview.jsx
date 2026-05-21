@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
 
-const MATTERPORT_URL = 'https://my.matterport.com/show/?m=eNmHo1h3Poj&play=1';
+const MATTERPORT_URL = 'https://doormann.viewin360.co/share/collection/71Y1x?logo=0&card=1&info=1&logosize=200&fs=1&vr=0&zoom=1&thumbs=1&inst=es';
 
 const REEL_IMAGE =
   'https://lh3.googleusercontent.com/aida-public/AB6AXuA4iHgOrimJhX05uIoECVEOif8xrBKhJmXI2Tly9olHdXMbK7MaFgStjg2pCRLqVLxTspa14RvDo-9FDj1CGqRaG89r6WioYgtHDLk1Tb9zlMRe6C3qS4crHZdZiEUyl2tRKrMJSmyZ7EcYrk7aFVK_oiPWPlNGrsyjmHjFRE0iHjCOHzsZsYUmZ77a3u1SjD0jWJ4V5zCU42xQ-GO--4GizqypHcnGha63xkPuys90wr1_SRmUAT1xFhdn5TRZxWT6PMZcdrAVgSk';
 
 // ─── Reemplazá esta URL con tu imagen de plano real ───────────────────────────
-const FLOOR_PLAN_IMAGE = null;
+const FLOOR_PLAN_IMAGE = 'https://static.tokkobroker.com/pictures/6811203_16941810600148600011027949836947230498386497061057409250758090562184505248578.jpg';
 
 // ─── Sub-componentes ──────────────────────────────────────────────────────────
 
@@ -122,7 +122,7 @@ export default function InteractivePreview() {
             )}
           </div>
           <p className="text-sm text-on-surface-variant italic">
-            Recorrido real con Matterport. Navegable desde cualquier dispositivo, compatible con VR.
+            Recorrido real con Kuula/Matterport. Navegable desde cualquier dispositivo, compatible con VR.
           </p>
         </div>
 

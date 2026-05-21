@@ -16,10 +16,10 @@ export default function Hero({ onOpenModal }) {
       </div>
       <div className="relative z-10 max-w-4xl px-8 md:px-24">
         <h1 className="font-headline font-extrabold text-5xl md:text-7xl text-white text-locked leading-none mb-6">
-          Vendé tus propiedades más rápido con contenido visual premium
+          Vendé tus propiedades más rápido con contenido audiovisual de calidad
         </h1>
         <p className="text-white/90 text-xl font-light max-w-2xl mb-10 leading-relaxed">
-          Tours virtuales 360°, Tomas con dron 360°, Fotografías y videos para redes sociales diseñados para destacar cada
+          Tours virtuales 360°, Perspectivas únicas con dron, Fotografías profesionales y videos para redes sociales diseñados para destacar cada
           propiedad.
         </p>
         <div className="flex flex-wrap gap-4">

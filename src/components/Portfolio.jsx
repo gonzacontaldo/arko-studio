@@ -1,47 +1,119 @@
 import { useState } from 'react';
-import PortfolioLightbox from './PortfolioLightbox';
+import PropertyModal from './PropertyModal';
+import TextLogo from '../assets/TextLogo.png';
 
-// ─── Datos ────────────────────────────────────────────────────────────────────
-// category: 'foto' | 'video' | 'tour' | 'dron'
-// actions: botones que aparecen en el hover overlay (opcional)
+// ─── SantaAnaPerimetral ───────────────────────────────────────────────────────
+import SantaAnaPortada from '../assets/portfolio/SantaAnaPerimetral/Portada.jpg';
+import SantaAnaFoto1   from '../assets/portfolio/SantaAnaPerimetral/Foto1.jpg';
+import SantaAnaFoto2   from '../assets/portfolio/SantaAnaPerimetral/Foto2.jpg';
+import SantaAnaFoto3   from '../assets/portfolio/SantaAnaPerimetral/Foto3.jpg';
+import SantaAnaFoto4   from '../assets/portfolio/SantaAnaPerimetral/Foto4.jpg';
+import SantaAnaFoto5   from '../assets/portfolio/SantaAnaPerimetral/Foto5.jpg';
+
+// ─── PuertasDelNorte113 ───────────────────────────────────────────────────────
+import PuertasPortada from '../assets/portfolio/PuertasDelNorte113/Portada.jpg';
+import PuertasFoto1   from '../assets/portfolio/PuertasDelNorte113/Foto1.jpg';
+import PuertasFoto2   from '../assets/portfolio/PuertasDelNorte113/Foto2.jpg';
+import PuertasFoto3   from '../assets/portfolio/PuertasDelNorte113/Foto3.jpg';
+
+// ─── PuertasDelNorte113 ───────────────────────────────────────────────────────
+import Puertas115Portada from '../assets/portfolio/PuertasDelNorte115/Portada.jpg';
+import Puertas115Foto1   from '../assets/portfolio/PuertasDelNorte115/Foto1.jpg';
+import Puertas115Foto2   from '../assets/portfolio/PuertasDelNorte115/Foto2.jpg';
+import Puertas115Foto3   from '../assets/portfolio/PuertasDelNorte115/Foto3.jpg';
+
+// ─── PuertasDelNorte113 ───────────────────────────────────────────────────────
+import OlivosPortada from '../assets/portfolio/DuplexOlivos/Portada.jpg';
+import OlivosFoto1 from '../assets/portfolio/DuplexOlivos/Foto1.jpg';
+import OlivosFoto2 from '../assets/portfolio/DuplexOlivos/Foto2.jpg';
+import OlivosFoto3 from '../assets/portfolio/DuplexOlivos/Foto3.jpg';
+import OlivosFoto4 from '../assets/portfolio/DuplexOlivos/Foto4.jpg';
+import OlivosFoto5 from '../assets/portfolio/DuplexOlivos/Foto5.jpg';
+
+// ─── Virazon ───────────────────────────────────────────────────────
+import VirazonPortada from '../assets/portfolio/Virazon/Portada.jpg';
+import VirazonFoto1 from '../assets/portfolio/Virazon/Foto1.jpg';
+import VirazonFoto2 from '../assets/portfolio/Virazon/Foto2.jpg';
+import VirazonFoto3 from '../assets/portfolio/Virazon/Foto3.jpg'
+import VirazonFoto4 from '../assets/portfolio/Virazon/Foto4.jpg';
+import VirazonFoto5 from '../assets/portfolio/Virazon/Foto5.jpg';
+
+// ─── Terrazas3erPiso ───────────────────────────────────────────────────────
+import TerrazasPortada from '../assets/portfolio/Terrazas3erPiso/Portada.jpg';
+import TerrazasFoto1 from '../assets/portfolio/Terrazas3erPiso/Foto1.jpg';
+import TerrazasFoto2 from '../assets/portfolio/Terrazas3erPiso/Foto2.jpg';
+import TerrazasFoto3 from '../assets/portfolio/Terrazas3erPiso/Foto3.jpg';
+
+// ─── Propiedades ──────────────────────────────────────────────────────────────
+// Para agregar una propiedad nueva:
+//   1. Importá las fotos: import foto1 from '../assets/portfolio/nombre/foto1.jpg';
+//   2. Agregá un objeto al array con el formato de abajo.
+//
+// types: qué tabs va a tener la propiedad en el modal.
+//   'foto' = galería de fotos
+//   'video' = video de YouTube
+//   'tour'  = tour 360°
+//   'dron'  = para el filtro, puede combinarse con cualquiera
 
 const portfolioItems = [
+  // ── Ejemplo de propiedad completa (reemplazá con tus datos) ──────────────
   {
-    src: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAfjVaw9HAi8bHXY-ZAEzhxCN_cXJ5uIOTpDDtSW0JULQXmggxLnFBOfWAfe8Jh7N0wa9TLAFO77xdpSE1PLXylrIj0EmBb6yP83PGVgQBQktfsaIy_FovaV8urwp45eifjxUJ0n8vX1UHNWf6wS4u2_aZtHlNYBkZWGjuLLlmt6uJ70QVBiR6Gmk045_9RybxlgCxOvWN7eFrvrgnKPNwbK_jIH8L2XtxhCAtAADmaMyuw-Elko9RINp5_-_wDIOAPWOe8x0HH0iw',
-    alt: 'Casa moderna minimalista con grandes ventanas durante la hora azul',
-    category: 'foto',
-    actions: ['tour'],
+    id: 'SantaAnaPerimetral',
+    title: 'Santa Ana — 3 Dormitorios',
+    cover: SantaAnaPortada,
+    fotos: [SantaAnaPortada, SantaAnaFoto1, SantaAnaFoto2, SantaAnaFoto3, SantaAnaFoto4, SantaAnaFoto5],
+    tourUrl: 'https://doormann.viewin360.co/share/collection/7156d?logo=0&card=1&info=1&logosize=200&fs=1&vr=0&zoom=1&thumbs=1&inst=es',
+    types: ['foto', 'tour', 'dron'],
   },
   {
-    src: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAbcGOoD1nN547lnR0ahgMx4SCJS1_fsTIGaWlF3ttMXNGeQIhiDIo3hgzcceZMR8wmYrN3CpP0W3kPbZTHwSfM_5i2KockTbJ8n1nWEeql08WArR_d-9MN95ukWJLAOYedEzNJdP9pRDMkxj4a5_uqVmXnTYVKTiGO1ztUhL5rRKGy3kyyPKzjuw_wrR2TF8e2ze1mtYEfNChl-4ZJaoyuAzobOojk-qyPxZ4y2crn5BMzxR045oJs6iYa1IX4BRtxgyTOYY89xvc',
-    alt: 'Cocina moderna con isla de mármol e iluminación profesional',
-    category: 'foto',
-    actions: ['video'],
+    id: 'Virazon',
+    title: 'Casa Al Lago - Virazón',
+    cover: VirazonPortada,
+    fotos: [VirazonPortada, VirazonFoto1, VirazonFoto2, VirazonFoto3, VirazonFoto4, VirazonFoto5],
+    videoId: '9ivVAjKi58s',
+    tourUrl: 'https://doormann.viewin360.co/share/collection/7MSq5?logo=0&card=1&info=1&logosize=200&fs=1&vr=0&zoom=1&thumbs=1&inst=es',
+    types: ['foto', 'video', 'tour', 'dron'],
   },
   {
-    src: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDRd3wJTbkixsBOu90n4AJlXxyjmt6am2Yd3DM3snY1NaT2YlOl_eVuzKgzX0bV3qNqkplHb_Ua-97e6SpI6EoQAICu_sEeapPiHrBPY9eQHJXPPP_fw2m2qxV-ws-zH7ZPE_LrN3d-og8TVav4uwB5vtdikgmrieQPlgvyaqMdJ_X4DE1hMwUf_1ost3y5D-6y3af4VhDtJt9NuBBGZ4IE9_tYJ-RaRdx94jCUXNyigInV0FFdboQHCd1TQAy_fJfwYR3-Z07i1kA',
-    alt: 'Baño de lujo con bañadera independiente y ventanal al jardín',
-    category: 'tour',
-    actions: ['tour'],
+    id: 'PuertasDelNorte113',
+    title: 'Oficina - Puerta Norte',
+    cover: PuertasPortada,
+    fotos: [PuertasPortada, PuertasFoto1, PuertasFoto2, PuertasFoto3],
+    videoId: '_I57bl9c1R4',
+    vertical: true,
+    tourUrl: 'https://doormann.viewin360.co/share/collection/7MyD4?logo=0&card=1&info=1&logosize=200&fs=1&vr=0&zoom=1&thumbs=1&inst=es',
+    types: ['foto', 'video', 'tour'],
   },
   {
-    src: 'https://lh3.googleusercontent.com/aida-public/AB6AXuD6NbrrO3HlakeiijaX4JiSg3u70ojkkjGfIU9R6hxDCL7eCcb86FuxTV0GgPfQLk2p93NC6xs54DJ20A3M62qMjojYmbKcTAW6oXfylAyZmKVBWfFwpndjCk1X1WQZKue6Jjr2Wshl6AcqBdGb1M5zJ_LO6iIgils1BOyg-G3S8A2knqwsskc6SBtK9jdLKYtY_b9V8VvKbcOlI8y-_aAMPxrx4V3k_INcqqM3Or4HsRmPknIkz5Q-XjFJ6tdHZOa23dMt2a99PsY',
-    alt: 'Dormitorio principal con luz natural matutina',
-    category: 'video',
-    actions: ['video'],
+    id: 'PuertasDelNorte115',
+    title: 'Oficina - Puerta Norte',
+    cover: Puertas115Portada,
+    fotos: [Puertas115Portada, Puertas115Foto1, Puertas115Foto2, Puertas115Foto3],
+    videoId: 'qTd6yig9AMM',
+    tourUrl: 'https://doormann.viewin360.co/share/collection/7Myx8?logo=0&card=1&info=1&logosize=200&fs=1&vr=0&zoom=1&thumbs=1&inst=es',
+    types: ['foto', 'video', 'tour', 'dron'],
   },
   {
-    src: 'https://lh3.googleusercontent.com/aida-public/AB6AXuC-eaQOsoNwZHcyTdaoWVtJe5R9zNjGp6SVaRkITtw9DDkwIPP8FNRUpqcjq3VfsfD7o9QXVgItaNZwZi1jAygBqfCJyYMUQQtbOitbSY-kaw8H3os5Pop2FqufwqA0bc6fXXimkn9Wm62_-DkpiLDdDfxct1qipA5eNdWyn4ypt4BiAGHsVmHf3kmgS6FDTY7AQUJm5W4mYsvgFXDvgUgoz3SvjZJsQGfQrO2g2zQeu6pBSx5srNsG-m6IK1eD39u3vtUotedyhPM',
-    alt: 'Vista aérea cenital de patio con pileta geométrica y jardín',
-    category: 'dron',
-    actions: [],
+    id: 'DuplexOlivos',
+    title: 'Duplex - Olivos',
+    cover: OlivosPortada,
+    fotos: [OlivosPortada, OlivosFoto1, OlivosFoto2, OlivosFoto3, OlivosFoto4, OlivosFoto5],
+    videoId: 'UjWrEYrJnhU',
+    vertical: true,
+    tourUrl: 'https://doormann.viewin360.co/share/collection/7Mzql?logo=0&card=1&info=1&logosize=200&fs=1&vr=0&zoom=1&thumbs=1&inst=es',
+    types: ['foto', 'video', 'tour', 'dron'],
   },
+  
   {
-    src: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAaYEMiH0cod3dojq_26y7_U4HsBimeHvnFcgudLVYryFdBTnSQvr-ZT8OJvIUcNN3ngyVGGte8uKZJhtvEYfWWr-nsiabZ5md8MP-ueKX1803lSdBjKQeElUupENuTXRFtATzqBFcN41FAr0GhztUi-cceLWEl7VQwmmUIzU1saDXqed36d4VG9OUNBcljkduhHODkiepgj6usBYdfhVhC-VQMhEeD8zcFh5PSDl64FQN7SHsA_bSSl-rDG59avDmgLQ_bQ-URm3U',
-    alt: 'Living amplio y luminoso con diseño escandinavo',
-    category: 'video',
-    actions: ['video'],
+    id: 'Terrazas3erPiso',
+    title: 'Departamento - Terrazas Santa Maria',
+    cover: TerrazasPortada,
+    fotos: [TerrazasPortada, TerrazasFoto1, TerrazasFoto2, TerrazasFoto3],
+    videoId: 'pN1s8p24mrQ',
+    tourUrl: 'https://doormann.viewin360.co/share/collection/7MBrd?logo=0&card=1&info=1&logosize=200&fs=1&vr=0&zoom=1&thumbs=1&inst=es',
+    types: ['foto', 'video', 'tour', 'dron'],
   },
+  
 ];
 
 // ─── Filtros ──────────────────────────────────────────────────────────────────
@@ -57,17 +129,12 @@ const FILTERS = [
 // ─── Componente ───────────────────────────────────────────────────────────────
 
 export default function Portfolio() {
-  const [activeFilter, setActiveFilter] = useState('all');
-  const [lightboxIndex, setLightboxIndex] = useState(null);
+  const [activeFilter, setActiveFilter]         = useState('all');
+  const [selectedProperty, setSelectedProperty] = useState(null);
 
   const filtered = activeFilter === 'all'
     ? portfolioItems
-    : portfolioItems.filter(item => item.category === activeFilter);
-
-  const openLightbox  = (i) => setLightboxIndex(i);
-  const closeLightbox = () => setLightboxIndex(null);
-  const goPrev = () => setLightboxIndex(i => (i - 1 + filtered.length) % filtered.length);
-  const goNext = () => setLightboxIndex(i => (i + 1) % filtered.length);
+    : portfolioItems.filter(item => item.types.includes(activeFilter));
 
   return (
     <>
@@ -90,7 +157,7 @@ export default function Portfolio() {
             {FILTERS.map(({ label, value }) => (
               <button
                 key={value}
-                onClick={() => { setActiveFilter(value); closeLightbox(); }}
+                onClick={() => setActiveFilter(value)}
                 className={`font-headline font-bold text-xs uppercase tracking-widest px-5 py-2 rounded-full border transition-all duration-200 ${
                   activeFilter === value
                     ? 'bg-secondary text-on-secondary border-secondary shadow-sm'
@@ -104,64 +171,72 @@ export default function Portfolio() {
         </div>
 
         {/* ── Grilla ────────────────────────────────────────────────────── */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-0.5">
-          {filtered.map((item, i) => (
-            <div
-              key={item.src}
-              className="group relative aspect-[4/3] overflow-hidden bg-stone-200 cursor-zoom-in"
-              onClick={() => openLightbox(i)}
-            >
-              <img
-                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                src={item.src}
-                alt={item.alt}
-                loading="lazy"
-              />
+        {filtered.length === 0 ? (
+          <div className="px-8 max-w-7xl mx-auto text-on-surface-variant text-sm text-center py-16">
+            No hay propiedades cargadas aún.
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-0.5">
+            {filtered.map((property) => (
+              <div
+                key={property.id}
+                className="group relative aspect-[4/3] overflow-hidden bg-stone-200 cursor-pointer"
+                onClick={() => setSelectedProperty(property)}
+              >
+                <img
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                  src={property.cover}
+                  alt={property.title}
+                  loading="lazy"
+                />
 
-              {/* Overlay hover */}
-              <div className="absolute inset-0 bg-on-surface/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center gap-3">
-                {/* Icono zoom en el centro */}
-                <span className="material-symbols-outlined text-white text-3xl opacity-80">zoom_in</span>
+                {/* Watermark fijo */}
+                <img
+                  src={TextLogo}
+                  alt=""
+                  draggable={false}
+                  onContextMenu={e => e.preventDefault()}
+                  className="absolute bottom-3 left-3 pointer-events-none select-none z-10"
+                  style={{ width: '140px', opacity: 0.75, filter: 'brightness(0) invert(1)' }}
+                />
 
-                {/* Botones de acción (no propagan el click al lightbox) */}
-                {item.actions.length > 0 && (
-                  <div className="flex gap-2" onClick={(e) => e.stopPropagation()}>
-                    {item.actions.includes('tour') && (
-                      <button className="bg-white text-on-surface px-5 py-1.5 text-xs font-bold uppercase tracking-widest rounded-md hover:bg-secondary hover:text-white transition-colors">
-                        Ver Tour
-                      </button>
-                    )}
-                    {item.actions.includes('video') && (
-                      <button className="bg-white text-on-surface px-5 py-1.5 text-xs font-bold uppercase tracking-widest rounded-md hover:bg-secondary hover:text-white transition-colors">
-                        Ver Video
-                      </button>
-                    )}
+                {/* Overlay hover */}
+                <div className="absolute inset-0 bg-on-surface/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center gap-3">
+                  <span className="material-symbols-outlined text-white text-3xl opacity-80">open_in_full</span>
+                  {property.title && (
+                    <span className="text-white font-headline font-bold text-sm tracking-wide px-4 text-center">
+                      {property.title}
+                    </span>
+                  )}
+                  <div className="flex gap-2">
+                    {property.types.includes('foto')  && <MediaBadge icon="photo_library" label="Fotos" />}
+                    {property.types.includes('video') && <MediaBadge icon="play_circle"   label="Video" />}
+                    {property.types.includes('tour')  && <MediaBadge icon="view_in_ar"    label="360°"  />}
+                    {property.types.includes('dron')  && <MediaBadge icon="flight"        label="Dron"  />}
                   </div>
-                )}
+                </div>
               </div>
-
-              {/* Badge de categoría */}
-              <div className="absolute top-3 left-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                <span className="bg-on-surface/70 text-white text-[10px] font-headline font-bold uppercase tracking-widest px-2.5 py-1 rounded-full">
-                  {FILTERS.find(f => f.value === item.category)?.label}
-                </span>
-              </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
 
       </section>
 
-      {/* ── Lightbox ──────────────────────────────────────────────────────── */}
-      {lightboxIndex !== null && (
-        <PortfolioLightbox
-          items={filtered}
-          index={lightboxIndex}
-          onClose={closeLightbox}
-          onPrev={goPrev}
-          onNext={goNext}
+      {selectedProperty && (
+        <PropertyModal
+          property={selectedProperty}
+          onClose={() => setSelectedProperty(null)}
         />
       )}
     </>
+  );
+}
+
+function MediaBadge({ icon, label }) {
+  return (
+    <span className="flex items-center gap-1 bg-white/20 text-white text-[10px] font-headline font-bold uppercase tracking-widest px-2.5 py-1 rounded-full">
+      <span className="material-symbols-outlined text-sm">{icon}</span>
+      {label}
+    </span>
   );
 }

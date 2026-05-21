@@ -3,7 +3,7 @@ const values = [
     icon: 'groups',
     title: 'Atraé compradores calificados',
     description:
-      'Nuestro contenido visual filtra el interés y garantiza que cada visita sea de un comprador real.',
+      'Nuestro contenido visual filtra el interés y garantiza que cada visita sea de un comprador potencial real.',
   },
   {
     icon: 'timer_off',

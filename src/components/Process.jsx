@@ -15,7 +15,7 @@ const steps = [
   {
     number: '3',
     title: 'Edición',
-    description: 'Retoque profesional, corrección de color y perspectiva arquitectónica.',
+    description: 'Armar el video final, Color grading, Edición de audio, Creacion de Tours 360 y Planos',
     highlighted: false,
   },
   {
