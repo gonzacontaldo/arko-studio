@@ -19,7 +19,7 @@ const coverageZones = [
 
 export default function Footer() {
   return (
-    <footer className="w-full border-t border-stone-200 bg-stone-100 dark:bg-stone-950 px-12 pt-16 pb-10">
+    <footer className="w-full border-t border-stone-200 bg-stone-100 dark:bg-stone-950 px-4 md:px-12 pt-12 md:pt-16 pb-8 md:pb-10">
 
       {/* ── Grid principal ─────────────────────────────────────────────── */}
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">

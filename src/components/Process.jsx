@@ -29,19 +29,19 @@ const steps = [
 
 export default function Process() {
   return (
-    <section id="proceso" className="py-32 px-8 bg-surface">
+    <section id="proceso" className="py-16 md:py-32 px-4 md:px-8 bg-surface">
       <div className="max-w-7xl mx-auto">
-        <div className="mb-20 text-center">
+        <div className="mb-12 md:mb-20 text-center">
           <span className="text-secondary font-bold text-xs tracking-widest uppercase mb-4 block">
             ¿Cómo trabajamos?
           </span>
-          <h2 className="font-headline font-extrabold text-4xl text-locked">Entrega en 72 horas</h2>
+          <h2 className="font-headline font-extrabold text-3xl md:text-4xl text-locked">Entrega en 72 horas</h2>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 md:gap-12">
           {steps.map(({ number, title, description, highlighted }) => (
-            <div key={number} className="text-center space-y-6">
+            <div key={number} className="text-center space-y-4 md:space-y-6">
               <div
-                className={`w-16 h-16 rounded-full flex items-center justify-center mx-auto font-bold text-2xl border ${
+                className={`min-w-[4rem] min-h-[4rem] w-16 h-16 rounded-full flex items-center justify-center mx-auto font-bold text-xl md:text-2xl border ${
                   highlighted
                     ? 'bg-secondary text-white shadow-lg border-secondary'
                     : 'bg-surface-container-low text-secondary border-outline-variant/20'

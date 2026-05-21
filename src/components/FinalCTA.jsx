@@ -3,7 +3,7 @@ const CTA_BG =
 
 export default function FinalCTA({ onOpenModal }) {
   return (
-    <section className="py-40 px-8 relative overflow-hidden bg-on-surface text-center">
+    <section className="py-20 md:py-40 px-4 md:px-8 relative overflow-hidden bg-on-surface text-center">
       <div className="absolute inset-0 opacity-10">
         <img
           className="w-full h-full object-cover"
@@ -13,16 +13,16 @@ export default function FinalCTA({ onOpenModal }) {
         />
       </div>
       <div className="relative z-10 max-w-4xl mx-auto">
-        <h2 className="font-headline font-extrabold text-5xl md:text-6xl text-white text-locked mb-8 leading-tight">
+        <h2 className="font-headline font-extrabold text-3xl sm:text-5xl md:text-6xl text-white text-locked mb-6 md:mb-8 leading-tight break-words">
           ¿Listo para destacar tus propiedades?
         </h2>
-        <p className="text-surface-variant text-xl mb-12 font-light">
+        <p className="text-surface-variant text-base md:text-xl mb-8 md:mb-12 font-light">
           Sumáte a los agentes que usan contenido profesional para generar más consultas y cerrar operaciones más
           rápido.
         </p>
         <button
           onClick={onOpenModal}
-          className="editorial-gradient text-on-secondary px-16 py-5 rounded-md font-bold text-lg tracking-widest uppercase shadow-2xl hover:scale-105 active:scale-95 transition-all duration-300"
+          className="editorial-gradient text-on-secondary px-8 md:px-16 py-4 md:py-5 rounded-md font-bold text-sm md:text-lg tracking-widest uppercase shadow-2xl hover:scale-105 active:scale-95 transition-all duration-300"
         >
           Reservar Sesión
         </button>

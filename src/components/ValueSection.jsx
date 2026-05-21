@@ -26,8 +26,8 @@ const values = [
 
 export default function ValueSection() {
   return (
-    <section className="py-32 px-8 bg-surface">
-      <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-16">
+    <section className="py-16 md:py-32 px-4 md:px-8 bg-surface">
+      <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 md:gap-16">
         {values.map(({ icon, title, description }) => (
           <div key={title} className="space-y-4">
             <span className="material-symbols-outlined text-secondary text-4xl block">{icon}</span>

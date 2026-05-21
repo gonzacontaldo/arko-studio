@@ -21,7 +21,7 @@ function SectionLabel({ children }) {
 function VideoVertical({ src }) {
   return (
     <div className="flex flex-col items-center gap-4">
-      <div className="aspect-[9/16] w-[220px] bg-on-surface rounded-[2rem] relative flex items-center justify-center overflow-hidden border-[7px] border-stone-800 shadow-2xl">
+      <div className="aspect-[9/16] w-[180px] sm:w-[220px] max-w-full bg-on-surface rounded-[2rem] relative flex items-center justify-center overflow-hidden border-[7px] border-stone-800 shadow-2xl">
         <img className="absolute inset-0 w-full h-full object-cover" src={src} alt="Reel vertical" loading="lazy" />
         {/* Notch */}
         <div className="absolute top-2 left-1/2 -translate-x-1/2 w-12 h-1.5 bg-stone-700 rounded-full z-20" />
@@ -91,18 +91,18 @@ export default function InteractivePreview() {
   }, []);
 
   return (
-    <section className="py-32 px-8 bg-surface-container-lowest space-y-24">
+    <section className="py-16 md:py-32 px-4 md:px-8 bg-surface-container-lowest space-y-16 md:space-y-24">
       <div className="max-w-7xl mx-auto">
 
         {/* ── Tour Virtual 360° ──────────────────────────────────────────────── */}
         <div className="space-y-5">
           <div>
             <SectionLabel>Tour virtual</SectionLabel>
-            <h3 className="font-headline font-extrabold text-3xl text-locked">Experiencia Interactiva 360°</h3>
+            <h3 className="font-headline font-extrabold text-2xl md:text-3xl text-locked">Experiencia Interactiva 360°</h3>
           </div>
           <div
             ref={iframeContainerRef}
-            className="w-full h-[560px] rounded-xl overflow-hidden border border-outline-variant/20 shadow-lg bg-surface-container-high"
+            className="w-full h-[320px] sm:h-[440px] md:h-[560px] rounded-xl overflow-hidden border border-outline-variant/20 shadow-lg bg-surface-container-high"
           >
             {iframeSrc ? (
               <iframe
@@ -130,7 +130,7 @@ export default function InteractivePreview() {
         <div className="space-y-8">
           <div>
             <SectionLabel>Videos</SectionLabel>
-            <h3 className="font-headline font-extrabold text-3xl text-locked">Videos Cinematográficos</h3>
+            <h3 className="font-headline font-extrabold text-2xl md:text-3xl text-locked">Videos Cinematográficos</h3>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
             <VideoHorizontal src={REEL_IMAGE} />
@@ -142,7 +142,7 @@ export default function InteractivePreview() {
         <div className="space-y-5">
           <div>
             <SectionLabel>Planos 2D</SectionLabel>
-            <h3 className="font-headline font-extrabold text-3xl text-locked">Planos con Medición Láser</h3>
+            <h3 className="font-headline font-extrabold text-2xl md:text-3xl text-locked">Planos con Medición Láser</h3>
           </div>
 
           {FLOOR_PLAN_IMAGE ? (

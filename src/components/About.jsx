@@ -2,8 +2,8 @@ import ABOUT_IMAGE from '../assets/1.png';
 
 export default function About() {
   return (
-    <section id="nosotros" className="py-32 px-8 bg-surface-container-low">
-      <div className="max-w-5xl mx-auto flex flex-col md:flex-row gap-20 items-center">
+    <section id="nosotros" className="py-16 md:py-32 px-4 md:px-8 bg-surface-container-low">
+      <div className="max-w-5xl mx-auto flex flex-col md:flex-row gap-10 md:gap-20 items-center">
         <div className="w-full md:w-1/3">
           <img
             className="w-full grayscale rounded-md aspect-[3/4] object-cover shadow-xl"
@@ -13,8 +13,8 @@ export default function About() {
           />
         </div>
         <div className="w-full md:w-2/3">
-          <h2 className="font-headline font-extrabold text-4xl text-locked mb-8">Creamos perspectiva</h2>
-          <div className="space-y-6 text-on-surface-variant leading-relaxed text-lg">
+          <h2 className="font-headline font-extrabold text-3xl md:text-4xl text-locked mb-6 md:mb-8">Creamos perspectiva</h2>
+          <div className="space-y-5 text-on-surface-variant leading-relaxed text-base md:text-lg">
             <p>
               En ARKO, no solo sacamos fotos. Creamos una narrativa visual que respeta la arquitectura y le hace
               justicia a cada inversión.

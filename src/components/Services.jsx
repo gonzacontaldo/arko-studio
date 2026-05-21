@@ -100,9 +100,9 @@ export default function Services({ onOpenBudget }) {
 
   return (
     <>
-      <section id="servicios" className="py-32 px-8 bg-surface">
-        <div className="max-w-7xl mx-auto mb-20 text-center">
-          <h2 className="font-headline font-extrabold text-4xl text-locked mb-4">Nuestros Servicios</h2>
+      <section id="servicios" className="py-16 md:py-32 px-4 md:px-8 bg-surface">
+        <div className="max-w-7xl mx-auto mb-12 md:mb-20 text-center">
+          <h2 className="font-headline font-extrabold text-3xl md:text-4xl text-locked mb-4">Nuestros Servicios</h2>
           <div className="w-20 h-1 bg-secondary mx-auto" />
         </div>
 

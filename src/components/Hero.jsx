@@ -14,11 +14,11 @@ export default function Hero({ onOpenModal }) {
         />
         <div className="absolute inset-0 bg-on-surface/20" />
       </div>
-      <div className="relative z-10 max-w-4xl px-8 md:px-24">
-        <h1 className="font-headline font-extrabold text-5xl md:text-7xl text-white text-locked leading-none mb-6">
+      <div className="relative z-10 max-w-4xl px-4 md:px-24">
+        <h1 className="font-headline font-extrabold text-3xl sm:text-5xl md:text-7xl text-white text-locked leading-tight mb-6 break-words">
           Vendé tus propiedades más rápido con contenido audiovisual de calidad
         </h1>
-        <p className="text-white/90 text-xl font-light max-w-2xl mb-10 leading-relaxed">
+        <p className="text-white/90 text-base sm:text-xl font-light max-w-2xl mb-10 leading-relaxed">
           Tours virtuales 360°, Perspectivas únicas con dron, Fotografías profesionales y videos para redes sociales diseñados para destacar cada
           propiedad.
         </p>

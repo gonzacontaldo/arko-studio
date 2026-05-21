@@ -81,10 +81,10 @@ export default function Navbar({ onOpenModal }) {
     }`}>
 
       {/* ── Barra principal ─────────────────────────────────────────────── */}
-      <div className={`flex justify-between items-center px-6 md:px-8 transition-all duration-300 ${scrolled ? 'py-3' : 'py-4'}`}>
+      <div className={`flex flex-wrap justify-between items-center px-4 md:px-8 gap-y-2 transition-all duration-300 ${scrolled ? 'py-2' : 'py-3'}`}>
 
         {/* Logo */}
-        <a href="#top" className="font-headline font-bold tracking-tighter text-xl text-stone-900 dark:text-stone-100 uppercase">
+        <a href="#top" className="font-headline font-bold tracking-tighter text-lg text-stone-900 dark:text-stone-100 uppercase shrink-0">
           ARKO Studio
         </a>
 
@@ -95,7 +95,7 @@ export default function Navbar({ onOpenModal }) {
           ))}
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 shrink-0">
           {/* CTA — solo desktop */}
           <button
             onClick={onOpenModal}
@@ -107,7 +107,7 @@ export default function Navbar({ onOpenModal }) {
           {/* Hamburger — solo mobile */}
           <button
             onClick={() => setMenuOpen(o => !o)}
-            className="md:hidden w-10 h-10 flex items-center justify-center text-stone-700 dark:text-stone-200 hover:text-[#C5A059] transition-colors"
+            className="md:hidden min-w-[2.5rem] min-h-[2.5rem] flex items-center justify-center text-stone-700 dark:text-stone-200 hover:text-[#C5A059] transition-colors"
             aria-label={menuOpen ? 'Cerrar menú' : 'Abrir menú'}
             aria-expanded={menuOpen}
           >
