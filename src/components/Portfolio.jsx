@@ -196,8 +196,8 @@ export default function Portfolio() {
                   alt=""
                   draggable={false}
                   onContextMenu={e => e.preventDefault()}
-                  className="absolute bottom-3 left-3 pointer-events-none select-none z-10"
-                  style={{ width: '140px', opacity: 0.75, filter: 'brightness(0) invert(1)' }}
+                  className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none select-none z-10"
+                  style={{ width: '60%', maxWidth: '220px', opacity: 0.45, filter: 'brightness(0) invert(1)' }}
                 />
 
                 {/* Overlay hover */}

@@ -94,15 +94,15 @@ export default function PropertyModal({ property, onClose }) {
         {/* ── Contenido ─────────────────────────────────────────────────── */}
         <div className="flex-1 overflow-hidden bg-black relative" style={{ minHeight: '300px' }}>
 
-          {/* Watermark — solo visible en tab de fotos */}
+          {/* Watermark — centrado sobre la foto */}
           {activeTab === 'foto' && (
             <img
               src={TextLogo}
               alt=""
               draggable={false}
               onContextMenu={e => e.preventDefault()}
-              className="absolute bottom-4 left-4 pointer-events-none select-none"
-              style={{ width: '200px', opacity: 0.8, filter: 'brightness(0) invert(1)', zIndex: 20 }}
+              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none select-none"
+              style={{ width: '55%', maxWidth: '480px', minWidth: '200px', opacity: 0.35, filter: 'brightness(0) invert(1)', zIndex: 20 }}
             />
           )}
 
@@ -190,15 +190,13 @@ export default function PropertyModal({ property, onClose }) {
 
           {/* Tour 360 */}
           {activeTab === 'tour' && property.tourUrl && (
-            <div className="w-full h-full flex" style={{ minHeight: '500px' }}>
-              <iframe
-                className="w-full h-full"
-                src={property.tourUrl}
-                title={`Tour 360° — ${property.title}`}
-                allow="fullscreen; xr-spatial-tracking"
-                allowFullScreen
-              />
-            </div>
+            <iframe
+              src={property.tourUrl}
+              title={`Tour 360° — ${property.title}`}
+              allow="fullscreen; xr-spatial-tracking"
+              allowFullScreen
+              style={{ width: '100%', height: 'clamp(400px, 70vh, 700px)', display: 'block', border: 'none' }}
+            />
           )}
 
         </div>
