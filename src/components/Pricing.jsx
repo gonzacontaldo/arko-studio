@@ -12,7 +12,7 @@ const INCLUDES = [
 
 const ADDONS = [
   { name: 'Video vertical con agente inmobiliario', desc: 'Cinematic storytelling + formatos optimizados para redes.', price: 'USD 400' },
-  { name: 'Transición día a noche',                 desc: 'Edición crepuscular del exterior.',                        price: '1,5× tarifa' },
+  { name: 'Transición día a noche',                 desc: 'Edición crepuscular del exterior.',                        price: '1,5X del Premiere Package' },
   { name: 'Plano arquitectónico 2D',                desc: 'Representación digital de la planta de la propiedad.',     price: 'A consultar' },
   { name: 'Renovación tour virtual 360° 4K',        desc: 'Hosting en Kuula por 12 meses adicionales.',               price: 'USD 60 / año' },
 ];
@@ -38,7 +38,7 @@ export default function Pricing({ onOpenModal }) {
             Premiere Package
           </h2>
           <p className="text-on-surface-variant text-base max-w-2xl mx-auto leading-relaxed">
-            Producción visual integral para propiedades de alto valor. Fotografía, video cinemático, drone y tecnología inmersiva en una sola sesión.
+            Producción visual integral para propiedades de alto valor. Fotografía, video cinemático, dron y tecnología inmersiva en una sola sesión.
           </p>
         </div>
 
@@ -48,7 +48,7 @@ export default function Pricing({ onOpenModal }) {
           {/* Calculadora — full width */}
           <div className="p-8 md:p-12 border-b border-outline-variant/20">
             <p className="text-xs text-on-surface-variant mb-6 tracking-wide uppercase font-medium">
-              Calculá tu inversión — 0,15% del valor listado
+              Calculá tu inversión — 0,15% del valor de publicación
             </p>
             <div className="flex flex-wrap items-center gap-4 mb-8">
               <span className="text-sm text-on-surface-variant w-36">Valor de la propiedad</span>

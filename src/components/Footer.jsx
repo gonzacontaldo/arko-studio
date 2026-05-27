@@ -12,9 +12,11 @@ const legal = [
 const coverageZones = [
   'CABA',
   'GBA Norte',
-  'GBA Sur',
-  'GBA Oeste',
-  'Zona Norte (Nordelta, Tigre)',
+  'Villanueva',
+  'Pilar',
+  'Reserva Cardales',
+  'Nordelta',
+  'Tigre'
 ];
 
 export default function Footer() {

@@ -29,9 +29,12 @@ export default function Hero({ onOpenModal }) {
           >
             Solicitar Presupuesto
           </button>
-          <button className="bg-white/10 backdrop-blur-md border border-white/20 text-white px-10 py-4 rounded-md font-bold text-sm tracking-widest uppercase hover:bg-white/20 transition-all">
+          <a
+            href="#portfolio"
+            className="bg-white/10 backdrop-blur-md border border-white/20 text-white px-10 py-4 rounded-md font-bold text-sm tracking-widest uppercase hover:bg-white/20 transition-all"
+          >
             Ver Portfolio
-          </button>
+          </a>
         </div>
       </div>
     </section>
