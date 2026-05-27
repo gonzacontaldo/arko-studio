@@ -1,7 +1,7 @@
-const socialLinks = [
-  { label: 'Instagram', href: '#' },
-  { label: 'LinkedIn',  href: '#' },
-  { label: 'Contacto',  href: '#' },
+const contactLinks = [
+  { icon: 'photo_camera', label: '@arkostudio',       href: 'https://instagram.com/' },
+  { icon: 'phone',        label: '+54 9 11 7649-8888',   href: 'tel:+5491176498888' },
+  { icon: 'mail',         label: 'contacto@arkostudio.com.ar', href: 'mailto:contacto@arkostudio.com.ar' },
 ];
 
 const legal = [
@@ -55,18 +55,21 @@ export default function Footer() {
           </p>
         </div>
 
-        {/* Links */}
+        {/* Contacto */}
         <div>
           <h4 className="font-bold text-xs uppercase tracking-widest text-[#C5A059] mb-4">
-            Links
+            Contacto
           </h4>
-          <div className="flex flex-col gap-2.5">
-            {socialLinks.map(({ label, href }) => (
+          <div className="flex flex-col gap-3">
+            {contactLinks.map(({ icon, label, href }) => (
               <a
                 key={label}
                 href={href}
-                className="font-body text-sm text-stone-500 hover:text-[#C5A059] transition-colors"
+                target={href.startsWith('http') ? '_blank' : undefined}
+                rel={href.startsWith('http') ? 'noopener noreferrer' : undefined}
+                className="flex items-center gap-2 font-body text-sm text-stone-500 hover:text-[#C5A059] transition-colors"
               >
+                <span className="material-symbols-outlined text-[#C5A059] text-base">{icon}</span>
                 {label}
               </a>
             ))}

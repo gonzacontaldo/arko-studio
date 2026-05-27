@@ -37,10 +37,10 @@ const services = [
   },
   {
     icon: 'movie',
-    title: 'Videos para Redes',
+    title: 'Videos Cinematograficos',
     description:
-      'Contenido vertical optimizado para Instagram y TikTok. Ediciones dinámicas que muestran la energía del espacio.',
-    features: ['Estabilización 4K', 'Música licenciada', 'Clips del agente'],
+      'Contenido horizontal / vertical optimizado para subir el valor percibido de tu propiedad. Ediciones dinámicas que muestran la energía del espacio.',
+    features: ['Estabilización 4K', 'Música licenciada', 'Ediciones dinámicas'],
     examples: [
       { src: IMGS.reel,  alt: 'Reel vertical de dormitorio moderno',             label: 'Instagram Reel · Dormitorio' },
       { src: IMGS.living,alt: 'Toma cinematográfica de living',                  label: 'Reel · Living'               },
@@ -68,7 +68,7 @@ const services = [
     title: 'Tours Virtuales 360°',
     description:
       'Recorridos interactivos con Matterport y Kuula. El comprador explora cada ambiente a su ritmo, desde cualquier dispositivo.',
-    features: ['Insta360 X5', 'Matterport', 'Kuula'],
+    features: ['Ahorrate visitas innecesarias', 'Matterport', 'Kuula'],
     examples: [
       { src: IMGS.tour,  alt: 'Tour 360° del living',            label: 'Living · Tour interactivo'  },
       { src: IMGS.kitch, alt: 'Tour 360° de la cocina',          label: 'Cocina · Vista panorámica'  },
@@ -82,8 +82,8 @@ const services = [
     icon: 'flight_takeoff',
     title: 'Tomas Aéreas 360°',
     description:
-      'Perspectivas aéreas impactantes para mostrar la propiedad y su entorno con el DJI Avata 2. Ideal para lotes, casas con jardín y ubicaciones privilegiadas.',
-    features: ['DJI Avata 2', 'Tomas 360°', 'Edición profesional'],
+      'Perspectivas aéreas impactantes para mostrar la propiedad y su entorno. Ideal para lotes, complejos, casas con jardín y ubicaciones privilegiadas',
+    features: ['4k', 'Perspectivas únicas', 'Edición profesional'],
     examples: [
       { src: IMGS.pool,  alt: 'Vista aérea cenital de pileta y jardín',          label: 'Aéreo · Jardín y pileta'    },
       { src: IMGS.bldg,  alt: 'Toma aérea de edificio moderno',                  label: 'Aéreo · Torre en altura'    },

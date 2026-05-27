@@ -1,7 +1,5 @@
-const BEFORE_IMG =
-  'https://lh3.googleusercontent.com/aida-public/AB6AXuC3p9DsCXeaAJGv1CKBSv8GPTRWll7nUHcSN9ISQZkF2G93RBhRLy3vgmI2ueLoBM1DZglY7MgZYFsB96T6fNhDD2B--35Vlq0U9NX7nLKemvesMPRJPV8Fr01SkWXLt-bmo2gJE86ebPxLzjFvJvC9nct9DsW1Vtfog8e3ptVQdEpMkuvPcoaEpvu8Hj0-N5Fup3-qVjloGDWXU_I770kZQQ8fB--pmuO1g8-3fuYgPeoebhAw_liIGFIqCP90765k09sT69vQ6A0';
-const AFTER_IMG =
-  'https://lh3.googleusercontent.com/aida-public/AB6AXuBzjj8kQ4HafVp1OnfZVNPSndumhRJJqXtKdmEk7F2fQNdxb9XNMBPdOBD-iEbX9HvORT-5IbnU9n01cWV92SdRO86TjRuLNkNgoIUeNY3_8sHeZgPDhMq6cLVkjJ4lidGQa33JfxfR3y6qe7NiEcZXtyZH03LvvTicyCS9kui3JQhJ_-SJ6TeEu9BKlqMEmSQguyWOSrsvDrH-wAM8fcX9s2YzvCgo5AyvIzlt5zS5gh6yGnw-bWRGoZ2qsGztmC3-CuxAhC67kQc';
+import BEFORE_IMG from '../assets/BeforeAfter/Before.jpg';
+import AFTER_IMG from '../assets/BeforeAfter/After.jpg';
 
 export default function BeforeAfter() {
   return (
