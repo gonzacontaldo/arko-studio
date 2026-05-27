@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
-const BNA = 1425;
+const BNA_FALLBACK = 1425;
 const RATE = 0.0015;
 
 const INCLUDES = [
@@ -23,6 +23,25 @@ function fmt(n) {
 
 export default function Pricing({ onOpenModal }) {
   const [propVal, setPropVal] = useState(200000);
+  const [bna, setBna]         = useState(BNA_FALLBACK);
+  const [bnaDate, setBnaDate] = useState(null);
+
+  useEffect(() => {
+    fetch('https://dolarapi.com/v1/dolares/oficial')
+      .then(r => r.json())
+      .then(data => {
+        if (data?.venta) {
+          setBna(Math.round(data.venta));
+          // La API devuelve fechaActualizacion como "2026-05-27T..."
+          if (data.fechaActualizacion) {
+            const d = new Date(data.fechaActualizacion);
+            setBnaDate(d.toLocaleDateString('es-AR', { day: '2-digit', month: '2-digit', year: 'numeric' }));
+          }
+        }
+      })
+      .catch(() => {/* usa el fallback silenciosamente */});
+  }, []);
+
   const fee = Math.round(propVal * RATE);
 
   return (
@@ -70,7 +89,7 @@ export default function Pricing({ onOpenModal }) {
               </div>
               <div className="lg:col-span-1 bg-surface-container-low rounded-xl p-5">
                 <p className="text-xs text-on-surface-variant mb-2">Equivalente en pesos</p>
-                <p className="text-2xl font-semibold text-on-surface font-headline">$ {fmt(fee * BNA)}</p>
+                <p className="text-2xl font-semibold text-on-surface font-headline">$ {fmt(fee * bna)}</p>
               </div>
               <div className="lg:col-span-2 flex flex-wrap items-center gap-2 bg-surface-container-low/50 rounded-xl p-5">
                 {[[300000, 450], [650000, 975], [1000000, 1500]].map(([v, f]) => (
@@ -85,7 +104,7 @@ export default function Pricing({ onOpenModal }) {
               </div>
             </div>
             <p className="text-[10px] text-on-surface-variant/50">
-              Conversión según dólar billete tipo vendedor BNA · ${fmt(BNA)} · 25/05/2026
+              Conversión según dólar billete tipo vendedor BNA · ${fmt(bna)}{bnaDate ? ` · ${bnaDate}` : ''}
             </p>
           </div>
 
