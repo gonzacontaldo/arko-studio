@@ -30,10 +30,10 @@ export default function App() {
       <FadeIn><ValueSection /></FadeIn>
       <FadeIn><Portfolio /></FadeIn>
       <FadeIn><Services onOpenBudget={open} /></FadeIn>
-      <FadeIn><Pricing onOpenModal={open} /></FadeIn>
       <FadeIn><BeforeAfter /></FadeIn>
       {/* <FadeIn><DevelopersSection /></FadeIn> */}
       <FadeIn><InteractivePreview /></FadeIn>
+      <FadeIn><Pricing onOpenModal={open} /></FadeIn>
       <FadeIn><Process /></FadeIn>
       <FadeIn><About /></FadeIn>
       <FadeIn><FinalCTA onOpenModal={open} /></FadeIn>
