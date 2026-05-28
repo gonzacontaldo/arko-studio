@@ -44,6 +44,33 @@ import TerrazasFoto1 from '../assets/portfolio/Terrazas3erPiso/Foto1.jpg';
 import TerrazasFoto2 from '../assets/portfolio/Terrazas3erPiso/Foto2.jpg';
 import TerrazasFoto3 from '../assets/portfolio/Terrazas3erPiso/Foto3.jpg';
 
+// ─── SantaAna195 ───────────────────────────────────────────────────────
+import SantaAna195Portada from '../assets/portfolio/SantaAna195/Portada.jpg';
+import SantaAna195Foto1 from '../assets/portfolio/SantaAna195/Foto1.jpg';
+import SantaAna195Foto2 from '../assets/portfolio/SantaAna195/Foto2.jpg';
+import SantaAna195Foto3 from '../assets/portfolio/SantaAna195/Foto3.jpg';
+import SantaAna195Foto4 from '../assets/portfolio/SantaAna195/Foto4.jpg';
+
+// ─── Civis ───────────────────────────────────────────────────────
+import CivisPortada from '../assets/portfolio/Civis/Portada.jpg';
+import CivisFoto1 from '../assets/portfolio/Civis/Foto1.jpg';
+import CivisFoto2 from '../assets/portfolio/Civis/Foto2.jpg';
+import CivisFoto3 from '../assets/portfolio/Civis/Foto3.jpg';
+import CivisFoto4 from '../assets/portfolio/Civis/Foto4.jpg';
+
+// ─── PuertasDelNorte525 ───────────────────────────────────────────────────────
+import Puertas525Portada from '../assets/portfolio/PuertasDelNorte525/Portada.jpg';
+import Puertas525Foto1 from '../assets/portfolio/PuertasDelNorte525/Foto1.jpg';
+import Puertas525Foto2 from '../assets/portfolio/PuertasDelNorte525/Foto2.jpg';
+import Puertas525Foto3 from '../assets/portfolio/PuertasDelNorte525/Foto3.jpg';
+
+// ─── PuertasDelNorte120 ───────────────────────────────────────────────────────
+import Puertas120Portada from '../assets/portfolio/PuertasDelNorte120/Portada.jpg';
+import Puertas120Foto1 from '../assets/portfolio/PuertasDelNorte120/Foto1.jpg';
+import Puertas120Foto2 from '../assets/portfolio/PuertasDelNorte120/Foto2.jpg';
+
+
+
 // ─── Propiedades ──────────────────────────────────────────────────────────────
 // Para agregar una propiedad nueva:
 //   1. Importá las fotos: import foto1 from '../assets/portfolio/nombre/foto1.jpg';
@@ -113,6 +140,43 @@ const portfolioItems = [
     tourUrl: 'https://doormann.viewin360.co/share/collection/7MBrd?logo=0&card=1&info=1&logosize=200&fs=1&vr=0&zoom=1&thumbs=1&inst=es',
     types: ['foto', 'video', 'tour', 'dron'],
   },
+  {
+    id: 'SantaAna195',
+    title: 'Casa - Santa Ana a la Laguna',
+    cover: SantaAna195Portada,
+    fotos: [SantaAna195Portada, SantaAna195Foto1, SantaAna195Foto2, SantaAna195Foto3, SantaAna195Foto4],
+    videoId: '6y7ZG6t-P3U',
+    tourUrl: "https://doormann.viewin360.co/share/collection/71Y1x?logo=0&card=1&info=1&logosize=200&fs=1&vr=0&zoom=1&thumbs=1&inst=es",
+    types: ['foto', 'video', 'tour', 'dron'],
+  },
+  {
+    id: 'Civis',
+    title: 'Complejo - Civis',
+    cover: CivisPortada,
+    fotos: [CivisPortada, CivisFoto1, CivisFoto2, CivisFoto3, CivisFoto4],
+    videoId: '9pBvgShBwUA',
+    tourUrl: "https://doormann.viewin360.co/share/Lvzly?logo=0&card=1&info=1&logosize=200&fs=1&vr=0&zoom=1&thumbs=1&inst=es",
+    types: ['foto', 'video', 'tour', 'dron'],
+  },
+  {
+    id: 'PuertasDelNorte525',
+    title: 'Oficina - Puerta Norte',
+    cover: Puertas525Portada,
+    fotos: [Puertas525Portada, Puertas525Foto1, Puertas525Foto2, Puertas525Foto3],
+    videoId: 'GhFOs5FXXLA',
+    tourUrl: "https://doormann.viewin360.co/share/collection/7T7sy?logo=0&card=1&info=1&logosize=200&fs=1&vr=0&zoom=1&thumbs=1&inst=es",
+    types: ['foto', 'video', 'tour', 'dron'],
+  },
+  {
+    id: 'PuertasDelNorte120',
+    title: 'Oficina - Puerta Norte',
+    cover: Puertas120Portada,
+    fotos: [Puertas120Portada, Puertas120Foto1, Puertas120Foto2],
+    videoId: 'TiH-ErL9eIw',
+    //tourUrl: "https://doormann.viewin360.co/share/collection/7T7sy?logo=0&card=1&info=1&logosize=200&fs=1&vr=0&zoom=1&thumbs=1&inst=es",
+    types: ['foto', 'video'],
+  },
+
   
 ];
 

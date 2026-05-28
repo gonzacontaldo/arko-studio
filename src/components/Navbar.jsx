@@ -4,9 +4,9 @@ const navLinks = [
   { label: 'Inicio',    href: '#top',       section: 'top'       },
   { label: 'Portfolio', href: '#portfolio', section: 'portfolio' },
   { label: 'Servicios', href: '#servicios', section: 'servicios' },
-  { label: 'Precios',   href: '#precios',   section: 'precios'   },
   { label: 'Proceso',   href: '#proceso',   section: 'proceso'   },
   { label: 'Nosotros',  href: '#nosotros',  section: 'nosotros'  },
+  { label: 'Precios',   href: '#precios',   section: 'precios'   },
 ];
 
 export default function Navbar({ onOpenModal }) {
