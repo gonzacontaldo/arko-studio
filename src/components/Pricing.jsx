@@ -32,7 +32,7 @@ const LOGISTICS = [
 const ADDONS = [
   { name: 'Video vertical con agente inmobiliario', desc: 'Cinematic storytelling + formatos optimizados para redes.', price: 'USD 400' },
   { name: 'Transición día a noche',                 desc: 'Edición crepuscular del exterior.',                        price: '1,5X del Premiere Package' },
-  { name: 'Plano arquitectónico 2D',                desc: 'Representación digital de la planta de la propiedad.',     price: 'A consultar' },
+  { name: 'Planos de planta esquemáticos 2D',       desc: 'Propiedades de hasta 150 m². Para superficies mayores, consultar.', price: 'USD 100' },
   { name: 'Renovación tour virtual 360° 4K',        desc: 'Hosting en Kuula por 12 meses adicionales.',               price: 'USD 60 / año' },
 ];
 
