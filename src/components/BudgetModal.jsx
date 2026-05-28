@@ -7,7 +7,7 @@ const SERVICES = [
   { value: 'Fotografía profesional', label: '📷 Fotografía profesional' },
   { value: 'Video para redes sociales', label: '🎬 Video para redes sociales' },
   { value: 'Tour virtual 360°', label: '🔭 Tour virtual 360°' },
-  { value: 'Pack completo', label: '✨ Pack completo (foto + video + tour)' },
+  { value: 'Pack completo', label: '✨ Premiere Pack (foto + video + tour)' },
 ];
 
 export default function BudgetModal({ isOpen, onClose }) {

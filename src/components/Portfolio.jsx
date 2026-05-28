@@ -89,7 +89,7 @@ const portfolioItems = [
     title: 'Santa Ana — 3 Dormitorios',
     cover: SantaAnaPortada,
     fotos: [SantaAnaPortada, SantaAnaFoto1, SantaAnaFoto2, SantaAnaFoto3, SantaAnaFoto4, SantaAnaFoto5],
-    tourUrl: 'https://doormann.viewin360.co/share/collection/7156d?logo=0&card=1&info=1&logosize=200&fs=1&vr=0&zoom=1&thumbs=1&inst=es',
+    tourUrl: 'https://doormann.viewin360.co/share/collection/7156d?logo=1&card=1&info=1&logosize=74&fs=1&vr=0&zoom=1&thumbs=1&inst=es',
     types: ['foto', 'tour', 'dron'],
   },
   // {
@@ -108,7 +108,7 @@ const portfolioItems = [
     fotos: [PuertasPortada, PuertasFoto1, PuertasFoto2, PuertasFoto3],
     videoId: '_I57bl9c1R4',
     vertical: true,
-    tourUrl: 'https://doormann.viewin360.co/share/collection/7MyD4?logo=0&card=1&info=1&logosize=200&fs=1&vr=0&zoom=1&thumbs=1&inst=es',
+    tourUrl: 'https://doormann.viewin360.co/share/collection/7MyD4?logo=1&card=1&info=1&logosize=74&fs=1&vr=0&zoom=1&thumbs=1&inst=es',
     types: ['foto', 'video', 'tour'],
   },
   {
@@ -117,7 +117,7 @@ const portfolioItems = [
     cover: Puertas115Portada,
     fotos: [Puertas115Portada, Puertas115Foto1, Puertas115Foto2, Puertas115Foto3],
     videoId: 'qTd6yig9AMM',
-    tourUrl: 'https://doormann.viewin360.co/share/collection/7Myx8?logo=0&card=1&info=1&logosize=200&fs=1&vr=0&zoom=1&thumbs=1&inst=es',
+    tourUrl: 'https://doormann.viewin360.co/share/collection/7Myx8?logo=1&card=1&info=1&logosize=74&fs=1&vr=0&zoom=1&thumbs=1&inst=es',
     types: ['foto', 'video', 'tour', 'dron'],
   },
   {
@@ -127,7 +127,7 @@ const portfolioItems = [
     fotos: [OlivosPortada, OlivosFoto1, OlivosFoto2, OlivosFoto3, OlivosFoto4, OlivosFoto5],
     videoId: 'UjWrEYrJnhU',
     vertical: true,
-    tourUrl: 'https://doormann.viewin360.co/share/collection/7Mzql?logo=0&card=1&info=1&logosize=200&fs=1&vr=0&zoom=1&thumbs=1&inst=es',
+    tourUrl: 'https://doormann.viewin360.co/share/collection/7Mzql?logo=1&card=1&info=1&logosize=74&fs=1&vr=0&zoom=1&thumbs=1&inst=es',
     types: ['foto', 'video', 'tour', 'dron'],
   },
   
@@ -137,7 +137,7 @@ const portfolioItems = [
     cover: TerrazasPortada,
     fotos: [TerrazasPortada, TerrazasFoto1, TerrazasFoto2, TerrazasFoto3],
     videoId: 'pN1s8p24mrQ',
-    tourUrl: 'https://doormann.viewin360.co/share/collection/7MBrd?logo=0&card=1&info=1&logosize=200&fs=1&vr=0&zoom=1&thumbs=1&inst=es',
+    tourUrl: 'https://doormann.viewin360.co/share/collection/7MBrd?logo=1&card=1&info=1&logosize=74&fs=1&vr=0&zoom=1&thumbs=1&inst=es',
     types: ['foto', 'video', 'tour', 'dron'],
   },
   {
@@ -146,7 +146,7 @@ const portfolioItems = [
     cover: SantaAna195Portada,
     fotos: [SantaAna195Portada, SantaAna195Foto1, SantaAna195Foto2, SantaAna195Foto3, SantaAna195Foto4],
     videoId: '6y7ZG6t-P3U',
-    tourUrl: "https://doormann.viewin360.co/share/collection/71Y1x?logo=0&card=1&info=1&logosize=200&fs=1&vr=0&zoom=1&thumbs=1&inst=es",
+    tourUrl: "https://doormann.viewin360.co/share/collection/71Y1x?logo=1&card=1&info=1&logosize=74&fs=1&vr=0&zoom=1&thumbs=1&inst=es",
     types: ['foto', 'video', 'tour', 'dron'],
   },
   {
@@ -155,7 +155,7 @@ const portfolioItems = [
     cover: CivisPortada,
     fotos: [CivisPortada, CivisFoto1, CivisFoto2, CivisFoto3, CivisFoto4],
     videoId: '9pBvgShBwUA',
-    tourUrl: "https://doormann.viewin360.co/share/Lvzly?logo=0&card=1&info=1&logosize=200&fs=1&vr=0&zoom=1&thumbs=1&inst=es",
+    tourUrl: "https://doormann.viewin360.co/share/Lvzly?logo=1&card=1&info=1&logosize=74&fs=1&vr=0&zoom=1&thumbs=1&inst=es",
     types: ['foto', 'video', 'tour', 'dron'],
   },
   {
@@ -164,7 +164,7 @@ const portfolioItems = [
     cover: Puertas525Portada,
     fotos: [Puertas525Portada, Puertas525Foto1, Puertas525Foto2, Puertas525Foto3],
     videoId: 'GhFOs5FXXLA',
-    tourUrl: "https://doormann.viewin360.co/share/collection/7T7sy?logo=0&card=1&info=1&logosize=200&fs=1&vr=0&zoom=1&thumbs=1&inst=es",
+    tourUrl: "https://doormann.viewin360.co/share/collection/7T7sy?logo=1&card=1&info=1&logosize=74&fs=1&vr=0&zoom=1&thumbs=1&inst=es",
     types: ['foto', 'video', 'tour', 'dron'],
   },
   {
