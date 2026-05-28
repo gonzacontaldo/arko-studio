@@ -11,6 +11,24 @@ const INCLUDES = [
   { icon: 'flight_takeoff', name: 'Dron 4K',               desc: 'Hasta 10 fotos aéreas + video cinematográfico.' },
 ];
 
+const LOGISTICS = [
+  {
+    label: '⏱ 4 a 5 horas de producción',
+    title: '¿Por qué 4 a 5 horas?',
+    body: 'Una producción premium no se improvisa. Necesitamos tiempo para el recorrido inicial del espacio, fotografía por ambiente con configuración de luz, grabación de video cinemático con múltiples pasadas, tomas de drone y captura del tour virtual 360°. Apresurarse compromete la calidad. Este tiempo garantiza que cada espacio quede documentado en su mejor versión.',
+  },
+  {
+    label: '☀️ Luz natural óptima',
+    title: '¿Por qué luz natural?',
+    body: 'La luz natural es el elemento más importante en fotografía inmobiliaria. El rango ideal es de 10:00 a 14:00 hs, cuando la luz es difusa, cálida y envuelve los ambientes sin crear sombras duras. Hace que los espacios se vean más amplios y acogedores, evita el color artificial de la iluminación eléctrica y captura la verdadera paleta de colores de materiales y terminaciones. En días con lluvia intensa podemos reprogramar sin costo.',
+  },
+  {
+    label: '📍 CABA y GBA',
+    title: 'Cobertura CABA y GBA',
+    body: 'Operamos en Ciudad Autónoma de Buenos Aires y el Gran Buenos Aires (Norte, Sur, Oeste), incluyendo zonas como Nordelta, Tigre, Pilar y Cardales. Esto nos permite garantizar puntualidad en el traslado del equipo y conocimiento del contexto urbano de cada zona. Para propiedades fuera de esta área, consultanos disponibilidad y tarifa de traslado.',
+  },
+];
+
 const ADDONS = [
   { name: 'Video vertical con agente inmobiliario', desc: 'Cinematic storytelling + formatos optimizados para redes.', price: 'USD 400' },
   { name: 'Transición día a noche',                 desc: 'Edición crepuscular del exterior.',                        price: '1,5X del Premiere Package' },
@@ -43,19 +61,23 @@ export default function Pricing({ onOpenModal }) {
       .catch(() => {/* usa el fallback silenciosamente */});
   }, []);
 
-  const [tipsOpen, setTipsOpen] = useState(false);
+  const [tipsOpen,     setTipsOpen]     = useState(false);
+  const [logModal,     setLogModal]     = useState(null); // guarda el objeto LOGISTICS seleccionado
   const closeTips = useCallback(() => setTipsOpen(false), []);
 
   useEffect(() => {
-    if (!tipsOpen) return;
-    const onKey = (e) => { if (e.key === 'Escape') closeTips(); };
+    const isOpen = tipsOpen || !!logModal;
+    if (!isOpen) return;
+    const onKey = (e) => {
+      if (e.key === 'Escape') { closeTips(); setLogModal(null); }
+    };
     document.addEventListener('keydown', onKey);
     document.body.style.overflow = 'hidden';
     return () => {
       document.removeEventListener('keydown', onKey);
       document.body.style.overflow = '';
     };
-  }, [tipsOpen, closeTips]);
+  }, [tipsOpen, logModal, closeTips]);
 
   const fee = Math.round(propVal * RATE);
 
@@ -85,8 +107,8 @@ export default function Pricing({ onOpenModal }) {
             <p className="text-xs text-on-surface-variant mb-6 tracking-wide uppercase font-medium">
               Calculá tu inversión — 0,15% del valor de publicación
             </p>
-            <div className="flex flex-wrap items-center gap-4 mb-8">
-              <span className="text-sm text-on-surface-variant w-36">Desliza el slider hasta el valor de tu Propiedad</span>
+            <div className="flex flex-wrap items-center gap-4 mb-2">
+              <span className="text-sm text-on-surface-variant w-36">Valor de la propiedad</span>
               <input
                 type="range"
                 min="200000" max="2000000" step="10000"
@@ -98,6 +120,9 @@ export default function Pricing({ onOpenModal }) {
                 USD {fmt(propVal)}
               </span>
             </div>
+            <p className="text-[10px] text-on-surface-variant/50 mb-6">
+              Deslizá el slider hasta el valor de tu propiedad
+            </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
               <div className="lg:col-span-1 bg-surface-container-low rounded-xl p-5">
                 <p className="text-xs text-on-surface-variant mb-2">Inversión en USD</p>
@@ -173,9 +198,14 @@ export default function Pricing({ onOpenModal }) {
               </div>
               
               <div className="flex flex-wrap gap-2 mb-4">
-                {['⏱ 4 a 5 horas de producción', '☀️ Luz natural óptima', '📍 CABA y GBA'].map(pill => (
-                  <span key={pill} className="text-xs text-on-surface border border-outline-variant/50 rounded-full px-4 py-2">
-                    {pill}
+                {LOGISTICS.map(item => (
+                  <span key={item.label} className="inline-flex items-center gap-1.5 text-xs text-on-surface border border-outline-variant/50 rounded-full px-4 py-2">
+                    {item.label}
+                    <button
+                      onClick={() => setLogModal(item)}
+                      className="inline-flex items-center justify-center w-4 h-4 rounded-full border border-outline-variant/70 text-on-surface-variant hover:bg-secondary hover:text-white hover:border-secondary transition-colors text-[10px] font-bold flex-shrink-0"
+                      aria-label={`Más info: ${item.label}`}
+                    >!</button>
                   </span>
                 ))}
               </div>
@@ -264,6 +294,28 @@ export default function Pricing({ onOpenModal }) {
               </li>
             ))}
           </ul>
+        </div>
+      </div>,
+      document.body
+    )}
+    {logModal && createPortal(
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 md:p-6">
+        <div className="absolute inset-0 bg-on-surface/40 backdrop-blur-sm" onClick={() => setLogModal(null)} />
+        <div
+          className="relative z-10 w-full max-w-md bg-white rounded-2xl border-t-4 border-secondary shadow-2xl p-8"
+          style={{ animation: 'fadeInUp .22s cubic-bezier(.2,.8,.25,1)' }}
+        >
+          <button
+            onClick={() => setLogModal(null)}
+            className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-lg text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-colors text-xl"
+            aria-label="Cerrar"
+          >×</button>
+          <h2 className="font-headline font-extrabold text-xl text-on-surface text-locked mb-4">
+            {logModal.title}
+          </h2>
+          <p className="text-sm text-on-surface-variant leading-relaxed">
+            {logModal.body}
+          </p>
         </div>
       </div>,
       document.body
