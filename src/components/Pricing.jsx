@@ -228,9 +228,9 @@ export default function Pricing({ onOpenModal }) {
 
         </div>
 
-        <p className="text-center text-on-surface-variant text-xs mt-10 leading-relaxed">
+        <p className="text-center text-on-surface-variant text-xl mt-10 leading-relaxed">
           ¿Tenés otros requerimientos o querés un paquete a medida?{' '}
-          <button onClick={onOpenModal} className="text-secondary font-semibold hover:underline">
+          <button onClick={onOpenModal} className="text-secondary font-bold hover:underline">
             Consultanos.
           </button>
         </p>
