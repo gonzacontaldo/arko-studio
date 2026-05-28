@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 const BNA_FALLBACK = 1425;
 const RATE = 0.0015;
@@ -42,9 +42,24 @@ export default function Pricing({ onOpenModal }) {
       .catch(() => {/* usa el fallback silenciosamente */});
   }, []);
 
+  const [tipsOpen, setTipsOpen] = useState(false);
+  const closeTips = useCallback(() => setTipsOpen(false), []);
+
+  useEffect(() => {
+    if (!tipsOpen) return;
+    const onKey = (e) => { if (e.key === 'Escape') closeTips(); };
+    document.addEventListener('keydown', onKey);
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.removeEventListener('keydown', onKey);
+      document.body.style.overflow = '';
+    };
+  }, [tipsOpen, closeTips]);
+
   const fee = Math.round(propVal * RATE);
 
   return (
+    <>
     <section id="precios" className="py-16 md:py-32 px-4 md:px-8 bg-surface">
       <div className="max-w-7xl mx-auto">
 
@@ -70,7 +85,7 @@ export default function Pricing({ onOpenModal }) {
               Calculá tu inversión — 0,15% del valor de publicación
             </p>
             <div className="flex flex-wrap items-center gap-4 mb-8">
-              <span className="text-sm text-on-surface-variant w-36">Valor de la propiedad</span>
+              <span className="text-sm text-on-surface-variant w-36">Desliza el slider hasta el valor de tu Propiedad</span>
               <input
                 type="range"
                 min="200000" max="2000000" step="10000"
@@ -146,7 +161,16 @@ export default function Pricing({ onOpenModal }) {
           {/* Logística + CTA — full width */}
           <div className="p-8 md:p-12 border-t border-outline-variant/20 flex flex-col md:flex-row md:items-center gap-8">
             <div className="flex-1">
-              <p className="text-xs uppercase tracking-widest text-on-surface-variant font-medium mb-4">Logística</p>
+              <div className="flex items-center gap-3 mb-4">
+                <p className="text-xs uppercase tracking-widest text-on-surface-variant font-medium">Logística</p>
+                <button
+                  onClick={() => setTipsOpen(true)}
+                  className="text-xs text-blue-600 hover:text-blue-800 hover:underline transition-colors font-medium"
+                >
+                  ¿Cómo preparar el inmueble?
+                </button>
+              </div>
+              
               <div className="flex flex-wrap gap-2 mb-4">
                 {['⏱ 4 a 5 horas de producción', '☀️ Luz natural óptima', '📍 CABA y GBA'].map(pill => (
                   <span key={pill} className="text-xs text-on-surface border border-outline-variant/50 rounded-full px-4 py-2">
@@ -182,5 +206,70 @@ export default function Pricing({ onOpenModal }) {
 
       </div>
     </section>
+
+    {/* ── Modal: Cómo preparar el inmueble ─────────────────────────── */}
+    {tipsOpen && (
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 md:p-6">
+        {/* Overlay */}
+        <div
+          className="absolute inset-0 bg-on-surface/40 backdrop-blur-sm"
+          onClick={closeTips}
+        />
+
+        {/* Panel */}
+        <div className="relative z-10 w-full max-w-lg max-h-[85vh] overflow-y-auto bg-white rounded-2xl border-t-4 border-secondary shadow-2xl p-8 md:p-10"
+          style={{ animation: 'fadeInUp .22s cubic-bezier(.2,.8,.25,1)' }}
+        >
+          {/* Cerrar */}
+          <button
+            onClick={closeTips}
+            className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-lg text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-colors text-xl"
+            aria-label="Cerrar"
+          >
+            ×
+          </button>
+
+          <h2 className="font-headline font-extrabold text-2xl text-on-surface text-locked mb-3">
+            Cómo preparar el inmueble
+          </h2>
+
+          <p className="text-sm text-on-surface-variant leading-relaxed mb-6">
+            El éxito de la producción es un trabajo conjunto. Nuestro rol es relevar y fotografiar el espacio:{' '}
+            <strong className="text-on-surface">no realizamos limpieza, no ordenamos ni movemos objetos pesados, frágiles o de uso personal.</strong>{' '}
+            Esa preparación queda a cargo del propietario.
+          </p>
+
+          <p className="text-[10px] font-bold uppercase tracking-widest text-secondary mb-3">Generales</p>
+          <ul className="mb-6 space-y-0">
+            {[
+              'Persianas y cortinas abiertas; reemplazar lámparas quemadas.',
+              'Mascotas fuera de cuadro; retirar insignias religiosas y políticas.',
+              'Sin ropa colgada a la vista.',
+            ].map(tip => (
+              <li key={tip} className="flex items-start gap-3 py-2.5 border-b border-outline-variant/20 text-sm text-on-surface">
+                <span className="mt-1.5 w-2 h-2 rounded-full bg-secondary flex-shrink-0" />
+                {tip}
+              </li>
+            ))}
+          </ul>
+
+          <p className="text-[10px] font-bold uppercase tracking-widest text-secondary mb-3">Por ambiente</p>
+          <ul className="space-y-0">
+            {[
+              { room: 'Comedor', tip: 'Mesa despejada, TV apagada, poca decoración.' },
+              { room: 'Dormitorios', tip: 'Camas estiradas, pocos almohadones, colchas claras, mesas de luz y pisos despejados.' },
+              { room: 'Baños', tip: 'Sin artículos de aseo personal, cepillos ni tachos; solo toallas decorativas; espejos y vidrios limpios.' },
+              { room: 'Cocina', tip: 'Mesadas libres; guardar vajilla, trapos, productos de limpieza y comida; poca decoración.' },
+            ].map(({ room, tip }) => (
+              <li key={room} className="flex items-start gap-3 py-2.5 border-b border-outline-variant/20 text-sm text-on-surface last:border-b-0">
+                <span className="mt-1.5 w-2 h-2 rounded-full bg-secondary flex-shrink-0" />
+                <span><strong className="font-semibold">{room}:</strong> {tip}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    )}
+    </>
   );
 }
