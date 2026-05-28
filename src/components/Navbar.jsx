@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import logoImg from '../assets/Logo.png';
 
 const navLinks = [
   { label: 'Inicio',    href: '#top',       section: 'top'       },
@@ -84,8 +85,13 @@ export default function Navbar({ onOpenModal }) {
       <div className={`flex flex-wrap justify-between items-center px-4 md:px-8 gap-y-2 transition-all duration-300 ${scrolled ? 'py-2' : 'py-3'}`}>
 
         {/* Logo */}
-        <a href="#top" className="font-headline font-bold tracking-tighter text-lg text-stone-900 dark:text-stone-100 uppercase shrink-0">
-          ARKO Studio
+        <a href="#top" className="flex items-center gap-1.5 shrink-0">
+          <div className="h-8 w-8 overflow-hidden flex-shrink-0 flex items-center justify-center">
+            <img src={logoImg} alt="ARKO Studio" className="h-8 w-8 scale-[2.8]" />
+          </div>
+          <span className="font-headline font-bold tracking-tighter text-lg text-stone-900 dark:text-stone-100 uppercase leading-none mt-px">
+            ARKO Studio
+          </span>
         </a>
 
         {/* Links desktop */}
