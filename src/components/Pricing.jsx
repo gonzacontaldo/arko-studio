@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { createPortal } from 'react-dom';
 
 const BNA_FALLBACK = 1425;
 const RATE = 0.0015;
@@ -207,8 +208,7 @@ export default function Pricing({ onOpenModal }) {
       </div>
     </section>
 
-    {/* ── Modal: Cómo preparar el inmueble ─────────────────────────── */}
-    {tipsOpen && (
+    {tipsOpen && createPortal(
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4 md:p-6">
         {/* Overlay */}
         <div
@@ -217,22 +217,19 @@ export default function Pricing({ onOpenModal }) {
         />
 
         {/* Panel */}
-        <div className="relative z-10 w-full max-w-lg max-h-[85vh] overflow-y-auto bg-white rounded-2xl border-t-4 border-secondary shadow-2xl p-8 md:p-10"
+        <div
+          className="relative z-10 w-full max-w-lg max-h-[85vh] overflow-y-auto bg-white rounded-2xl border-t-4 border-secondary shadow-2xl p-8 md:p-10"
           style={{ animation: 'fadeInUp .22s cubic-bezier(.2,.8,.25,1)' }}
         >
-          {/* Cerrar */}
           <button
             onClick={closeTips}
             className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-lg text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-colors text-xl"
             aria-label="Cerrar"
-          >
-            ×
-          </button>
+          >×</button>
 
           <h2 className="font-headline font-extrabold text-2xl text-on-surface text-locked mb-3">
             Cómo preparar el inmueble
           </h2>
-
           <p className="text-sm text-on-surface-variant leading-relaxed mb-6">
             El éxito de la producción es un trabajo conjunto. Nuestro rol es relevar y fotografiar el espacio:{' '}
             <strong className="text-on-surface">no realizamos limpieza, no ordenamos ni movemos objetos pesados, frágiles o de uso personal.</strong>{' '}
@@ -240,7 +237,7 @@ export default function Pricing({ onOpenModal }) {
           </p>
 
           <p className="text-[10px] font-bold uppercase tracking-widest text-secondary mb-3">Generales</p>
-          <ul className="mb-6 space-y-0">
+          <ul className="mb-6">
             {[
               'Persianas y cortinas abiertas; reemplazar lámparas quemadas.',
               'Mascotas fuera de cuadro; retirar insignias religiosas y políticas.',
@@ -254,21 +251,22 @@ export default function Pricing({ onOpenModal }) {
           </ul>
 
           <p className="text-[10px] font-bold uppercase tracking-widest text-secondary mb-3">Por ambiente</p>
-          <ul className="space-y-0">
+          <ul>
             {[
-              { room: 'Comedor', tip: 'Mesa despejada, TV apagada, poca decoración.' },
+              { room: 'Comedor',     tip: 'Mesa despejada, TV apagada, poca decoración.' },
               { room: 'Dormitorios', tip: 'Camas estiradas, pocos almohadones, colchas claras, mesas de luz y pisos despejados.' },
-              { room: 'Baños', tip: 'Sin artículos de aseo personal, cepillos ni tachos; solo toallas decorativas; espejos y vidrios limpios.' },
-              { room: 'Cocina', tip: 'Mesadas libres; guardar vajilla, trapos, productos de limpieza y comida; poca decoración.' },
+              { room: 'Baños',       tip: 'Sin artículos de aseo personal, cepillos ni tachos; solo toallas decorativas; espejos y vidrios limpios.' },
+              { room: 'Cocina',      tip: 'Mesadas libres; guardar vajilla, trapos, productos de limpieza y comida; poca decoración.' },
             ].map(({ room, tip }) => (
-              <li key={room} className="flex items-start gap-3 py-2.5 border-b border-outline-variant/20 text-sm text-on-surface last:border-b-0">
+              <li key={room} className="flex items-start gap-3 py-2.5 border-b border-outline-variant/20 last:border-b-0 text-sm text-on-surface">
                 <span className="mt-1.5 w-2 h-2 rounded-full bg-secondary flex-shrink-0" />
                 <span><strong className="font-semibold">{room}:</strong> {tip}</span>
               </li>
             ))}
           </ul>
         </div>
-      </div>
+      </div>,
+      document.body
     )}
     </>
   );
