@@ -1,18 +1,20 @@
-const HERO_IMAGE =
-  'https://www.clarin.com/img/2022/01/31/seOJ4SAm4_1256x620__1.jpg';
+const HERO_VIDEO_ID = '9pBvgShBwUA';
 
 export default function Hero({ onOpenModal }) {
   return (
     <section className="relative min-h-screen flex items-center justify-start pt-20 overflow-hidden">
       <div className="absolute inset-0 z-0">
-        <img
-          className="w-full h-full object-cover"
-          src={HERO_IMAGE}
-          alt="Villa arquitectónica moderna con paredes de vidrio y piscina infinita al atardecer"
-          loading="eager"
-          fetchPriority="high"
-        />
-        <div className="absolute inset-0 bg-on-surface/20" />
+        {/* iframe escalado al 130% para ocultar bordes y logo de YouTube */}
+        <div className="absolute inset-0 scale-[1.3] pointer-events-none">
+          <iframe
+            className="w-full h-full"
+            src={`https://www.youtube.com/embed/${HERO_VIDEO_ID}?autoplay=1&mute=1&loop=1&playlist=${HERO_VIDEO_ID}&controls=0&showinfo=0&rel=0&modestbranding=1&playsinline=1&iv_load_policy=3`}
+            title="Hero background"
+            frameBorder="0"
+            allow="autoplay; encrypted-media"
+          />
+        </div>
+        <div className="absolute inset-0 bg-on-surface/40" />
       </div>
       <div className="relative z-10 max-w-4xl px-4 md:px-24">
         <h1 className="font-headline font-extrabold text-3xl sm:text-5xl md:text-7xl text-white text-locked leading-tight mb-6 break-words">
