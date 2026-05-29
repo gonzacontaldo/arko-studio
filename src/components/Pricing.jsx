@@ -80,7 +80,7 @@ export default function Pricing({ onOpenModal }) {
   }, [tipsOpen, logModal, closeTips]);
 
   const fee = Math.round(propVal * RATE);
-  const propValLabel = propVal === 200000
+  const propValLabel = propVal === 250000
     ? '≤ USD 200.000'
     : propVal === 1000000
       ? '≥ USD 1.000.000'
