@@ -4,8 +4,8 @@ const MATTERPORT_URL = 'https://doormann.viewin360.co/share/collection/71Y1x?log
 
 // ─── Pegá el ID de YouTube de cada video (lo que va después de ?v= en la URL) ──
 // Ejemplo: https://www.youtube.com/watch?v=dQw4w9WgXcQ  →  'dQw4w9WgXcQ'
-const YT_HORIZONTAL = ''; // Video landscape — portales y sitio web
-const YT_VERTICAL   = ''; // Reel vertical    — Instagram / TikTok
+const YT_HORIZONTAL = 'GhFOs5FXXLA'; // Video landscape — portales y sitio web
+const YT_VERTICAL   = '_I57bl9c1R4'; // Reel vertical    — Instagram / TikTok
 
 // ─── Reemplazá esta URL con tu imagen de plano real ───────────────────────────
 const FLOOR_PLAN_IMAGE = 'https://static.tokkobroker.com/pictures/6811203_16941810600148600011027949836947230498386497061057409250758090562184505248578.jpg';
