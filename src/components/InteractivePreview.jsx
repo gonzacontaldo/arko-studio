@@ -2,9 +2,10 @@ import { useEffect, useRef, useState } from 'react';
 
 const MATTERPORT_URL = 'https://doormann.viewin360.co/share/collection/71Y1x?logo=1&info=0&logosize=112&fs=1&vr=0&zoom=1&autorotate=0.08&autop=5&autopalt=1&thumbs=1&inst=es';
 
-// ─── Reemplazá estas URLs con tus videos reales ───────────────────────────────
-const VIDEO_HORIZONTAL = '/videos/Horizontal.mov'; // Video landscape — portales y sitio web
-const VIDEO_VERTICAL   = '/videos/Vertical.mov';   // Reel vertical    — Instagram / TikTok
+// ─── Pegá el ID de YouTube de cada video (lo que va después de ?v= en la URL) ──
+// Ejemplo: https://www.youtube.com/watch?v=dQw4w9WgXcQ  →  'dQw4w9WgXcQ'
+const YT_HORIZONTAL = ''; // Video landscape — portales y sitio web
+const YT_VERTICAL   = ''; // Reel vertical    — Instagram / TikTok
 
 // ─── Reemplazá esta URL con tu imagen de plano real ───────────────────────────
 const FLOOR_PLAN_IMAGE = 'https://static.tokkobroker.com/pictures/6811203_16941810600148600011027949836947230498386497061057409250758090562184505248578.jpg';
@@ -28,21 +29,27 @@ function VideoPlaceholder({ icon, label }) {
   );
 }
 
-function VideoVertical({ src }) {
+function YoutubeEmbed({ videoId, title }) {
+  return (
+    <iframe
+      className="absolute inset-0 w-full h-full"
+      src={`https://www.youtube.com/embed/${videoId}?rel=0&modestbranding=1&playsinline=1`}
+      title={title}
+      frameBorder="0"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+      allowFullScreen
+    />
+  );
+}
+
+function VideoVertical({ videoId }) {
   return (
     <div className="flex flex-col items-center gap-4">
       <div className="aspect-[9/16] w-[180px] sm:w-[220px] max-w-full bg-stone-900 rounded-[2rem] relative flex items-center justify-center overflow-hidden border-[7px] border-stone-800 shadow-2xl">
         {/* Notch */}
-        <div className="absolute top-2 left-1/2 -translate-x-1/2 w-12 h-1.5 bg-stone-700 rounded-full z-20" />
-        {src ? (
-          <video
-            className="absolute inset-0 w-full h-full object-cover"
-            src={src}
-            controls
-            playsInline
-            loop
-            muted
-          />
+        <div className="absolute top-2 left-1/2 -translate-x-1/2 w-12 h-1.5 bg-stone-700 rounded-full z-20 pointer-events-none" />
+        {videoId ? (
+          <YoutubeEmbed videoId={videoId} title="Reel vertical" />
         ) : (
           <VideoPlaceholder icon="videocam" label="Reel vertical" />
         )}
@@ -52,21 +59,14 @@ function VideoVertical({ src }) {
   );
 }
 
-function VideoHorizontal({ src }) {
+function VideoHorizontal({ videoId }) {
   return (
     <div className="flex flex-col gap-4">
       <div className="aspect-video w-full bg-stone-900 rounded-2xl relative flex items-center justify-center overflow-hidden border-[7px] border-stone-800 shadow-2xl">
         {/* Cámara frontal */}
-        <div className="absolute top-2 left-1/2 -translate-x-1/2 w-2 h-2 bg-stone-700 rounded-full z-20" />
-        {src ? (
-          <video
-            className="absolute inset-0 w-full h-full object-cover"
-            src={src}
-            controls
-            playsInline
-            loop
-            muted
-          />
+        <div className="absolute top-2 left-1/2 -translate-x-1/2 w-2 h-2 bg-stone-700 rounded-full z-20 pointer-events-none" />
+        {videoId ? (
+          <YoutubeEmbed videoId={videoId} title="Video horizontal" />
         ) : (
           <VideoPlaceholder icon="movie" label="Video horizontal" />
         )}
@@ -144,8 +144,8 @@ export default function InteractivePreview() {
             <h3 className="font-headline font-extrabold text-2xl md:text-3xl text-locked">Videos Cinematográficos</h3>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
-            <VideoHorizontal src={VIDEO_HORIZONTAL} />
-            <VideoVertical   src={VIDEO_VERTICAL} />
+            <VideoHorizontal videoId={YT_HORIZONTAL} />
+            <VideoVertical   videoId={YT_VERTICAL} />
           </div>
         </div>
 
