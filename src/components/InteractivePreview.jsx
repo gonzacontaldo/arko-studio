@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
 
-const MATTERPORT_URL = 'https://doormann.viewin360.co/share/collection/71Y1x?logo=1&card=1&info=1&logosize=74&fs=1&vr=0&zoom=1&thumbs=1&inst=es';
+const MATTERPORT_URL = 'https://doormann.viewin360.co/share/collection/71Y1x?logo=1&info=0&logosize=112&fs=1&vr=0&zoom=1&autorotate=0.08&autop=5&autopalt=1&thumbs=1&inst=es';
 
-const REEL_IMAGE =
-  'https://lh3.googleusercontent.com/aida-public/AB6AXuA4iHgOrimJhX05uIoECVEOif8xrBKhJmXI2Tly9olHdXMbK7MaFgStjg2pCRLqVLxTspa14RvDo-9FDj1CGqRaG89r6WioYgtHDLk1Tb9zlMRe6C3qS4crHZdZiEUyl2tRKrMJSmyZ7EcYrk7aFVK_oiPWPlNGrsyjmHjFRE0iHjCOHzsZsYUmZ77a3u1SjD0jWJ4V5zCU42xQ-GO--4GizqypHcnGha63xkPuys90wr1_SRmUAT1xFhdn5TRZxWT6PMZcdrAVgSk';
+// ─── Reemplazá estas URLs con tus videos reales ───────────────────────────────
+const VIDEO_HORIZONTAL = '/videos/Horizontal.mov'; // Video landscape — portales y sitio web
+const VIDEO_VERTICAL   = '/videos/Vertical.mov';   // Reel vertical    — Instagram / TikTok
 
 // ─── Reemplazá esta URL con tu imagen de plano real ───────────────────────────
 const FLOOR_PLAN_IMAGE = 'https://static.tokkobroker.com/pictures/6811203_16941810600148600011027949836947230498386497061057409250758090562184505248578.jpg';
@@ -18,23 +19,33 @@ function SectionLabel({ children }) {
   );
 }
 
+function VideoPlaceholder({ icon, label }) {
+  return (
+    <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-stone-900/80 z-10">
+      <span className="material-symbols-outlined text-4xl text-white/30">{icon}</span>
+      <p className="text-[10px] uppercase tracking-widest font-headline font-bold text-white/30">{label}</p>
+    </div>
+  );
+}
+
 function VideoVertical({ src }) {
   return (
     <div className="flex flex-col items-center gap-4">
-      <div className="aspect-[9/16] w-[180px] sm:w-[220px] max-w-full bg-on-surface rounded-[2rem] relative flex items-center justify-center overflow-hidden border-[7px] border-stone-800 shadow-2xl">
-        <img className="absolute inset-0 w-full h-full object-cover" src={src} alt="Reel vertical" loading="lazy" />
+      <div className="aspect-[9/16] w-[180px] sm:w-[220px] max-w-full bg-stone-900 rounded-[2rem] relative flex items-center justify-center overflow-hidden border-[7px] border-stone-800 shadow-2xl">
         {/* Notch */}
         <div className="absolute top-2 left-1/2 -translate-x-1/2 w-12 h-1.5 bg-stone-700 rounded-full z-20" />
-        {/* Play */}
-        <div className="z-10 w-11 h-11 rounded-full glass-nav flex items-center justify-center text-secondary">
-          <span className="material-symbols-outlined">play_arrow</span>
-        </div>
-        {/* Progress bar */}
-        <div className="absolute bottom-5 left-5 right-5 z-10">
-          <div className="h-0.5 w-full bg-white/20 rounded-full">
-            <div className="h-0.5 w-1/3 bg-secondary rounded-full" />
-          </div>
-        </div>
+        {src ? (
+          <video
+            className="absolute inset-0 w-full h-full object-cover"
+            src={src}
+            controls
+            playsInline
+            loop
+            muted
+          />
+        ) : (
+          <VideoPlaceholder icon="videocam" label="Reel vertical" />
+        )}
       </div>
       <p className="text-xs text-on-surface-variant text-center italic">Reel para Instagram / TikTok</p>
     </div>
@@ -44,21 +55,21 @@ function VideoVertical({ src }) {
 function VideoHorizontal({ src }) {
   return (
     <div className="flex flex-col gap-4">
-      <div className="aspect-video w-full bg-on-surface rounded-2xl relative flex items-center justify-center overflow-hidden border-[7px] border-stone-800 shadow-2xl">
-        <img className="absolute inset-0 w-full h-full object-cover" src={src} alt="Video horizontal" loading="lazy" />
+      <div className="aspect-video w-full bg-stone-900 rounded-2xl relative flex items-center justify-center overflow-hidden border-[7px] border-stone-800 shadow-2xl">
         {/* Cámara frontal */}
         <div className="absolute top-2 left-1/2 -translate-x-1/2 w-2 h-2 bg-stone-700 rounded-full z-20" />
-        {/* Play */}
-        <div className="z-10 w-11 h-11 rounded-full glass-nav flex items-center justify-center text-secondary">
-          <span className="material-symbols-outlined">play_arrow</span>
-        </div>
-        {/* Progress bar */}
-        <div className="absolute bottom-4 left-6 right-6 z-10 flex items-center gap-3">
-          <div className="h-0.5 flex-1 bg-white/20 rounded-full">
-            <div className="h-0.5 w-2/5 bg-secondary rounded-full" />
-          </div>
-          <span className="text-white/50 text-[10px] font-mono">0:42</span>
-        </div>
+        {src ? (
+          <video
+            className="absolute inset-0 w-full h-full object-cover"
+            src={src}
+            controls
+            playsInline
+            loop
+            muted
+          />
+        ) : (
+          <VideoPlaceholder icon="movie" label="Video horizontal" />
+        )}
       </div>
       <p className="text-xs text-on-surface-variant italic">Video completo para portales y sitio web</p>
     </div>
@@ -133,8 +144,8 @@ export default function InteractivePreview() {
             <h3 className="font-headline font-extrabold text-2xl md:text-3xl text-locked">Videos Cinematográficos</h3>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
-            <VideoHorizontal src={REEL_IMAGE} />
-            <VideoVertical   src={REEL_IMAGE} />
+            <VideoHorizontal src={VIDEO_HORIZONTAL} />
+            <VideoVertical   src={VIDEO_VERTICAL} />
           </div>
         </div>
 
