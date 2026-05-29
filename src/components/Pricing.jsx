@@ -81,9 +81,9 @@ export default function Pricing({ onOpenModal }) {
 
   const fee = Math.round(propVal * RATE);
   const propValLabel = propVal === 200000
-    ? 'USD 200.000 o menos'
+    ? '≤ USD 200.000'
     : propVal === 1000000
-      ? 'USD 1.000.000 o más'
+      ? '≥ USD 1.000.000'
       : `USD ${fmt(propVal)}`;
 
   return (
