@@ -80,6 +80,11 @@ export default function Pricing({ onOpenModal }) {
   }, [tipsOpen, logModal, closeTips]);
 
   const fee = Math.round(propVal * RATE);
+  const propValLabel = propVal === 200000
+    ? 'USD 200.000 o menos'
+    : propVal === 1000000
+      ? 'USD 1.000.000 o más'
+      : `USD ${fmt(propVal)}`;
 
   return (
     <>
@@ -111,13 +116,13 @@ export default function Pricing({ onOpenModal }) {
               <span className="text-sm text-on-surface-variant w-36">Valor de la propiedad</span>
               <input
                 type="range"
-                min="200000" max="2000000" step="10000"
+                min="200000" max="1000000" step="10000"
                 value={propVal}
                 onChange={e => setPropVal(+e.target.value)}
                 className="flex-1 min-w-[160px] accent-secondary"
               />
               <span className="text-base font-semibold text-on-surface w-36 text-right">
-                USD {fmt(propVal)}
+                {propValLabel}
               </span>
             </div>
             <p className="text-[10px] text-on-surface-variant/50 mb-6">
