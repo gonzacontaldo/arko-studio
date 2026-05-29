@@ -196,7 +196,7 @@ export default function Pricing({ onOpenModal }) {
                 <p className="text-xs uppercase tracking-widest text-on-surface-variant font-medium">Logística</p>
                 <button
                   onClick={() => setTipsOpen(true)}
-                  className="text-xs text-blue-600 hover:text-blue-800 hover:underline transition-colors font-medium"
+                  className="text-xs text-secondary hover:opacity-70 hover:underline transition-colors font-medium"
                 >
                   ¿Cómo preparar el inmueble?
                 </button>
