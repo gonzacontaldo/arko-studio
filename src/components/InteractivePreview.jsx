@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 
-const MATTERPORT_URL = 'https://doormann.viewin360.co/share/collection/71Y1x?logo=1&info=0&logosize=112&fs=1&vr=0&zoom=1&autorotate=0.08&autop=5&autopalt=1&thumbs=1&inst=es';
+const MATTERPORT_URL = 'https://kuula.co/share/collection/71Y1x?logo=bWVkaWEvNTk0MjM5LzZhMTgtNDQ2NC00ZjJkLTk0NzUucG5n&info=0&logosize=112&fs=1&vr=0&zoom=1&autorotate=0.08&autop=5&autopalt=1&thumbs=1&inst=es';
 
 // ─── Pegá el ID de YouTube de cada video (lo que va después de ?v= en la URL) ──
 // Ejemplo: https://www.youtube.com/watch?v=dQw4w9WgXcQ  →  'dQw4w9WgXcQ'

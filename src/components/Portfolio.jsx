@@ -126,7 +126,7 @@ const portfolioItems = [
     fotos: [OlivosPortada, OlivosFoto1, OlivosFoto2, OlivosFoto3, OlivosFoto4, OlivosFoto5],
     videoId: 'UjWrEYrJnhU',
     vertical: true,
-    tourUrl: 'https://doormann.viewin360.co/share/collection/7Mzql?logo=1&card=1&info=1&logosize=74&fs=1&vr=0&zoom=1&thumbs=1&inst=es',
+    tourUrl: 'https://kuula.co/share/collection/7Mzql?logo=bWVkaWEvNTk0MjM5LzZhMTgtNDQ2NC00ZjJkLTk0NzUucG5n&info=0&logosize=112&fs=1&vr=0&zoom=1&autorotate=0.08&autop=5&autopalt=1&thumbs=1&inst=es',
     types: ['foto', 'video', 'tour', 'dron'],
   },
   
@@ -136,7 +136,7 @@ const portfolioItems = [
     cover: TerrazasPortada,
     fotos: [TerrazasPortada, TerrazasFoto1, TerrazasFoto2, TerrazasFoto3],
     videoId: '97-TMfc--qc',
-    tourUrl: 'https://doormann.viewin360.co/share/collection/7MBrd?logo=1&card=1&info=1&logosize=74&fs=1&vr=0&zoom=1&thumbs=1&inst=es',
+    tourUrl: 'https://kuula.co/share/collection/7MBrd?logo=bWVkaWEvNTk0MjM5LzZhMTgtNDQ2NC00ZjJkLTk0NzUucG5n&info=0&logosize=112&fs=1&vr=0&zoom=1&autorotate=0.08&autop=5&autopalt=1&thumbs=1&inst=',
     types: ['foto', 'video', 'tour', 'dron'],
   },
   {
@@ -145,7 +145,7 @@ const portfolioItems = [
     cover: SantaAna195Portada,
     fotos: [SantaAna195Portada, SantaAna195Foto1, SantaAna195Foto2, SantaAna195Foto3, SantaAna195Foto4],
     videoId: '6y7ZG6t-P3U',
-    tourUrl: "https://doormann.viewin360.co/share/collection/71Y1x?logo=1&card=1&info=1&logosize=74&fs=1&vr=0&zoom=1&thumbs=1&inst=es",
+    tourUrl: "https://kuula.co/share/collection/71Y1x?logo=bWVkaWEvNTk0MjM5LzZhMTgtNDQ2NC00ZjJkLTk0NzUucG5n&info=0&logosize=112&fs=1&vr=0&zoom=1&autorotate=0.08&autop=5&autopalt=1&thumbs=1&inst=es",
     types: ['foto', 'video', 'tour', 'dron'],
   },
   // {
