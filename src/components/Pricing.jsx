@@ -41,7 +41,7 @@ function fmt(n) {
 }
 
 export default function Pricing({ onOpenModal }) {
-  const [propVal, setPropVal] = useState(200000);
+  const [propVal, setPropVal] = useState(450000);
   const [bna, setBna]         = useState(BNA_FALLBACK);
   const [bnaDate, setBnaDate] = useState(null);
 
