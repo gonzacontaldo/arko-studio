@@ -83,23 +83,16 @@ import Puertas120Foto2 from '../assets/portfolio/PuertasDelNorte120/Foto2.jpg';
 //   'dron'  = para el filtro, puede combinarse con cualquiera
 
 const portfolioItems = [
-  // {
-  //   id: 'SantaAnaPerimetral',
-  //   title: 'Santa Ana — 3 Dormitorios',
-  //   cover: SantaAnaPortada,
-  //   fotos: [SantaAnaPortada, SantaAnaFoto1, SantaAnaFoto2, SantaAnaFoto3, SantaAnaFoto4, SantaAnaFoto5],
-  //   tourUrl: 'https://doormann.viewin360.co/share/collection/7156d?logo=1&card=1&info=1&logosize=74&fs=1&vr=0&zoom=1&thumbs=1&inst=es',
-  //   types: ['foto', 'tour', 'dron'],
-  // },
-  // {
-  //   id: 'Virazon',
-  //   title: 'Casa Al Lago - Virazón',
-  //   cover: VirazonPortada,
-  //   fotos: [VirazonPortada, VirazonFoto1, VirazonFoto2, VirazonFoto3, VirazonFoto4, VirazonFoto5],
-  //   videoId: '9ivVAjKi58s',
-  //   tourUrl: 'https://doormann.viewin360.co/share/collection/7MSq5?logo=0&card=1&info=1&logosize=200&fs=1&vr=0&zoom=1&thumbs=1&inst=es',
-  //   types: ['foto', 'video', 'tour', 'dron'],
-  // },
+  
+  {
+    id: 'Virazon',
+    title: 'Casa Al Lago - Virazón',
+    cover: VirazonPortada,
+    fotos: [VirazonPortada, VirazonFoto1, VirazonFoto2, VirazonFoto3, VirazonFoto4, VirazonFoto5],
+    videoId: '9ivVAjKi58s',
+    tourUrl: 'https://doormann.viewin360.co/share/collection/7MSq5?logo=0&card=1&info=1&logosize=200&fs=1&vr=0&zoom=1&thumbs=1&inst=es',
+    types: ['foto', 'video', 'tour', 'dron'],
+  },
   // {
   //   id: 'PuertasDelNorte113',
   //   title: 'Oficina - Puerta Norte',
@@ -157,15 +150,15 @@ const portfolioItems = [
   //   tourUrl: "https://doormann.viewin360.co/share/Lvzly?logo=1&card=1&info=1&logosize=74&fs=1&vr=0&zoom=1&thumbs=1&inst=es",
   //   types: ['foto', 'video', 'tour', 'dron'],
   // },
-  // {
-  //   id: 'PuertasDelNorte525',
-  //   title: 'Oficina - Puerta Norte',
-  //   cover: Puertas525Portada,
-  //   fotos: [Puertas525Portada, Puertas525Foto1, Puertas525Foto2, Puertas525Foto3],
-  //   videoId: 'GhFOs5FXXLA',
-  //   tourUrl: "https://doormann.viewin360.co/share/collection/7T7sy?logo=1&card=1&info=1&logosize=74&fs=1&vr=0&zoom=1&thumbs=1&inst=es",
-  //   types: ['foto', 'video', 'tour', 'dron'],
-  // },
+  {
+    id: 'PuertasDelNorte525',
+    title: 'Oficina - Puerta Norte',
+    cover: Puertas525Portada,
+    fotos: [Puertas525Portada, Puertas525Foto1, Puertas525Foto2, Puertas525Foto3],
+    videoId: 'GhFOs5FXXLA',
+    tourUrl: "https://doormann.viewin360.co/share/collection/7T7sy?logo=1&card=1&info=1&logosize=74&fs=1&vr=0&zoom=1&thumbs=1&inst=es",
+    types: ['foto', 'video', 'tour', 'dron'],
+  },
   // {
   //   id: 'PuertasDelNorte120',
   //   title: 'Oficina - Puerta Norte',
@@ -175,7 +168,14 @@ const portfolioItems = [
   //   //tourUrl: "https://doormann.viewin360.co/share/collection/7T7sy?logo=0&card=1&info=1&logosize=200&fs=1&vr=0&zoom=1&thumbs=1&inst=es",
   //   types: ['foto', 'video'],
   // },
-
+  {
+    id: 'SantaAnaPerimetral',
+    title: 'Santa Ana — 3 Dormitorios',
+    cover: SantaAnaPortada,
+    fotos: [SantaAnaPortada, SantaAnaFoto1, SantaAnaFoto2, SantaAnaFoto3, SantaAnaFoto4, SantaAnaFoto5],
+    tourUrl: 'https://doormann.viewin360.co/share/collection/7156d?logo=1&card=1&info=1&logosize=74&fs=1&vr=0&zoom=1&thumbs=1&inst=es',
+    types: ['foto', 'tour', 'dron'],
+  },
   
 ];
 
