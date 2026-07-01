@@ -69,6 +69,13 @@ import Puertas120Portada from '../assets/portfolio/PuertasDelNorte120/Portada.jp
 import Puertas120Foto1 from '../assets/portfolio/PuertasDelNorte120/Foto1.jpg';
 import Puertas120Foto2 from '../assets/portfolio/PuertasDelNorte120/Foto2.jpg';
 
+// --- Carpinchos 352 --------------------
+import Carpinchos352Portada from '../assets/portfolio/carpinchos352/Portada.jpg';
+import Carpinchos352Foto1 from '../assets/portfolio/carpinchos352/Foto1.jpg';
+import Carpinchos352Foto2 from '../assets/portfolio/carpinchos352/Foto2.jpg';
+import Carpinchos352Foto3 from '../assets/portfolio/carpinchos352/Foto3.jpg';
+import Carpinchos352Foto4 from '../assets/portfolio/carpinchos352/Foto4.jpg';
+
 
 
 // ─── Propiedades ──────────────────────────────────────────────────────────────
@@ -93,16 +100,16 @@ const portfolioItems = [
     tourUrl: 'https://doormann.viewin360.co/share/collection/7MSq5?logo=0&card=1&info=1&logosize=200&fs=1&vr=0&zoom=1&thumbs=1&inst=es',
     types: ['foto', 'video', 'tour', 'dron'],
   },
-  // {
-  //   id: 'PuertasDelNorte113',
-  //   title: 'Oficina - Puerta Norte',
-  //   cover: PuertasPortada,
-  //   fotos: [PuertasPortada, PuertasFoto1, PuertasFoto2, PuertasFoto3],
-  //   videoId: '_I57bl9c1R4',
-  //   vertical: true,
-  //   tourUrl: 'https://doormann.viewin360.co/share/collection/7MyD4?logo=1&card=1&info=1&logosize=74&fs=1&vr=0&zoom=1&thumbs=1&inst=es',
-  //   types: ['foto', 'video', 'tour'],
-  // },
+  {
+    id: 'PuertasDelNorte113',
+    title: 'Oficina - Puerta Norte',
+    cover: PuertasPortada,
+    fotos: [PuertasPortada, PuertasFoto1, PuertasFoto2, PuertasFoto3],
+    videoId: '_I57bl9c1R4',
+    vertical: true,
+    tourUrl: 'https://doormann.viewin360.co/share/collection/7MyD4?logo=1&card=1&info=1&logosize=74&fs=1&vr=0&zoom=1&thumbs=1&inst=es',
+    types: ['foto', 'video', 'tour'],
+  },
   // {
   //   id: 'PuertasDelNorte115',
   //   title: 'Oficina - Puerta Norte',
@@ -141,15 +148,15 @@ const portfolioItems = [
     tourUrl: "https://kuula.co/share/collection/71Y1x?logo=bWVkaWEvNTk0MjM5LzZhMTgtNDQ2NC00ZjJkLTk0NzUucG5n&info=0&logosize=112&fs=1&vr=0&zoom=1&autorotate=0.08&autop=5&autopalt=1&thumbs=1&inst=es",
     types: ['foto', 'video', 'tour', 'dron'],
   },
-  // {
-  //   id: 'Civis',
-  //   title: 'Complejo - Civis',
-  //   cover: CivisPortada,
-  //   fotos: [CivisPortada, CivisFoto1, CivisFoto2, CivisFoto3, CivisFoto4],
-  //   videoId: '9pBvgShBwUA',
-  //   tourUrl: "https://doormann.viewin360.co/share/Lvzly?logo=1&card=1&info=1&logosize=74&fs=1&vr=0&zoom=1&thumbs=1&inst=es",
-  //   types: ['foto', 'video', 'tour', 'dron'],
-  // },
+  {
+    id: 'Civis',
+    title: 'Complejo - Civis',
+    cover: CivisPortada,
+    fotos: [CivisPortada, CivisFoto1, CivisFoto2, CivisFoto3, CivisFoto4],
+    videoId: '9pBvgShBwUA',
+    tourUrl: "https://doormann.viewin360.co/share/Lvzly?logo=1&card=1&info=1&logosize=74&fs=1&vr=0&zoom=1&thumbs=1&inst=es",
+    types: ['foto', 'video', 'tour', 'dron'],
+  },
   {
     id: 'PuertasDelNorte525',
     title: 'Oficina - Puerta Norte',
@@ -176,6 +183,15 @@ const portfolioItems = [
     tourUrl: 'https://doormann.viewin360.co/share/collection/7156d?logo=1&card=1&info=1&logosize=74&fs=1&vr=0&zoom=1&thumbs=1&inst=es',
     types: ['foto', 'tour', 'dron'],
   },
+  {
+    id: 'Carpinchos352',
+    title: 'Casa - Carpinchos',
+    cover: Carpinchos352Portada,
+    fotos: [Carpinchos352Portada, Carpinchos352Foto1, Carpinchos352Foto2, Carpinchos352Foto3, Carpinchos352Foto4],
+    videoId: 'sWd10K4Mu_Y',
+    tourUrl: 'https://doormann.viewin360.co/share/collection/7T9YC?logo=1&info=0&logosize=112&fs=1&vr=0&zoom=1&autopalt=1&thumbs=1&inst=es',
+    types: ['foto', 'video', 'tour', 'dron'],
+  }
   
 ];
 
