@@ -74,10 +74,10 @@ import Carpinchos352Foto3 from '../assets/portfolio-web/carpinchos352/Foto3.jpg'
 import Carpinchos352Foto4 from '../assets/portfolio-web/carpinchos352/Foto4.jpg';
 
 // --- Lote --------------------
-import LotePortada from '../assets/portfolio-web/lote/Portada.jpg';
-import LoteFoto1 from '../assets/portfolio-web/lote/Foto1.jpg';
-import LoteFoto2 from '../assets/portfolio-web/lote/Foto2.jpg';
-import LoteFoto3 from '../assets/portfolio-web/lote/Foto3.jpg';
+import LotePortada from '../assets/portfolio-web/Lote/Portada.jpg';
+import LoteFoto1 from '../assets/portfolio-web/Lote/Foto1.jpg';
+import LoteFoto2 from '../assets/portfolio-web/Lote/Foto2.jpg';
+import LoteFoto3 from '../assets/portfolio-web/Lote/Foto3.jpg';
 
 // --- Depto Tigre --------------------
 import DeptoTigrePortada from '../assets/portfolio-web/deptoTigre/Portada.jpg';
