@@ -80,11 +80,11 @@ import LoteFoto2 from '../assets/portfolio-web/Lote/Foto2.jpg';
 import LoteFoto3 from '../assets/portfolio-web/Lote/Foto3.jpg';
 
 // --- Depto Tigre --------------------
-import DeptoTigrePortada from '../assets/portfolio-web/deptoTigre/Portada.jpg';
-import DeptoTigreFoto1 from '../assets/portfolio-web/deptoTigre/Foto1.jpg';
-import DeptoTigreFoto2 from '../assets/portfolio-web/deptoTigre/Foto2.jpg';
-import DeptoTigreFoto3 from '../assets/portfolio-web/deptoTigre/Foto3.jpg';
-import DeptoTigreFoto4 from '../assets/portfolio-web/deptoTigre/Foto4.jpg';
+import DeptoTigrePortada from '../assets/portfolio-web/DeptoTigre/Portada.jpg';
+import DeptoTigreFoto1 from '../assets/portfolio-web/DeptoTigre/Foto1.jpg';
+import DeptoTigreFoto2 from '../assets/portfolio-web/DeptoTigre/Foto2.jpg';
+import DeptoTigreFoto3 from '../assets/portfolio-web/DeptoTigre/Foto3.jpg';
+import DeptoTigreFoto4 from '../assets/portfolio-web/DeptoTigre/Foto4.jpg';
 
 // ─── Yacht ───────────────────────────────────────────────────────
 import YachtPortada from '../assets/portfolio-web/Yacht/Portada.jpg';
