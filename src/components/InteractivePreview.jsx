@@ -4,8 +4,8 @@ const MATTERPORT_URL = 'https://kuula.co/share/collection/71Y1x?logo=bWVkaWEvNTk
 
 // ─── Pegá el ID de YouTube de cada video (lo que va después de ?v= en la URL) ──
 // Ejemplo: https://www.youtube.com/watch?v=dQw4w9WgXcQ  →  'dQw4w9WgXcQ'
-const YT_HORIZONTAL = '9pBvgShBwUA'; // Video landscape — portales y sitio web
-const YT_VERTICAL   = '_I57bl9c1R4'; // Reel vertical    — Instagram / TikTok
+const YT_HORIZONTAL = 'ni3x6uBh2ZA'; // Video landscape — portales y sitio web
+const YT_VERTICAL   = 'SAIckW_n0g0'; // Reel vertical    — Instagram / TikTok
 
 // ─── Reemplazá esta URL con tu imagen de plano real ───────────────────────────
 const FLOOR_PLAN_IMAGE = 'https://static.tokkobroker.com/pictures/6811203_16941810600148600011027949836947230498386497061057409250758090562184505248578.jpg';
@@ -150,7 +150,7 @@ export default function InteractivePreview() {
         </div>
 
         {/* ── Planos 2D ─────────────────────────────────────────────────────── */}
-        <div className="space-y-5">
+        {/* <div className="space-y-5">
           <div>
             <SectionLabel>Planos 2D</SectionLabel>
             <h3 className="font-headline font-extrabold text-2xl md:text-3xl text-locked">Planos con Medición Láser</h3>
@@ -178,7 +178,7 @@ export default function InteractivePreview() {
             Planos a escala con medición láser. Distribuidos junto a las fotos para que los compradores
             entiendan cada ambiente antes de visitar.
           </p>
-        </div>
+        </div> */}
 
       </div>
     </section>

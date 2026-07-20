@@ -11,13 +11,13 @@ export default function BeforeAfter() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="relative">
             <img
-              className="w-full h-[280px] sm:h-[400px] md:h-[500px] object-cover rounded-md grayscale-[40%] contrast-75"
+              className="w-full h-[280px] sm:h-[400px] md:h-[500px] object-cover rounded-md"
               src={BEFORE_IMG}
               alt="Interior con iluminación deficiente, tomado con celular"
               loading="lazy"
             />
             <div className="absolute top-6 left-6 bg-on-surface/80 text-white px-4 py-1 text-xs font-bold uppercase tracking-widest">
-              Publicación Básica
+              Foto real en un portal inmobiliario
             </div>
           </div>
           <div className="relative">
@@ -28,7 +28,7 @@ export default function BeforeAfter() {
               loading="lazy"
             />
             <div className="absolute top-6 right-6 bg-secondary text-on-secondary px-4 py-1 text-xs font-bold uppercase tracking-widest">
-              Contenido Profesional
+              Contenido profesional
             </div>
           </div>
         </div>
