@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { supabase } from '../lib/supabase';
 
 const ESTADOS = ['agendado', 'filmado', 'edicion', 'terminado'];
@@ -25,26 +25,52 @@ const EMPTY = {
 
 export default function Producciones() {
   const [items, setItems]   = useState([]);
+  const [clientes, setClientes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState(null); // objeto en edición o null
 
+  // filtros / orden
+  const [q, setQ]             = useState('');
+  const [estadoF, setEstadoF] = useState('all'); // all | terminado | pendiente
+  const [clienteF, setClienteF] = useState('all');
+  const [sortDir, setSortDir] = useState('desc'); // por fecha
+
   const load = async () => {
     setLoading(true);
-    const { data } = await supabase.from('producciones').select('*').order('orden', { ascending: true, nullsFirst: false }).order('created_at', { ascending: false });
-    setItems(data || []);
+    const [p, c] = await Promise.all([
+      supabase.from('producciones').select('*'),
+      supabase.from('clientes').select('id,nombre'),
+    ]);
+    setItems(p.data || []);
+    setClientes(c.data || []);
     setLoading(false);
   };
   useEffect(() => { load(); }, []);
+
+  const clienteNombre = useMemo(() => Object.fromEntries(clientes.map(c => [c.id, c.nombre])), [clientes]);
 
   const setEstado = async (id, estado) => {
     await supabase.from('producciones').update({ estado }).eq('id', id);
     setItems(its => its.map(i => (i.id === id ? { ...i, estado } : i)));
   };
 
+  const view = useMemo(() => {
+    let arr = [...items];
+    const term = q.trim().toLowerCase();
+    if (term) arr = arr.filter(i => `${i.titulo || i.propiedad || ''}`.toLowerCase().includes(term));
+    if (estadoF === 'terminado') arr = arr.filter(i => i.estado === 'terminado');
+    else if (estadoF === 'pendiente') arr = arr.filter(i => i.estado !== 'terminado');
+    if (clienteF !== 'all') arr = arr.filter(i => i.cliente_id === clienteF);
+    // Orden por fecha (fecha_sesion; si falta, created_at).
+    const fecha = (i) => new Date(i.fecha_sesion || i.created_at).getTime();
+    arr.sort((a, b) => sortDir === 'desc' ? fecha(b) - fecha(a) : fecha(a) - fecha(b));
+    return arr;
+  }, [items, q, estadoF, clienteF, sortDir]);
+
   return (
     <div>
       <div className="flex items-center justify-between mb-5">
-        <h2 className="font-headline font-bold text-xl text-on-surface">Producción / Portfolio</h2>
+        <h2 className="font-headline font-bold text-xl text-on-surface">Producción / Portfolio <span className="text-on-surface-variant font-body font-normal text-sm">({view.length})</span></h2>
         <button
           onClick={() => setEditing({ ...EMPTY })}
           className="text-sm font-headline font-bold uppercase tracking-widest text-secondary hover:opacity-70"
@@ -53,23 +79,43 @@ export default function Producciones() {
         </button>
       </div>
 
+      {/* Barra de filtros */}
+      <div className="flex flex-wrap gap-2 mb-4">
+        <input placeholder="Buscar por nombre…" value={q} onChange={e => setQ(e.target.value)} className="input flex-1 min-w-[200px]" />
+        <select value={estadoF} onChange={e => setEstadoF(e.target.value)} className="input w-auto">
+          <option value="all">Todas</option>
+          <option value="pendiente">Sin terminar</option>
+          <option value="terminado">Terminadas</option>
+        </select>
+        <select value={clienteF} onChange={e => setClienteF(e.target.value)} className="input w-auto">
+          <option value="all">Todos los clientes</option>
+          {clientes.map(c => <option key={c.id} value={c.id}>{c.nombre}</option>)}
+        </select>
+        <button onClick={() => setSortDir(d => d === 'desc' ? 'asc' : 'desc')} className="input w-auto flex items-center gap-1 cursor-pointer">
+          Fecha
+          <span className="material-symbols-outlined text-base">{sortDir === 'desc' ? 'arrow_downward' : 'arrow_upward'}</span>
+        </button>
+      </div>
+
       {loading ? (
         <p className="text-on-surface-variant text-sm">Cargando…</p>
-      ) : items.length === 0 ? (
-        <p className="text-on-surface-variant text-sm">Todavía no hay producciones.</p>
+      ) : view.length === 0 ? (
+        <p className="text-on-surface-variant text-sm">No hay producciones que coincidan.</p>
       ) : (
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
               <tr className="text-left text-on-surface-variant border-b border-outline-variant/40">
                 <th className="py-2 pr-4 font-medium">Título</th>
+                <th className="py-2 pr-4 font-medium">Cliente</th>
+                <th className="py-2 pr-4 font-medium">Fecha</th>
                 <th className="py-2 pr-4 font-medium">Estado</th>
                 <th className="py-2 pr-4 font-medium">Público</th>
                 <th className="py-2 font-medium"></th>
               </tr>
             </thead>
             <tbody>
-              {items.map(i => (
+              {view.map(i => (
                 <tr key={i.id} className="border-b border-outline-variant/20">
                   <td className="py-3 pr-4 font-medium text-on-surface">
                     <div className="flex items-center gap-2">
@@ -77,6 +123,10 @@ export default function Producciones() {
                       <span>{i.titulo || i.propiedad}</span>
                       {i.destacado && <span className="text-[10px] font-bold uppercase bg-secondary/10 text-secondary rounded-full px-2 py-0.5">home</span>}
                     </div>
+                  </td>
+                  <td className="py-3 pr-4 text-on-surface-variant">{clienteNombre[i.cliente_id] || '—'}</td>
+                  <td className="py-3 pr-4 text-on-surface-variant whitespace-nowrap">
+                    {i.fecha_sesion ? new Date(i.fecha_sesion + 'T00:00:00').toLocaleDateString('es-AR') : '—'}
                   </td>
                   <td className="py-3 pr-4">
                     <select

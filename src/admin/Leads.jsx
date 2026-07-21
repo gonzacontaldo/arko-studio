@@ -1,5 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { supabase } from '../lib/supabase';
+import { scoreLead, scoreColor } from '../lib/leadScore';
 
 const ESTADOS = ['nuevo', 'contactado', 'presupuestado', 'ganado', 'perdido'];
 const ESTADO_COLOR = {
@@ -16,13 +17,18 @@ export default function Leads() {
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState({ nombre: '', contacto: '', propiedad: '', mensaje: '' });
 
+  // filtros / orden
+  const [q, setQ]           = useState('');
+  const [estadoF, setEstadoF] = useState('all');
+  const [fuenteF, setFuenteF] = useState('all');
+  const [sortBy, setSortBy]   = useState('fecha');
+
   const load = async () => {
     setLoading(true);
     const { data } = await supabase.from('leads').select('*').order('created_at', { ascending: false });
     setLeads(data || []);
     setLoading(false);
   };
-
   useEffect(() => { load(); }, []);
 
   const addLead = async (e) => {
@@ -39,14 +45,26 @@ export default function Leads() {
     setLeads(ls => ls.map(l => (l.id === id ? { ...l, estado } : l)));
   };
 
+  const view = useMemo(() => {
+    let arr = leads.map(l => ({ ...l, _score: scoreLead(l) }));
+    const term = q.trim().toLowerCase();
+    if (term) arr = arr.filter(l => `${l.nombre} ${l.propiedad || ''}`.toLowerCase().includes(term));
+    if (estadoF !== 'all') arr = arr.filter(l => l.estado === estadoF);
+    if (fuenteF !== 'all') arr = arr.filter(l => fuenteF === 'auto' ? l.fuente === 'openclaw' : l.fuente !== 'openclaw');
+    const num = (v) => (v == null ? -Infinity : v);
+    arr.sort((a, b) => {
+      if (sortBy === 'score') return num(b._score) - num(a._score);
+      if (sortBy === 'precio') return num(b.metadata?.precio) - num(a.metadata?.precio);
+      return new Date(b.created_at) - new Date(a.created_at); // fecha
+    });
+    return arr;
+  }, [leads, q, estadoF, fuenteF, sortBy]);
+
   return (
     <div>
       <div className="flex items-center justify-between mb-5">
-        <h2 className="font-headline font-bold text-xl text-on-surface">Leads</h2>
-        <button
-          onClick={() => setShowForm(s => !s)}
-          className="text-sm font-headline font-bold uppercase tracking-widest text-secondary hover:opacity-70"
-        >
+        <h2 className="font-headline font-bold text-xl text-on-surface">Leads <span className="text-on-surface-variant font-body font-normal text-sm">({view.length})</span></h2>
+        <button onClick={() => setShowForm(s => !s)} className="text-sm font-headline font-bold uppercase tracking-widest text-secondary hover:opacity-70">
           {showForm ? 'Cancelar' : '+ Nuevo lead'}
         </button>
       </div>
@@ -61,10 +79,29 @@ export default function Leads() {
         </form>
       )}
 
+      {/* Barra de filtros */}
+      <div className="flex flex-wrap gap-2 mb-4">
+        <input placeholder="Buscar por nombre o propiedad…" value={q} onChange={e => setQ(e.target.value)} className="input flex-1 min-w-[200px]" />
+        <select value={estadoF} onChange={e => setEstadoF(e.target.value)} className="input w-auto">
+          <option value="all">Todos los estados</option>
+          {ESTADOS.map(e => <option key={e} value={e}>{e}</option>)}
+        </select>
+        <select value={fuenteF} onChange={e => setFuenteF(e.target.value)} className="input w-auto">
+          <option value="all">Todas las fuentes</option>
+          <option value="auto">Auto (OpenClaw)</option>
+          <option value="manual">Manuales</option>
+        </select>
+        <select value={sortBy} onChange={e => setSortBy(e.target.value)} className="input w-auto">
+          <option value="fecha">Ordenar: fecha</option>
+          <option value="score">Ordenar: score</option>
+          <option value="precio">Ordenar: precio</option>
+        </select>
+      </div>
+
       {loading ? (
         <p className="text-on-surface-variant text-sm">Cargando…</p>
-      ) : leads.length === 0 ? (
-        <p className="text-on-surface-variant text-sm">Todavía no hay leads.</p>
+      ) : view.length === 0 ? (
+        <p className="text-on-surface-variant text-sm">No hay leads que coincidan.</p>
       ) : (
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
@@ -73,12 +110,13 @@ export default function Leads() {
                 <th className="py-2 pr-4 font-medium">Nombre</th>
                 <th className="py-2 pr-4 font-medium">Contacto</th>
                 <th className="py-2 pr-4 font-medium">Propiedad</th>
+                <th className="py-2 pr-4 font-medium">Score</th>
                 <th className="py-2 pr-4 font-medium">Estado</th>
                 <th className="py-2 font-medium">Fecha</th>
               </tr>
             </thead>
             <tbody>
-              {leads.map(l => (
+              {view.map(l => (
                 <tr key={l.id} className="border-b border-outline-variant/20">
                   <td className="py-3 pr-4 font-medium text-on-surface">
                     <div className="flex items-center gap-2">
@@ -96,6 +134,11 @@ export default function Leads() {
                         <span className="material-symbols-outlined text-sm">open_in_new</span>
                       </a>
                     ) : (l.propiedad)}
+                  </td>
+                  <td className="py-3 pr-4">
+                    {l._score == null
+                      ? <span className="text-on-surface-variant/40 text-xs">—</span>
+                      : <span className={`text-xs font-bold rounded-full px-2 py-1 ${scoreColor(l._score)}`}>{l._score}</span>}
                   </td>
                   <td className="py-3 pr-4">
                     <select
