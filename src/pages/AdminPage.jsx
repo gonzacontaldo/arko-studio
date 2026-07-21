@@ -3,18 +3,20 @@ import { Link } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { useSession } from '../admin/useSession';
 import Login from '../admin/Login';
+import Dashboard from '../admin/Dashboard';
 import Leads from '../admin/Leads';
 import Producciones from '../admin/Producciones';
 import HubLogo from '../admin/HubLogo';
 
 const TABS = [
+  { key: 'dashboard',   label: 'Inicio',     icon: 'dashboard' },
   { key: 'leads',       label: 'Leads',      icon: 'contacts' },
   { key: 'produccion',  label: 'Producción', icon: 'movie'    },
 ];
 
 export default function AdminPage() {
   const session = useSession();
-  const [tab, setTab] = useState('leads');
+  const [tab, setTab] = useState('dashboard');
 
   // Cargando estado de sesión
   if (session === undefined) {
@@ -64,6 +66,7 @@ export default function AdminPage() {
 
         {/* Contenido */}
         <div className="bg-surface rounded-2xl border border-outline-variant/40 shadow-sm p-6 md:p-8 mb-12">
+          {tab === 'dashboard'  && <Dashboard onGo={setTab} />}
           {tab === 'leads'      && <Leads />}
           {tab === 'produccion' && <Producciones />}
         </div>
