@@ -29,6 +29,27 @@ html {
   letter-spacing: 0.05em;
 }
 
+/* Markdown renderizado (procedimientos) */
+.markdown { color: #2d3435; font-size: 0.9rem; line-height: 1.7; }
+.markdown h1 { font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: 1.6rem; margin: 0 0 .6rem; }
+.markdown h2 { font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 1.25rem; margin: 1.4rem 0 .5rem; padding-bottom: .3rem; border-bottom: 1px solid #e4e9ea; }
+.markdown h3 { font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 1.05rem; margin: 1.1rem 0 .4rem; }
+.markdown p { margin: .6rem 0; }
+.markdown ul, .markdown ol { margin: .6rem 0; padding-left: 1.4rem; }
+.markdown li { margin: .3rem 0; }
+.markdown ul { list-style: disc; }
+.markdown ol { list-style: decimal; }
+.markdown a { color: #785a1a; text-decoration: underline; }
+.markdown strong { font-weight: 700; }
+.markdown code { background: #f2f4f4; border-radius: .25rem; padding: .1rem .35rem; font-size: .85em; }
+.markdown pre { background: #2d3435; color: #f9f9f9; border-radius: .5rem; padding: 1rem; overflow-x: auto; margin: .8rem 0; }
+.markdown pre code { background: none; padding: 0; color: inherit; }
+.markdown blockquote { border-left: 3px solid #785a1a; padding-left: 1rem; color: #5a6061; margin: .8rem 0; }
+.markdown hr { border: none; border-top: 1px solid #e4e9ea; margin: 1.4rem 0; }
+.markdown img { max-width: 100%; border-radius: .5rem; margin: .6rem 0; }
+.markdown table { border-collapse: collapse; margin: .8rem 0; width: 100%; }
+.markdown th, .markdown td { border: 1px solid #e4e9ea; padding: .4rem .6rem; text-align: left; }
+
 /* Inputs del panel de administración */
 .input {
   width: 100%;

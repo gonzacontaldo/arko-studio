@@ -8,14 +8,16 @@ import Leads from '../admin/Leads';
 import Producciones from '../admin/Producciones';
 import Clientes from '../admin/Clientes';
 import Agenda from '../admin/Agenda';
+import Procedimientos from '../admin/Procedimientos';
 import HubLogo from '../admin/HubLogo';
 
 const TABS = [
-  { key: 'dashboard',   label: 'Inicio',     icon: 'dashboard' },
-  { key: 'agenda',      label: 'Agenda',     icon: 'calendar_month' },
-  { key: 'leads',       label: 'Leads',      icon: 'contacts' },
-  { key: 'clientes',    label: 'Clientes',   icon: 'group'    },
-  { key: 'produccion',  label: 'Producción', icon: 'movie'    },
+  { key: 'dashboard',    label: 'Inicio',        icon: 'dashboard' },
+  { key: 'agenda',       label: 'Agenda',        icon: 'calendar_month' },
+  { key: 'leads',        label: 'Leads',         icon: 'contacts' },
+  { key: 'clientes',     label: 'Clientes',      icon: 'group'    },
+  { key: 'produccion',   label: 'Producción',    icon: 'movie'    },
+  { key: 'procedimientos', label: 'Procedimientos', icon: 'menu_book' },
 ];
 
 export default function AdminPage() {
@@ -75,6 +77,7 @@ export default function AdminPage() {
           {tab === 'leads'      && <Leads />}
           {tab === 'clientes'   && <Clientes />}
           {tab === 'produccion' && <Producciones />}
+          {tab === 'procedimientos' && <Procedimientos />}
         </div>
       </div>
     </div>
