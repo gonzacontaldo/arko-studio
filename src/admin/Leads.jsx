@@ -80,9 +80,23 @@ export default function Leads() {
             <tbody>
               {leads.map(l => (
                 <tr key={l.id} className="border-b border-outline-variant/20">
-                  <td className="py-3 pr-4 font-medium text-on-surface">{l.nombre}</td>
+                  <td className="py-3 pr-4 font-medium text-on-surface">
+                    <div className="flex items-center gap-2">
+                      {l.nombre}
+                      {l.fuente === 'openclaw' && (
+                        <span className="text-[10px] font-headline font-bold uppercase tracking-wider bg-secondary/10 text-secondary rounded-full px-2 py-0.5">auto</span>
+                      )}
+                    </div>
+                  </td>
                   <td className="py-3 pr-4 text-on-surface-variant">{l.contacto}</td>
-                  <td className="py-3 pr-4 text-on-surface-variant">{l.propiedad}</td>
+                  <td className="py-3 pr-4 text-on-surface-variant">
+                    {l.url ? (
+                      <a href={l.url} target="_blank" rel="noopener noreferrer" className="text-secondary hover:underline inline-flex items-center gap-1">
+                        {l.propiedad || 'Ver aviso'}
+                        <span className="material-symbols-outlined text-sm">open_in_new</span>
+                      </a>
+                    ) : (l.propiedad)}
+                  </td>
                   <td className="py-3 pr-4">
                     <select
                       value={l.estado}
