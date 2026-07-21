@@ -5,6 +5,7 @@ import { useSession } from '../admin/useSession';
 import Login from '../admin/Login';
 import Leads from '../admin/Leads';
 import Producciones from '../admin/Producciones';
+import HubLogo from '../admin/HubLogo';
 
 const TABS = [
   { key: 'leads',       label: 'Leads',      icon: 'contacts' },
@@ -25,14 +26,11 @@ export default function AdminPage() {
 
   // Logueado → hub
   return (
-    <div className="min-h-screen bg-surface-container-low">
+    <div className="min-h-screen bg-surface-container-low font-body">
       {/* Header */}
-      <header className="sticky top-0 z-40 bg-surface border-b border-outline-variant/30">
+      <header className="sticky top-0 z-40 glass-nav border-b border-outline-variant/30">
         <div className="max-w-6xl mx-auto px-4 md:px-8 py-3 flex items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <span className="font-headline font-extrabold text-lg text-on-surface">Arko Studio</span>
-            <span className="text-xs font-headline uppercase tracking-widest text-on-surface-variant">Admin</span>
-          </div>
+          <HubLogo size="sm" />
           <div className="flex items-center gap-4">
             <Link to="/" className="text-sm text-on-surface-variant hover:text-secondary transition-colors">Ver sitio</Link>
             <button

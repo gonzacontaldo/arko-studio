@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { supabase, isSupabaseConfigured } from '../lib/supabase';
+import HubLogo from './HubLogo';
 
 export default function Login() {
   const [email, setEmail]       = useState('');
@@ -19,8 +20,10 @@ export default function Login() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-surface-container-low px-4">
       <div className="w-full max-w-sm bg-surface rounded-2xl border border-outline-variant/40 shadow-xl p-8">
-        <h1 className="font-headline font-extrabold text-2xl text-on-surface mb-1">Arko Studio</h1>
-        <p className="text-on-surface-variant text-sm mb-6">Panel de administración</p>
+        <div className="mb-6">
+          <HubLogo size="lg" />
+          <p className="text-on-surface-variant text-sm mt-3">Panel de administración</p>
+        </div>
 
         {!isSupabaseConfigured && (
           <div className="mb-4 text-xs text-error bg-error/10 rounded-lg p-3">
