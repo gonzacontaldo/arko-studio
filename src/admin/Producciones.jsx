@@ -17,7 +17,7 @@ const VIDEO_FIELDS = [
 ];
 
 const EMPTY = {
-  titulo: '', cliente: '', fecha_sesion: '', estado: 'agendado',
+  titulo: '', cliente_id: '', fecha_sesion: '', estado: 'agendado',
   fotos: [], cover: null,
   video_horizontal: '', video_reel: '', video_vertical: '', video_fpv: '',
   tour_url: '', es_dron: false, destacado: false, publicado: false,
@@ -93,7 +93,7 @@ export default function Producciones() {
                       : <span className="text-xs text-on-surface-variant/60">oculto</span>}
                   </td>
                   <td className="py-3 text-right">
-                    <button onClick={() => setEditing({ ...EMPTY, ...i, fecha_sesion: i.fecha_sesion || '', fotos: i.fotos || [] })} className="text-secondary text-sm font-medium hover:underline">Editar</button>
+                    <button onClick={() => setEditing({ ...EMPTY, ...i, cliente_id: i.cliente_id || '', fecha_sesion: i.fecha_sesion || '', fotos: i.fotos || [] })} className="text-secondary text-sm font-medium hover:underline">Editar</button>
                   </td>
                 </tr>
               ))}
@@ -116,10 +116,15 @@ export default function Producciones() {
 // ─── Editor (modal) ───────────────────────────────────────────────────────────
 function Editor({ value, onClose, onSaved }) {
   const [form, setForm]   = useState(value);
+  const [clientes, setClientes] = useState([]);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState('');
   const isEdit = !!form.id;
+
+  useEffect(() => {
+    supabase.from('clientes').select('id,nombre,empresa').order('nombre').then(({ data }) => setClientes(data || []));
+  }, []);
 
   const set = (patch) => setForm(f => ({ ...f, ...patch }));
 
@@ -152,7 +157,7 @@ function Editor({ value, onClose, onSaved }) {
     const payload = {
       titulo: form.titulo,
       propiedad: form.titulo,           // requerido por el esquema original
-      cliente: form.cliente || null,
+      cliente_id: form.cliente_id || null,
       fecha_sesion: form.fecha_sesion || null,
       estado: form.estado,
       fotos: form.fotos,
@@ -190,9 +195,12 @@ function Editor({ value, onClose, onSaved }) {
 
         <div className="grid sm:grid-cols-2 gap-3 mb-4">
           <input className="input sm:col-span-2" placeholder="Título *" value={form.titulo} onChange={e => set({ titulo: e.target.value })} />
-          <input className="input" placeholder="Cliente" value={form.cliente || ''} onChange={e => set({ cliente: e.target.value })} />
+          <select className="input" value={form.cliente_id || ''} onChange={e => set({ cliente_id: e.target.value })}>
+            <option value="">— Sin cliente —</option>
+            {clientes.map(c => <option key={c.id} value={c.id}>{c.nombre}{c.empresa ? ` · ${c.empresa}` : ''}</option>)}
+          </select>
           <input className="input" type="date" value={form.fecha_sesion || ''} onChange={e => set({ fecha_sesion: e.target.value })} />
-          <select className="input" value={form.estado} onChange={e => set({ estado: e.target.value })}>
+          <select className="input sm:col-span-2" value={form.estado} onChange={e => set({ estado: e.target.value })}>
             {ESTADOS.map(e => <option key={e} value={e}>{e}</option>)}
           </select>
         </div>
