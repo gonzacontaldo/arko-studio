@@ -1,0 +1,75 @@
+import { useState } from 'react';
+import { Link } from 'react-router-dom';
+import { supabase } from '../lib/supabase';
+import { useSession } from '../admin/useSession';
+import Login from '../admin/Login';
+import Leads from '../admin/Leads';
+import Producciones from '../admin/Producciones';
+
+const TABS = [
+  { key: 'leads',       label: 'Leads',      icon: 'contacts' },
+  { key: 'produccion',  label: 'Producción', icon: 'movie'    },
+];
+
+export default function AdminPage() {
+  const session = useSession();
+  const [tab, setTab] = useState('leads');
+
+  // Cargando estado de sesión
+  if (session === undefined) {
+    return <div className="min-h-screen flex items-center justify-center bg-surface-container-low text-on-surface-variant text-sm">Cargando…</div>;
+  }
+
+  // No logueado → pantalla de login
+  if (!session) return <Login />;
+
+  // Logueado → hub
+  return (
+    <div className="min-h-screen bg-surface-container-low">
+      {/* Header */}
+      <header className="sticky top-0 z-40 bg-surface border-b border-outline-variant/30">
+        <div className="max-w-6xl mx-auto px-4 md:px-8 py-3 flex items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <span className="font-headline font-extrabold text-lg text-on-surface">Arko Studio</span>
+            <span className="text-xs font-headline uppercase tracking-widest text-on-surface-variant">Admin</span>
+          </div>
+          <div className="flex items-center gap-4">
+            <Link to="/" className="text-sm text-on-surface-variant hover:text-secondary transition-colors">Ver sitio</Link>
+            <button
+              onClick={() => supabase.auth.signOut()}
+              className="text-sm font-medium text-on-surface-variant hover:text-error transition-colors"
+            >
+              Salir
+            </button>
+          </div>
+        </div>
+      </header>
+
+      {/* Tabs */}
+      <div className="max-w-6xl mx-auto px-4 md:px-8 pt-6">
+        <div className="flex gap-2 mb-6">
+          {TABS.map(t => (
+            <button
+              key={t.key}
+              onClick={() => setTab(t.key)}
+              className={`flex items-center gap-2 font-headline font-bold text-xs uppercase tracking-widest px-4 py-2 rounded-full border transition-all ${
+                tab === t.key
+                  ? 'bg-secondary text-on-secondary border-secondary'
+                  : 'bg-transparent text-on-surface-variant border-outline-variant hover:border-secondary'
+              }`}
+            >
+              <span className="material-symbols-outlined text-base">{t.icon}</span>
+              {t.label}
+            </button>
+          ))}
+        </div>
+
+        {/* Contenido */}
+        <div className="bg-surface rounded-2xl border border-outline-variant/40 shadow-sm p-6 md:p-8 mb-12">
+          {tab === 'leads'      && <Leads />}
+          {tab === 'produccion' && <Producciones />}
+        </div>
+      </div>
+    </div>
+  );
+}
