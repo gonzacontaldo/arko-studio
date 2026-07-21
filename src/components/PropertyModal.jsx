@@ -1,33 +1,33 @@
 import { useState, useEffect, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import TextLogo from '../assets/TextLogo.png';
+import { VIDEO_LABELS } from '../lib/portfolio';
 
 const TAB_CONFIG = {
-  foto:  { label: 'Fotos',    icon: 'photo_library' },
-  video: { label: 'Video',    icon: 'play_circle'   },
-  tour:  { label: 'Tour 360°',icon: 'view_in_ar'    },
+  foto:  { label: 'Fotos',     icon: 'photo_library' },
+  video: { label: 'Video',     icon: 'play_circle'   },
+  tour:  { label: 'Tour 360°', icon: 'view_in_ar'    },
 };
 
+// Los videos verticales/reel se muestran en formato 9:16; el resto 16:9.
+const isVertical = (kind) => kind === 'vertical' || kind === 'reel';
+
 export default function PropertyModal({ property, onClose }) {
-  const mediaTabs = property.types.filter(t => t !== 'dron' || property.fotos?.length);
-  // Solo mostramos tabs con contenido real
-  const visibleTabs = property.types.filter(t => {
-    if (t === 'foto') return property.fotos?.length > 0;
-    if (t === 'video') return !!(property.videoSrc || property.videoId);
-    if (t === 'tour')  return !!property.tourUrl;
-    return false;
-  });
+  const fotos  = property.fotos ?? [];
+  const videos = property.videos ?? [];
 
-  const [activeTab,  setActiveTab]  = useState(visibleTabs[0]);
-  const [photoIndex, setPhotoIndex] = useState(0);
+  const visibleTabs = [];
+  if (fotos.length)        visibleTabs.push('foto');
+  if (videos.length)       visibleTabs.push('video');
+  if (property.tourUrl)    visibleTabs.push('tour');
 
-  const fotos   = property.fotos  ?? [];
+  const [activeTab,   setActiveTab]   = useState(visibleTabs[0]);
+  const [photoIndex,  setPhotoIndex]  = useState(0);
+  const [videoIndex,  setVideoIndex]  = useState(0);
+
   const hasMany = fotos.length > 1;
-
-  const prevPhoto = useCallback(() =>
-    setPhotoIndex(i => (i - 1 + fotos.length) % fotos.length), [fotos.length]);
-  const nextPhoto = useCallback(() =>
-    setPhotoIndex(i => (i + 1) % fotos.length), [fotos.length]);
+  const prevPhoto = useCallback(() => setPhotoIndex(i => (i - 1 + fotos.length) % fotos.length), [fotos.length]);
+  const nextPhoto = useCallback(() => setPhotoIndex(i => (i + 1) % fotos.length), [fotos.length]);
 
   const handleKey = useCallback((e) => {
     if (e.key === 'Escape') { onClose(); return; }
@@ -46,10 +46,9 @@ export default function PropertyModal({ property, onClose }) {
     };
   }, [handleKey]);
 
-  const switchTab = (tab) => {
-    setActiveTab(tab);
-    setPhotoIndex(0);
-  };
+  const switchTab = (tab) => { setActiveTab(tab); setPhotoIndex(0); setVideoIndex(0); };
+
+  const activeVideo = videos[videoIndex];
 
   return createPortal(
     <div
@@ -91,23 +90,37 @@ export default function PropertyModal({ property, onClose }) {
           </button>
         </div>
 
+        {/* Sub-selector de videos (si hay más de uno) */}
+        {activeTab === 'video' && videos.length > 1 && (
+          <div className="flex gap-1 px-4 py-2 border-b border-outline-variant/60 bg-surface-container-low">
+            {videos.map((v, idx) => (
+              <button
+                key={v.kind}
+                onClick={() => setVideoIndex(idx)}
+                className={`px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wide transition-colors ${
+                  videoIndex === idx ? 'bg-secondary/15 text-secondary' : 'text-on-surface-variant hover:text-secondary'
+                }`}
+              >
+                {VIDEO_LABELS[v.kind] || v.kind}
+              </button>
+            ))}
+          </div>
+        )}
+
         {/* ── Contenido ─────────────────────────────────────────────────── */}
         <div className="flex-1 overflow-hidden bg-black relative" style={{ minHeight: '300px' }}>
 
-          {/* Watermark — centrado sobre la foto */}
+          {/* Watermark sobre las fotos */}
           {activeTab === 'foto' && (
             <img
-              src={TextLogo}
-              alt=""
-              draggable={false}
-              onContextMenu={e => e.preventDefault()}
+              src={TextLogo} alt="" draggable={false} onContextMenu={e => e.preventDefault()}
               className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none select-none"
               style={{ width: '55%', maxWidth: '480px', minWidth: '200px', opacity: 0.35, filter: 'brightness(0) invert(1)', zIndex: 20 }}
             />
           )}
 
-          {/* Fotos  */}
-          {(activeTab === 'foto') && fotos.length > 0 && (
+          {/* Fotos */}
+          {activeTab === 'foto' && fotos.length > 0 && (
             <div className="w-full h-full flex items-center justify-center" style={{ minHeight: '400px' }}>
               <img
                 key={photoIndex}
@@ -120,18 +133,10 @@ export default function PropertyModal({ property, onClose }) {
               />
               {hasMany && (
                 <>
-                  <button
-                    onClick={prevPhoto}
-                    className="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/10 hover:bg-white/25 flex items-center justify-center text-white transition-colors"
-                    aria-label="Anterior"
-                  >
+                  <button onClick={prevPhoto} className="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/10 hover:bg-white/25 flex items-center justify-center text-white transition-colors" aria-label="Anterior">
                     <span className="material-symbols-outlined text-2xl">chevron_left</span>
                   </button>
-                  <button
-                    onClick={nextPhoto}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/10 hover:bg-white/25 flex items-center justify-center text-white transition-colors"
-                    aria-label="Siguiente"
-                  >
+                  <button onClick={nextPhoto} className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/10 hover:bg-white/25 flex items-center justify-center text-white transition-colors" aria-label="Siguiente">
                     <span className="material-symbols-outlined text-2xl">chevron_right</span>
                   </button>
                   <div className="absolute bottom-3 left-0 right-0 text-center pointer-events-none">
@@ -142,50 +147,33 @@ export default function PropertyModal({ property, onClose }) {
             </div>
           )}
 
-          {/* Video local o YouTube */}
-          {activeTab === 'video' && (
-            <>
-              {property.videoSrc && (
-                <div className="flex items-center justify-center w-full h-full" style={{ minHeight: '400px' }}>
-                  <video
-                    key={property.videoSrc}
-                    className="max-w-full max-h-[75vh]"
-                    controls
-                    autoPlay
-                    playsInline
-                  >
-                    <source src={property.videoSrc} type="video/mp4" />
-                  </video>
+          {/* Video de YouTube (horizontal / reel / vertical / fpv) */}
+          {activeTab === 'video' && activeVideo && (
+            isVertical(activeVideo.kind) ? (
+              <div className="flex items-center justify-center w-full h-full py-4" style={{ minHeight: '400px' }}>
+                <div className="relative w-full max-w-xs" style={{ paddingTop: 'min(177.78%, 75vh)' }}>
+                  <iframe
+                    key={activeVideo.id}
+                    className="absolute inset-0 w-full h-full rounded-lg"
+                    src={`https://www.youtube.com/embed/${activeVideo.id}?autoplay=1&rel=0`}
+                    title={property.title}
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    allowFullScreen
+                  />
                 </div>
-              )}
-              {!property.videoSrc && property.videoId && (
-                property.vertical ? (
-                  /* Shorts / video vertical 9:16 */
-                  <div className="flex items-center justify-center w-full h-full py-4" style={{ minHeight: '400px' }}>
-                    <div className="relative w-full max-w-xs" style={{ paddingTop: 'min(177.78%, 75vh)' }}>
-                      <iframe
-                        className="absolute inset-0 w-full h-full rounded-lg"
-                        src={`https://www.youtube.com/embed/${property.videoId}?autoplay=1&rel=0`}
-                        title={property.title}
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                        allowFullScreen
-                      />
-                    </div>
-                  </div>
-                ) : (
-                  /* Video horizontal 16:9 */
-                  <div className="relative w-full" style={{ paddingTop: '56.25%' }}>
-                    <iframe
-                      className="absolute inset-0 w-full h-full"
-                      src={`https://www.youtube.com/embed/${property.videoId}?autoplay=1&rel=0`}
-                      title={property.title}
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                      allowFullScreen
-                    />
-                  </div>
-                )
-              )}
-            </>
+              </div>
+            ) : (
+              <div className="relative w-full" style={{ paddingTop: '56.25%' }}>
+                <iframe
+                  key={activeVideo.id}
+                  className="absolute inset-0 w-full h-full"
+                  src={`https://www.youtube.com/embed/${activeVideo.id}?autoplay=1&rel=0`}
+                  title={property.title}
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  allowFullScreen
+                />
+              </div>
+            )
           )}
 
           {/* Tour 360 */}

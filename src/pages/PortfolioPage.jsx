@@ -1,19 +1,24 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { portfolioItems, FILTERS } from '../data/portfolioItems';
+import { FILTERS } from '../data/portfolioItems';
+import { fetchPortfolio } from '../lib/portfolio';
 import PortfolioGrid from '../components/PortfolioGrid';
 import Footer from '../components/Footer';
 import logoImg from '../assets/Logo.png';
 
 export default function PortfolioPage() {
   const [activeFilter, setActiveFilter] = useState('all');
+  const [items, setItems] = useState([]);
 
-  // Al entrar a la página, arrancar desde arriba.
-  useEffect(() => { window.scrollTo(0, 0); }, []);
+  // Al entrar a la página, arrancar desde arriba y traer el portfolio.
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    fetchPortfolio().then(setItems);
+  }, []);
 
   const filtered = activeFilter === 'all'
-    ? portfolioItems
-    : portfolioItems.filter(item => item.types.includes(activeFilter));
+    ? items
+    : items.filter(item => item.types.includes(activeFilter));
 
   return (
     <div className="bg-surface text-on-surface font-body selection:bg-secondary/30 min-h-screen flex flex-col">

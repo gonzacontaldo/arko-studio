@@ -1,11 +1,18 @@
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { portfolioItems } from '../data/portfolioItems';
+import { fetchPortfolio } from '../lib/portfolio';
 import PortfolioGrid from './PortfolioGrid';
 
-// Solo las propiedades marcadas con featured:true (máx 3) en la portada.
-const featured = portfolioItems.filter(item => item.featured).slice(0, 3);
-
 export default function Portfolio() {
+  const [featured, setFeatured] = useState([]);
+
+  useEffect(() => {
+    fetchPortfolio().then(items => {
+      const dest = items.filter(i => i.destacado);
+      setFeatured((dest.length ? dest : items).slice(0, 3));
+    });
+  }, []);
+
   return (
     <section id="portfolio" className="py-24 bg-surface-container-low">
 
