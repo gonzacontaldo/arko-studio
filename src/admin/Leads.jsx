@@ -45,6 +45,12 @@ export default function Leads() {
     setLeads(ls => ls.map(l => (l.id === id ? { ...l, estado } : l)));
   };
 
+  const deleteLead = async (lead) => {
+    if (!confirm(`¿Eliminar el lead "${lead.nombre}"? No se puede deshacer.`)) return;
+    await supabase.from('leads').delete().eq('id', lead.id);
+    setLeads(ls => ls.filter(l => l.id !== lead.id));
+  };
+
   const view = useMemo(() => {
     let arr = leads.map(l => ({ ...l, _score: scoreLead(l) }));
     const term = q.trim().toLowerCase();
@@ -112,7 +118,8 @@ export default function Leads() {
                 <th className="py-2 pr-4 font-medium">Propiedad</th>
                 <th className="py-2 pr-4 font-medium">Score</th>
                 <th className="py-2 pr-4 font-medium">Estado</th>
-                <th className="py-2 font-medium">Fecha</th>
+                <th className="py-2 pr-4 font-medium">Fecha</th>
+                <th className="py-2 font-medium"></th>
               </tr>
             </thead>
             <tbody>
@@ -149,8 +156,18 @@ export default function Leads() {
                       {ESTADOS.map(e => <option key={e} value={e}>{e}</option>)}
                     </select>
                   </td>
-                  <td className="py-3 text-on-surface-variant whitespace-nowrap">
+                  <td className="py-3 pr-4 text-on-surface-variant whitespace-nowrap">
                     {new Date(l.created_at).toLocaleDateString('es-AR')}
+                  </td>
+                  <td className="py-3 text-right">
+                    <button
+                      onClick={() => deleteLead(l)}
+                      className="w-8 h-8 rounded-full text-on-surface-variant/60 hover:text-error hover:bg-error/10 flex items-center justify-center transition-colors"
+                      aria-label={`Eliminar lead ${l.nombre}`}
+                      title="Eliminar lead"
+                    >
+                      <span className="material-symbols-outlined text-lg">delete</span>
+                    </button>
                   </td>
                 </tr>
               ))}
