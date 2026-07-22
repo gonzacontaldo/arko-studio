@@ -8,7 +8,7 @@ const INCLUDES = [
   { icon: 'photo_camera',   name: 'Fotografía editorial',  desc: 'Interiores y exteriores con edición HDR premium.' },
   { icon: 'vrpano',         name: 'Tour virtual 360° 4K',  desc: 'Desarrollado en Kuula. Incluye 3 meses de hosting.' },
   { icon: 'movie',          name: 'Video cinemático',       desc: 'Recorrido audiovisual profesional de 1 a 2 minutos.' },
-  { icon: 'flight_takeoff', name: 'Dron 4K',               desc: 'Hasta 10 fotos aéreas + video cinematográfico.' },
+  { icon: 'flight_takeoff', name: 'Drone 4K',              desc: 'Hasta 10 fotos aéreas + video cinematográfico.' },
 ];
 
 const LOGISTICS = [
@@ -100,7 +100,7 @@ export default function Pricing({ onOpenModal }) {
             Premiere Package
           </h2>
           <p className="text-on-surface-variant text-base max-w-2xl mx-auto leading-relaxed">
-            Producción visual integral para propiedades de alto valor. Fotografía, video cinemático, dron y tecnología inmersiva en una sola sesión.
+            Producción visual integral para propiedades de alto valor. Fotografía, video cinemático, drone y tecnología inmersiva en una sola sesión.
           </p>
           <p className="mt-5 text-sm text-on-surface-variant">
             Desde{' '}

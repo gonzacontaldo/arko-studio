@@ -292,7 +292,7 @@ function Editor({ value, onClose, onSaved }) {
 
         {/* Flags */}
         <div className="flex flex-wrap gap-5 mb-6 text-sm">
-          <label className="flex items-center gap-2"><input type="checkbox" checked={form.es_dron}   onChange={e => set({ es_dron: e.target.checked })} /> Incluye dron</label>
+          <label className="flex items-center gap-2"><input type="checkbox" checked={form.es_dron}   onChange={e => set({ es_dron: e.target.checked })} /> Incluye drone</label>
           <label className="flex items-center gap-2"><input type="checkbox" checked={form.destacado} onChange={e => set({ destacado: e.target.checked })} /> Destacar en la home</label>
           <label className="flex items-center gap-2"><input type="checkbox" checked={form.publicado} onChange={e => set({ publicado: e.target.checked })} /> Publicar en el sitio</label>
         </div>

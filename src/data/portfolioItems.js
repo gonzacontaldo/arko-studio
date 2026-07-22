@@ -244,5 +244,5 @@ export const FILTERS = [
   { label: 'Fotografía', value: 'foto' },
   { label: 'Video',      value: 'video'},
   { label: '360°',       value: 'tour' },
-  { label: 'Dron',       value: 'dron' },
+  { label: 'Drone',      value: 'dron' },
 ];

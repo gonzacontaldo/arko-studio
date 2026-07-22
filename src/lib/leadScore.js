@@ -80,7 +80,7 @@ export function scoreLead(lead) {
     s += 4;
   }
 
-  // 5. Zona / tipo premium (0-10) — donde el dron y el video brillan
+  // 5. Zona / tipo premium (0-10) — donde el drone y el video brillan
   const premium = ZONA_PREMIUM.test(m.zona || '') || TIPO_PREMIUM.test(m.tipo || '');
   s += premium ? 10 : 4;
 

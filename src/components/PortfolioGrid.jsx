@@ -53,7 +53,7 @@ export default function PortfolioGrid({ items }) {
                 {property.types.includes('foto')  && <MediaBadge icon="photo_library" label="Fotos" />}
                 {property.types.includes('video') && <MediaBadge icon="play_circle"   label="Video" />}
                 {property.types.includes('tour')  && <MediaBadge icon="view_in_ar"    label="360°"  />}
-                {property.types.includes('dron')  && <MediaBadge icon="flight"        label="Dron"  />}
+                {property.types.includes('dron')  && <MediaBadge icon="flight"        label="Drone" />}
               </div>
             </div>
           </div>

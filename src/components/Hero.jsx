@@ -21,7 +21,7 @@ export default function Hero({ onOpenModal }) {
           Vendé tus propiedades más rápido con contenido audiovisual de calidad
         </h1>
         <p className="text-white/90 text-base sm:text-xl font-light max-w-2xl mb-10 leading-relaxed">
-          Tours virtuales 360°, Perspectivas únicas con dron, Fotografías profesionales y videos para redes sociales diseñados para destacar cada
+          Tours virtuales 360°, Perspectivas únicas con drone, Fotografías profesionales y videos para redes sociales diseñados para destacar cada
           propiedad.
         </p>
         <div className="flex flex-wrap gap-4">

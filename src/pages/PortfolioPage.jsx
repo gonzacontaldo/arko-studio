@@ -49,7 +49,7 @@ export default function PortfolioPage() {
         <span className="text-secondary font-bold text-xs tracking-widest uppercase mb-4 block">Portfolio</span>
         <h1 className="font-headline font-extrabold text-4xl md:text-5xl text-locked mb-4">Portfolio Completo</h1>
         <p className="text-on-surface-variant text-base max-w-2xl">
-          Todos nuestros trabajos: fotografía, video, tours virtuales 360° y tomas aéreas con dron.
+          Todos nuestros trabajos: fotografía, video, tours virtuales 360° y tomas aéreas con drone.
         </p>
       </section>
 
