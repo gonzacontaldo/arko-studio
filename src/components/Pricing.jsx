@@ -102,24 +102,12 @@ export default function Pricing({ onOpenModal }) {
           <p className="text-on-surface-variant text-base max-w-2xl mx-auto leading-relaxed">
             Producción visual integral para propiedades de alto valor. Fotografía, video cinemático, drone y tecnología inmersiva en una sola sesión.
           </p>
-          <p className="mt-5 text-sm text-on-surface-variant">
-            Desde{' '}
-            <span className="text-secondary font-bold text-base">USD 150</span>
-            {' '}— el precio final depende de la propiedad.{' '}
-            <a
-              href="https://wa.me/5491144340580?text=Hola%2C%20me%20interesa%20el%20Premiere%20Package.%20%C2%BFMe%20pod%C3%A9s%20dar%20un%20presupuesto%3F"
-              target="_blank" rel="noopener noreferrer"
-              className="text-secondary font-semibold hover:underline"
-            >
-              Consultá el tuyo →
-            </a>
-          </p>
         </div>
 
         {/* Card */}
         <div className="bg-white rounded-2xl border border-outline-variant/40 shadow-xl overflow-hidden">
 
-          {/* Calculadora — COMENTADA temporalmente, reactivar cuando se quiera mostrar el precio
+          {/* Calculadora de precio */}
           <div className="p-8 md:p-12 border-b border-outline-variant/20">
             <p className="text-xs text-on-surface-variant mb-6 tracking-wide uppercase font-medium">
               Calculá tu inversión — 0,15% del valor de publicación
@@ -165,7 +153,6 @@ export default function Pricing({ onOpenModal }) {
               Conversión según dólar billete tipo vendedor BNA · ${fmt(bna)}{bnaDate ? ` · ${bnaDate}` : ''}
             </p>
           </div>
-          */}
 
           {/* Incluye + Add-ons — dos columnas en desktop */}
           <div className="grid grid-cols-1 lg:grid-cols-2 divide-y lg:divide-y-0 lg:divide-x divide-outline-variant/20">
