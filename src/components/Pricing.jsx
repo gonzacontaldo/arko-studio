@@ -138,7 +138,7 @@ export default function Pricing({ onOpenModal }) {
                 <p className="text-2xl font-semibold text-on-surface font-headline">$ {fmt(fee * bna)}</p>
               </div>
               <div className="lg:col-span-2 flex flex-wrap items-center gap-2 bg-surface-container-low/50 rounded-xl p-5">
-                {[[300000, 450], [650000, 975], [1000000, 1500]].map(([v, f]) => (
+                {[[200000, 300],[300000, 450], [650000, 975]].map(([v, f]) => (
                   <button
                     key={v}
                     onClick={() => setPropVal(v)}
