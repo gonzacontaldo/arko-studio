@@ -21,6 +21,7 @@ const EMPTY = {
   fotos: [], cover: null,
   video_horizontal: '', video_reel: '', video_vertical: '', video_fpv: '',
   tour_url: '', es_dron: false, destacado: false, publicado: false,
+  es_ejemplo: false, ficha_precio: '', ficha_ubicacion: '', ficha_descripcion: '', ficha_specs_text: '',
 };
 
 export default function Producciones() {
@@ -143,7 +144,7 @@ export default function Producciones() {
                       : <span className="text-xs text-on-surface-variant/60">oculto</span>}
                   </td>
                   <td className="py-3 text-right">
-                    <button onClick={() => setEditing({ ...EMPTY, ...i, cliente_id: i.cliente_id || '', fecha_sesion: i.fecha_sesion || '', fotos: i.fotos || [] })} className="text-secondary text-sm font-medium hover:underline">Editar</button>
+                    <button onClick={() => setEditing({ ...EMPTY, ...i, cliente_id: i.cliente_id || '', fecha_sesion: i.fecha_sesion || '', fotos: i.fotos || [], ficha_specs_text: (i.ficha_specs || []).join(', ') })} className="text-secondary text-sm font-medium hover:underline">Editar</button>
                   </td>
                 </tr>
               ))}
@@ -220,7 +221,18 @@ function Editor({ value, onClose, onSaved }) {
       es_dron: form.es_dron,
       destacado: form.destacado,
       publicado: form.publicado,
+      es_ejemplo: form.es_ejemplo,
+      ficha_precio: form.ficha_precio || null,
+      ficha_ubicacion: form.ficha_ubicacion || null,
+      ficha_descripcion: form.ficha_descripcion || null,
+      ficha_specs: form.ficha_specs_text
+        ? form.ficha_specs_text.split(',').map(s => s.trim()).filter(Boolean)
+        : null,
     };
+    // Solo una propiedad puede ser la ficha de ejemplo: destildar las demás.
+    if (form.es_ejemplo) {
+      await supabase.from('producciones').update({ es_ejemplo: false }).eq('es_ejemplo', true);
+    }
     const res = isEdit
       ? await supabase.from('producciones').update(payload).eq('id', form.id)
       : await supabase.from('producciones').insert(payload);
@@ -295,7 +307,21 @@ function Editor({ value, onClose, onSaved }) {
           <label className="flex items-center gap-2"><input type="checkbox" checked={form.es_dron}   onChange={e => set({ es_dron: e.target.checked })} /> Incluye drone</label>
           <label className="flex items-center gap-2"><input type="checkbox" checked={form.destacado} onChange={e => set({ destacado: e.target.checked })} /> Destacar en la home</label>
           <label className="flex items-center gap-2"><input type="checkbox" checked={form.publicado} onChange={e => set({ publicado: e.target.checked })} /> Publicar en el sitio</label>
+          <label className="flex items-center gap-2"><input type="checkbox" checked={form.es_ejemplo} onChange={e => set({ es_ejemplo: e.target.checked })} /> Usar como ficha de ejemplo (/ejemplo)</label>
         </div>
+
+        {/* Datos de la ficha de ejemplo — solo si está marcada */}
+        {form.es_ejemplo && (
+          <div className="bg-surface-container-low rounded-xl p-4 mb-6 space-y-3">
+            <p className="text-xs font-headline uppercase tracking-widest text-on-surface-variant">Datos de la ficha de ejemplo</p>
+            <div className="grid sm:grid-cols-2 gap-3">
+              <input className="input" placeholder="Precio (ej: USD 890.000)" value={form.ficha_precio || ''} onChange={e => set({ ficha_precio: e.target.value })} />
+              <input className="input" placeholder="Ubicación (ej: Nordelta, Tigre)" value={form.ficha_ubicacion || ''} onChange={e => set({ ficha_ubicacion: e.target.value })} />
+            </div>
+            <input className="input" placeholder="Specs separadas por coma (ej: 4 dormitorios, 3 baños, 320 m²)" value={form.ficha_specs_text || ''} onChange={e => set({ ficha_specs_text: e.target.value })} />
+            <textarea className="input" rows={4} placeholder="Descripción de la propiedad (podés usar saltos de línea para separar párrafos)" value={form.ficha_descripcion || ''} onChange={e => set({ ficha_descripcion: e.target.value })} />
+          </div>
+        )}
 
         {error && <p className="text-error text-sm mb-3">{error}</p>}
 

@@ -52,6 +52,31 @@ function fromStatic(it) {
   };
 }
 
+// Trae la propiedad marcada como "ficha de ejemplo" (es_ejemplo=true).
+// Devuelve el shape que usa la página /ejemplo, o null si no hay ninguna.
+export async function fetchEjemplo() {
+  if (!supabase) return null;
+  try {
+    const { data, error } = await supabase
+      .from('producciones')
+      .select('id,titulo,cover,fotos,video_horizontal,video_reel,video_vertical,video_fpv,tour_url,es_dron,ficha_precio,ficha_ubicacion,ficha_descripcion,ficha_specs')
+      .eq('es_ejemplo', true)
+      .limit(1)
+      .maybeSingle();
+    if (error || !data) return null;
+    const base = fromRow(data);
+    return {
+      ...base,
+      precio: data.ficha_precio || null,
+      ubicacion: data.ficha_ubicacion || null,
+      descripcion: data.ficha_descripcion || null,
+      specs: data.ficha_specs || null,
+    };
+  } catch {
+    return null;
+  }
+}
+
 // Trae el portfolio publicado desde Supabase. Si la base no está lista o está
 // vacía, cae al portfolio estático — así la landing nunca queda sin contenido.
 export async function fetchPortfolio() {
