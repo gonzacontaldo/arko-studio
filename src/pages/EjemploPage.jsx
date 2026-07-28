@@ -41,8 +41,13 @@ function specIcon(s) {
   return 'check_circle';
 }
 
-// Video principal: preferimos el horizontal; si no, el primero.
 const isVertical = (k) => k === 'vertical' || k === 'reel';
+const VIDEO_TITULO = {
+  horizontal: 'Video cinematográfico',
+  reel:       'Reel para redes',
+  vertical:   'Video vertical',
+  fpv:        'Video FPV / Drone',
+};
 
 export default function EjemploPage() {
   const [prop, setProp] = useState(DEMO);
@@ -65,7 +70,6 @@ export default function EjemploPage() {
 
   const fotos = prop.fotos || [];
   const videos = prop.videos || [];
-  const video = videos.find(v => !isVertical(v.kind)) || videos[0];
   const specs = prop.specs && prop.specs.length ? prop.specs : DEMO.specs;
 
   return (
@@ -147,23 +151,23 @@ export default function EjemploPage() {
         <div className="grid lg:grid-cols-3 gap-10">
           <div className="lg:col-span-2 space-y-12">
 
-            {/* Video */}
-            {video && (
-              <section>
-                <SectionTitle icon="movie" label="Video cinematográfico" />
+            {/* Videos — todos los disponibles, cada uno con su título */}
+            {videos.map(video => (
+              <section key={video.kind}>
+                <SectionTitle icon={isVertical(video.kind) ? 'smartphone' : (video.kind === 'fpv' ? 'flight' : 'movie')} label={VIDEO_TITULO[video.kind] || 'Video'} />
                 {isVertical(video.kind) ? (
                   <div className="flex justify-center">
                     <div className="relative w-full max-w-xs rounded-2xl overflow-hidden shadow-lg" style={{ paddingTop: 'min(177.78%, 70vh)' }}>
-                      <iframe className="absolute inset-0 w-full h-full" src={`https://www.youtube.com/embed/${video.id}?rel=0&modestbranding=1`} title="Video" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen />
+                      <iframe className="absolute inset-0 w-full h-full" src={`https://www.youtube.com/embed/${video.id}?rel=0&modestbranding=1`} title={VIDEO_TITULO[video.kind]} frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen />
                     </div>
                   </div>
                 ) : (
                   <div className="relative w-full rounded-2xl overflow-hidden shadow-lg" style={{ paddingTop: '56.25%' }}>
-                    <iframe className="absolute inset-0 w-full h-full" src={`https://www.youtube.com/embed/${video.id}?rel=0&modestbranding=1`} title="Video" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen />
+                    <iframe className="absolute inset-0 w-full h-full" src={`https://www.youtube.com/embed/${video.id}?rel=0&modestbranding=1`} title={VIDEO_TITULO[video.kind]} frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen />
                   </div>
                 )}
               </section>
-            )}
+            ))}
 
             {/* Tour 360 */}
             {prop.tourUrl && (
