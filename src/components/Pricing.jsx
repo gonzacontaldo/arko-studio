@@ -1,14 +1,34 @@
 import { useState, useEffect, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 
-const BNA_FALLBACK = 1425;
-const RATE = 0.0015;
+const MIN_M2  = 100;
+const MAX_M2  = 500;
+const STEP_M2 = 100;
+const WA_NUMBER = '5491176498888';
 
-const INCLUDES = [
-  { icon: 'photo_camera',   name: 'Fotografía editorial',  desc: 'Interiores y exteriores con edición HDR premium.' },
-  { icon: 'vrpano',         name: 'Tour virtual 360° 4K',  desc: 'Desarrollado en Kuula. Incluye 3 meses de hosting.' },
-  { icon: 'movie',          name: 'Video cinemático',       desc: 'Recorrido audiovisual profesional de 1 a 2 minutos.' },
-  { icon: 'flight_takeoff', name: 'Drone 4K',              desc: 'Hasta 10 fotos aéreas + video cinematográfico.' },
+// Servicios à la carte. base = precio hasta 100 m²; per100 = suma por cada 100 m² adicional.
+const SERVICES = [
+  { id: 'foto',   icon: 'photo_camera',   name: 'Fotografía editorial',  desc: 'Interiores y exteriores con edición HDR premium.',        base: 125000, per100: 25000 },
+  { id: 'tour',   icon: 'vrpano',         name: 'Tour virtual 360° 4K',  desc: 'Desarrollado en Kuula. Incluye 3 meses de hosting.',      base: 50000,  per100: 25000 },
+  { id: 'cine',   icon: 'movie',          name: 'Video cinematográfico', desc: 'Recorrido audiovisual profesional de 1 a 2 minutos.',     base: 125000, per100: 25000 },
+  { id: 'fpv',    icon: 'flight_takeoff', name: 'Video FPV',             desc: 'Vuelo inmersivo con drone FPV: recorrido continuo y dinámico.', base: 125000, per100: 25000 },
+  { id: 'reel',   icon: 'smartphone',     name: 'Reel para redes',       desc: 'Video vertical con agente inmobiliario para Instagram y TikTok.',      base: 125000, per100: 25000 },
+  { id: 'planos', icon: 'architecture',   name: 'Planos 2D',             desc: 'Plano esquemático de la propiedad. Dentro de un pack, a menor precio.', base: 50000, per100: 25000 },
+];
+
+const SERVICE_BY_ID = Object.fromEntries(SERVICES.map(s => [s.id, s]));
+
+// Packs con precio fijo. base = precio hasta 100 m²; per100 = suma por cada 100 m² adicional.
+const PACKS = [
+  { id: 'base',      name: 'Base',      tagline: 'Lo esencial para publicar.',            services: ['foto', 'planos', 'tour'],                 base: 175000, per100: 25000 },
+  { id: 'destacado', name: 'Destacado', tagline: 'Sumá impacto aéreo inmersivo.',         services: ['foto', 'planos', 'tour', 'fpv'],          base: 285000, per100: 50000, highlight: true },
+  { id: 'redes',     name: 'Redes',     tagline: 'Pensado para performance en redes.',    services: ['foto', 'planos', 'reel', 'cine'],         base: 350000, per100: 50000 },
+  { id: 'completo',  name: 'Completo',  tagline: 'La producción integral, sin dejar nada afuera.', services: ['foto', 'planos', 'tour', 'fpv', 'cine'], base: 395000, per100: 50000 },
+];
+
+const ADDONS = [
+  { name: 'Transición día a noche',                 desc: 'Edición crepuscular del exterior.' },
+  { name: 'Tour en Matterport',        desc: 'Genera un modelo 3D interactivo de la propiedad.' },
 ];
 
 const LOGISTICS = [
@@ -29,40 +49,24 @@ const LOGISTICS = [
   },
 ];
 
-const ADDONS = [
-  { name: 'Video vertical con agente inmobiliario', desc: 'Cinematic storytelling + formatos optimizados para redes.', price: 'USD 400' },
-  { name: 'Transición día a noche',                 desc: 'Edición crepuscular del exterior.',                        price: '1,5X del Premiere Package' },
-  { name: 'Planos de planta esquemáticos 2D',       desc: 'Propiedades de hasta 150 m². Para superficies mayores, consultar.', price: 'USD 100' },
-  { name: 'Renovación tour virtual 360° 4K',        desc: 'Hosting en Kuula por 12 meses adicionales.',               price: 'USD 60 / año' },
-];
-
 function fmt(n) {
   return Math.round(n).toLocaleString('es-AR');
 }
 
+// Cantidad de tramos de 100 m² por encima del primero.
+function stepsFor(m2) {
+  return Math.max(0, Math.round((m2 - MIN_M2) / STEP_M2));
+}
+
+function priceFor(item, m2) {
+  return item.base + item.per100 * stepsFor(m2);
+}
+
 export default function Pricing({ onOpenModal }) {
-  const [propVal, setPropVal] = useState(450000);
-  const [bna, setBna]         = useState(BNA_FALLBACK);
-  const [bnaDate, setBnaDate] = useState(null);
+  const [m2, setM2] = useState(MIN_M2);
 
-  useEffect(() => {
-    fetch('https://dolarapi.com/v1/dolares/oficial')
-      .then(r => r.json())
-      .then(data => {
-        if (data?.venta) {
-          setBna(Math.round(data.venta));
-          // La API devuelve fechaActualizacion como "2026-05-27T..."
-          if (data.fechaActualizacion) {
-            const d = new Date(data.fechaActualizacion);
-            setBnaDate(d.toLocaleDateString('es-AR', { day: '2-digit', month: '2-digit', year: 'numeric' }));
-          }
-        }
-      })
-      .catch(() => {/* usa el fallback silenciosamente */});
-  }, []);
-
-  const [tipsOpen,     setTipsOpen]     = useState(false);
-  const [logModal,     setLogModal]     = useState(null); // guarda el objeto LOGISTICS seleccionado
+  const [tipsOpen, setTipsOpen] = useState(false);
+  const [logModal, setLogModal] = useState(null);
   const closeTips = useCallback(() => setTipsOpen(false), []);
 
   useEffect(() => {
@@ -79,12 +83,12 @@ export default function Pricing({ onOpenModal }) {
     };
   }, [tipsOpen, logModal, closeTips]);
 
-  const fee = Math.round(propVal * RATE);
-  const propValLabel = propVal === 250000
-    ? '≤ USD 200.000'
-    : propVal === 1000000
-      ? '≥ USD 1.000.000'
-      : `USD ${fmt(propVal)}`;
+  const m2Label = m2 >= MAX_M2 ? `${fmt(MAX_M2)}+ m²` : `${fmt(m2)} m²`;
+
+  const packLink = (pack) => {
+    const text = `Hola, me interesa el pack ${pack.name} para una propiedad de ${m2Label}. ¿Me pasás un presupuesto?`;
+    return `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(text)}`;
+  };
 
   return (
     <>
@@ -94,101 +98,132 @@ export default function Pricing({ onOpenModal }) {
         {/* Header */}
         <div className="text-center mb-12 md:mb-16">
           <span className="text-secondary font-bold text-xs tracking-widest uppercase mb-4 block font-headline">
-            Paquete
+            Servicios y packs
           </span>
           <h2 className="font-headline font-extrabold text-3xl md:text-4xl text-locked mb-4">
-            Premiere Package
+            Armá tu producción
           </h2>
           <p className="text-on-surface-variant text-base max-w-2xl mx-auto leading-relaxed">
-            Producción visual integral para propiedades de alto valor. Fotografía, video cinemático, drone y tecnología inmersiva en una sola sesión.
+            Elegí servicios sueltos a la carta o combinálos en un pack con mejor precio. Todo escala según la superficie de la propiedad. Precios finales, IVA incluido.
           </p>
         </div>
 
-        {/* Card */}
-        <div className="bg-white rounded-2xl border border-outline-variant/40 shadow-xl overflow-hidden">
+        {/* Selector de superficie */}
+        <div className="bg-white rounded-2xl border border-outline-variant/40 shadow-sm p-6 md:p-8 mb-10">
+          <div className="flex flex-wrap items-center gap-4">
+            <span className="text-sm text-on-surface-variant w-40 flex items-center gap-2">
+              <span className="material-symbols-outlined text-secondary text-lg">straighten</span>
+              Superficie
+            </span>
+            <input
+              type="range"
+              min={MIN_M2} max={MAX_M2} step={STEP_M2}
+              value={m2}
+              onChange={e => setM2(+e.target.value)}
+              className="flex-1 min-w-[180px] accent-secondary"
+            />
+            <span className="text-lg font-bold text-on-surface w-28 text-right font-headline">
+              {m2Label}
+            </span>
+          </div>
+          <p className="text-[11px] text-on-surface-variant/60 mt-3">
+            El precio escala cada 100 m². Deslizá hasta la superficie de tu propiedad.
+          </p>
+        </div>
 
-          {/* Calculadora de precio */}
+        {/* Bloque 1 — Menú à la carte */}
+        <div className="mb-16">
+          <div className="flex items-baseline gap-3 mb-6">
+            <h3 className="font-headline font-extrabold text-xl md:text-2xl text-locked">A la carta</h3>
+            <span className="text-xs text-on-surface-variant">Servicios individuales</span>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {SERVICES.map(s => (
+              <div key={s.id} className="bg-white rounded-xl border border-outline-variant/40 p-5 flex flex-col">
+                <div className="flex items-start justify-between gap-3 mb-3">
+                  <span className="material-symbols-outlined text-secondary text-2xl">{s.icon}</span>
+                  <span className="text-lg font-bold text-secondary font-headline whitespace-nowrap">
+                    $ {fmt(priceFor(s, m2))}
+                  </span>
+                </div>
+                <p className="text-sm font-semibold text-on-surface mb-1">{s.name}</p>
+                <p className="text-xs text-on-surface-variant leading-relaxed">{s.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Bloque 2 — Packs */}
+        <div>
+          <div className="flex items-baseline gap-3 mb-6">
+            <h3 className="font-headline font-extrabold text-xl md:text-2xl text-locked">Packs</h3>
+            <span className="text-xs text-on-surface-variant">Combinaciones con mejor precio</span>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            {PACKS.map(pack => (
+              <div
+                key={pack.id}
+                className={`relative rounded-2xl p-6 flex flex-col ${
+                  pack.highlight
+                    ? 'bg-white border-2 border-secondary shadow-xl'
+                    : 'bg-white border border-outline-variant/40 shadow-sm'
+                }`}
+              >
+                {pack.highlight && (
+                  <span className="absolute -top-3 left-1/2 -translate-x-1/2 editorial-gradient text-on-secondary text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full shadow-md">
+                    Más elegido
+                  </span>
+                )}
+                <p className="font-headline font-extrabold text-lg text-on-surface mb-1">{pack.name}</p>
+                <p className="text-xs text-on-surface-variant leading-relaxed mb-4 min-h-[32px]">{pack.tagline}</p>
+
+                <div className="mb-4">
+                  <p className="text-2xl font-bold text-secondary font-headline">$ {fmt(priceFor(pack, m2))}</p>
+                  <p className="text-[10px] text-on-surface-variant/60">para {m2Label} · IVA incluido</p>
+                </div>
+
+                <ul className="space-y-2 mb-6 flex-1">
+                  {pack.services.map(id => (
+                    <li key={id} className="flex items-center gap-2 text-xs text-on-surface">
+                      <span className="material-symbols-outlined text-secondary text-base">check</span>
+                      {SERVICE_BY_ID[id].name}
+                    </li>
+                  ))}
+                </ul>
+
+                <a
+                  href={packLink(pack)}
+                  target="_blank" rel="noopener noreferrer"
+                  className={`w-full py-3 font-headline font-bold text-xs uppercase tracking-widest rounded-xl transition-all duration-150 active:scale-[0.98] flex items-center justify-center gap-2 ${
+                    pack.highlight
+                      ? 'editorial-gradient text-on-secondary shadow-md hover:opacity-90'
+                      : 'border border-secondary text-secondary hover:bg-secondary/5'
+                  }`}
+                >
+                  Solicitar
+                </a>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Add-ons + Logística */}
+        <div className="mt-16 bg-white rounded-2xl border border-outline-variant/40 shadow-sm overflow-hidden">
+          {/* Add-ons */}
           <div className="p-8 md:p-12 border-b border-outline-variant/20">
-            <p className="text-xs text-on-surface-variant mb-6 tracking-wide uppercase font-medium">
-              Calculá tu inversión — 0,15% del valor de publicación
-            </p>
-            <div className="flex flex-wrap items-center gap-4 mb-2">
-              <span className="text-sm text-on-surface-variant w-36">Valor de la propiedad</span>
-              <input
-                type="range"
-                min="200000" max="1000000" step="10000"
-                value={propVal}
-                onChange={e => setPropVal(+e.target.value)}
-                className="flex-1 min-w-[160px] accent-secondary"
-              />
-              <span className="text-base font-semibold text-on-surface w-36 text-right">
-                {propValLabel}
-              </span>
+            <p className="text-xs uppercase tracking-widest text-on-surface-variant font-medium mb-6">Add-ons opcionales</p>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              {ADDONS.map(addon => (
+                <div key={addon.name} className="px-5 py-4 bg-surface-container-low/60 rounded-xl">
+                  <p className="text-sm font-medium text-on-surface mb-0.5">{addon.name}</p>
+                  <p className="text-xs text-on-surface-variant">{addon.desc}</p>
+                </div>
+              ))}
             </div>
-            <p className="text-[10px] text-on-surface-variant/50 mb-6">
-              Deslizá el slider hasta el valor de tu propiedad
-            </p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
-              <div className="lg:col-span-1 bg-surface-container-low rounded-xl p-5">
-                <p className="text-xs text-on-surface-variant mb-2">Inversión en USD</p>
-                <p className="text-3xl font-bold text-secondary font-headline">USD {fmt(fee)}</p>
-              </div>
-              <div className="lg:col-span-1 bg-surface-container-low rounded-xl p-5">
-                <p className="text-xs text-on-surface-variant mb-2">Equivalente en pesos</p>
-                <p className="text-2xl font-semibold text-on-surface font-headline">$ {fmt(fee * bna)}</p>
-              </div>
-              <div className="lg:col-span-2 flex flex-wrap items-center gap-2 bg-surface-container-low/50 rounded-xl p-5">
-                {[[200000, 300],[300000, 450], [650000, 975]].map(([v, f]) => (
-                  <button
-                    key={v}
-                    onClick={() => setPropVal(v)}
-                    className="text-xs text-secondary border border-secondary/30 bg-secondary/5 rounded-full px-4 py-1.5 hover:bg-secondary/10 transition-colors"
-                  >
-                    USD {fmt(v)} → USD {fmt(f)}
-                  </button>
-                ))}
-              </div>
-            </div>
-            <p className="text-[10px] text-on-surface-variant/50">
-              Conversión según dólar billete tipo vendedor BNA · ${fmt(bna)}{bnaDate ? ` · ${bnaDate}` : ''}
-            </p>
           </div>
 
-          {/* Incluye + Add-ons — dos columnas en desktop */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 divide-y lg:divide-y-0 lg:divide-x divide-outline-variant/20">
-
-            {/* Incluye */}
-            <div className="p-8 md:p-12">
-              <p className="text-xs uppercase tracking-widest text-on-surface-variant font-medium mb-6">Incluye</p>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {INCLUDES.map(item => (
-                  <div key={item.name} className="bg-surface-container-low rounded-xl p-5">
-                    <span className="material-symbols-outlined text-secondary text-2xl mb-3 block">{item.icon}</span>
-                    <p className="text-sm font-semibold text-on-surface mb-1">{item.name}</p>
-                    <p className="text-xs text-on-surface-variant leading-relaxed">{item.desc}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Add-ons */}
-            <div className="p-8 md:p-12">
-              <p className="text-xs uppercase tracking-widest text-on-surface-variant font-medium mb-6">Add-ons opcionales</p>
-              <div className="space-y-3">
-                {ADDONS.map(addon => (
-                  <div key={addon.name} className="px-5 py-4 bg-surface-container-low/60 rounded-xl">
-                    <p className="text-sm font-medium text-on-surface mb-0.5">{addon.name}</p>
-                    <p className="text-xs text-on-surface-variant">{addon.desc}</p>
-                    {/* Precio add-on comentado: {addon.price} */}
-                  </div>
-                ))}
-              </div>
-            </div>
-
-          </div>
-
-          {/* Logística + CTA — full width */}
-          <div className="p-8 md:p-12 border-t border-outline-variant/20 flex flex-col md:flex-row md:items-center gap-8">
+          {/* Logística + CTA */}
+          <div className="p-8 md:p-12 flex flex-col md:flex-row md:items-center gap-8">
             <div className="flex-1">
               <div className="flex items-center gap-3 mb-4">
                 <p className="text-xs uppercase tracking-widest text-on-surface-variant font-medium">Logística</p>
@@ -199,7 +234,7 @@ export default function Pricing({ onOpenModal }) {
                   ¿Cómo preparar el inmueble?
                 </button>
               </div>
-              
+
               <div className="flex flex-wrap gap-2 mb-4">
                 {LOGISTICS.map(item => (
                   <span key={item.label} className="inline-flex items-center gap-1.5 text-xs text-on-surface border border-outline-variant/50 rounded-full px-4 py-2">
@@ -213,12 +248,12 @@ export default function Pricing({ onOpenModal }) {
                 ))}
               </div>
               <p className="text-xs text-on-surface-variant/70 leading-relaxed max-w-md">
-                La tarifa final puede variar según superficie, terreno, amenities, requerimientos aéreos y locación.
+                La tarifa final puede variar según terreno, amenities, requerimientos aéreos y locación.
               </p>
             </div>
             <div className="md:w-72 flex-shrink-0">
               <a
-                href="https://wa.me/5491144340580?text=Hola%2C%20me%20interesa%20el%20Premiere%20Package.%20%C2%BFMe%20pod%C3%A9s%20dar%20un%20presupuesto%3F"
+                href={`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent('Hola, me interesa una producción. ¿Me pasás un presupuesto?')}`}
                 target="_blank" rel="noopener noreferrer"
                 className="w-full py-4 editorial-gradient text-on-secondary font-headline font-bold text-sm uppercase tracking-widest rounded-xl transition-all duration-150 hover:opacity-90 active:scale-[0.98] shadow-md mb-3 flex items-center justify-center gap-2"
               >
@@ -228,19 +263,14 @@ export default function Pricing({ onOpenModal }) {
               <p className="text-[11px] text-on-surface-variant text-center leading-relaxed">
                 Te respondemos en menos de 24 hs.
               </p>
-              {/* CTA original comentado:
-              <button onClick={onOpenModal} className="w-full py-4 editorial-gradient ...">Consultar por este paquete</button>
-              <p>Invertí el 0,15% del valor de tu propiedad. Vendela más rápido.</p>
-              */}
             </div>
           </div>
-
         </div>
 
         <p className="text-center text-on-surface-variant text-xl mt-10 leading-relaxed">
           ¿Tenés otros requerimientos o querés un paquete a medida?{' '}
           <a
-            href="https://wa.me/5491144340580?text=Hola%2C%20quisiera%20consultar%20por%20un%20paquete%20a%20medida."
+            href={`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent('Hola, quisiera consultar por un paquete a medida.')}`}
             target="_blank" rel="noopener noreferrer"
             className="text-secondary font-bold hover:underline"
           >

@@ -1,13 +1,13 @@
 import { useState, useEffect } from 'react';
 
-const WHATSAPP_NUMBER = '+5491144340580';
+const WHATSAPP_NUMBER = '+5491176498888';
 
 const SERVICES = [
   { value: '', label: 'Seleccioná un servicio' },
   { value: 'Fotografía profesional', label: '📷 Fotografía profesional' },
   { value: 'Video para redes sociales', label: '🎬 Video para redes sociales' },
   { value: 'Tour virtual 360°', label: '🔭 Tour virtual 360°' },
-  { value: 'Pack completo', label: '✨ Premiere Pack (foto + video + tour)' },
+  { value: 'Pack completo', label: '✨ Pack completo (foto + video + tour)' },
 ];
 
 export default function BudgetModal({ isOpen, onClose }) {

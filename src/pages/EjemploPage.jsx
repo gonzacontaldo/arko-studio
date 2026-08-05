@@ -4,7 +4,7 @@ import logoImg from '../assets/Logo.png';
 import PropertyModal from '../components/PropertyModal';
 import { fetchEjemplo } from '../lib/portfolio';
 
-const WHATSAPP = 'https://wa.me/5491144340580?text=Hola%2C%20vi%20la%20ficha%20de%20ejemplo%20y%20quiero%20este%20tipo%20de%20contenido%20para%20mis%20propiedades.';
+const WHATSAPP = 'https://wa.me/5491176498888?text=Hola%2C%20vi%20la%20ficha%20de%20ejemplo%20y%20quiero%20este%20tipo%20de%20contenido%20para%20mis%20propiedades.';
 
 // Fallback: se usa si todavía no marcaste ninguna propiedad como ejemplo en el hub.
 const DEMO = {

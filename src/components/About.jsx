@@ -32,7 +32,7 @@ export default function About() {
 
           <div className="mt-8 pt-8 border-t border-outline-variant/30 flex flex-col sm:flex-row gap-5">
             <a
-              href="https://instagram.com/TU_USUARIO_IG"
+              href="https://instagram.com/arkostudio.ar"
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-2 text-sm text-on-surface-variant hover:text-secondary transition-colors"
@@ -41,14 +41,14 @@ export default function About() {
               @arkostudio
             </a>
             <a
-              href="tel:+5491100000000"
+              href="tel:+5491176498888"
               className="flex items-center gap-2 text-sm text-on-surface-variant hover:text-secondary transition-colors"
             >
               <span className="material-symbols-outlined text-secondary text-lg">phone</span>
               +54 9 11 7649-8888
             </a>
             <a
-              href="mailto:hola@arkostudio.com.ar"
+              href="mailto:contacto@arkostudio.com.ar"
               className="flex items-center gap-2 text-sm text-on-surface-variant hover:text-secondary transition-colors"
             >
               <span className="material-symbols-outlined text-secondary text-lg">mail</span>
