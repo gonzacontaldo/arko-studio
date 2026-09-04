@@ -2,7 +2,7 @@ const HERO_VIDEO_ID = '9pBvgShBwUA';
 
 export default function Hero({ onOpenModal }) {
   return (
-    <section className="relative min-h-screen flex items-center justify-start pt-20 overflow-hidden">
+    <section id="top" className="relative min-h-screen flex items-center justify-start pt-20 overflow-hidden">
       <div className="absolute inset-0 z-0">
         {/* iframe escalado al 130% para ocultar bordes y logo de YouTube */}
         <div className="absolute inset-0 scale-[1.3] pointer-events-none">

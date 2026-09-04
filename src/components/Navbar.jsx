@@ -2,12 +2,12 @@ import { useState, useEffect } from 'react';
 import logoImg from '../assets/Logo.png';
 
 const navLinks = [
-  { label: 'Inicio',    href: '#top',       section: 'top'       },
-  { label: 'Portfolio', href: '#portfolio', section: 'portfolio' },
-  { label: 'Servicios', href: '#servicios', section: 'servicios' },
-  { label: 'Precios',   href: '#precios',   section: 'precios'   },
-  { label: 'Proceso',   href: '#proceso',   section: 'proceso'   },
-  { label: 'Nosotros',  href: '#nosotros',  section: 'nosotros'  },
+  { label: 'Inicio',    href: '/',           section: 'top'       },
+  { label: 'Portfolio', href: '/#portfolio', section: 'portfolio' },
+  { label: 'Servicios', href: '/#servicios', section: 'servicios' },
+  { label: 'Precios',   href: '/#precios',   section: 'precios'   },
+  { label: 'Proceso',   href: '/#proceso',   section: 'proceso'   },
+  { label: 'Nosotros',  href: '/#nosotros',  section: 'nosotros'  },
 ];
 
 export default function Navbar({ onOpenModal }) {
@@ -85,7 +85,7 @@ export default function Navbar({ onOpenModal }) {
       <div className={`flex flex-wrap justify-between items-center px-4 md:px-8 gap-y-2 transition-all duration-300 ${scrolled ? 'py-2' : 'py-3'}`}>
 
         {/* Logo */}
-        <a href="#top" className="flex items-center gap-1.5 shrink-0">
+        <a href="/" className="flex items-center gap-1.5 shrink-0" aria-label="Ir al inicio de ARKO Studio">
           <div className="h-8 w-8 overflow-hidden flex-shrink-0 flex items-center justify-center">
             <img src={logoImg} alt="ARKO Studio" className="h-8 w-8 scale-[2.8]" />
           </div>
