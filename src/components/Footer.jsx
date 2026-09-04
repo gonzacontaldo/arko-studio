@@ -1,12 +1,15 @@
 const contactLinks = [
-  { icon: 'photo_camera', label: '@arkostudio',       href: 'https://instagram.com/' },
+  { icon: 'photo_camera', label: '@arkostudio', href: 'https://instagram.com/' },
   { icon: 'phone',        label: '+54 9 11 7649-8888',   href: 'tel:+5491176498888' },
   { icon: 'mail',         label: 'contacto@arkostudio.com.ar', href: 'mailto:contacto@arkostudio.com.ar' },
 ];
 
-const legal = [
-  { label: 'Privacidad', href: '#' },
-  { label: 'Términos',   href: '#' },
+const serviceLinks = [
+  { label: 'Fotografía inmobiliaria', href: '/fotografia-inmobiliaria' },
+  { label: 'Video inmobiliario', href: '/video-inmobiliario' },
+  { label: 'Drone inmobiliario', href: '/drone-inmobiliario' },
+  { label: 'Tour virtual 360°', href: '/tour-virtual-360' },
+  { label: 'Planos 2D', href: '/planos-2d' },
 ];
 
 const coverageZones = [
@@ -78,13 +81,13 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* Legal */}
+        {/* Servicios */}
         <div>
           <h4 className="font-bold text-xs uppercase tracking-widest text-[#C5A059] mb-4">
-            Legal
+            Servicios
           </h4>
           <div className="flex flex-col gap-2.5">
-            {legal.map(({ label, href }) => (
+            {serviceLinks.map(({ label, href }) => (
               <a
                 key={label}
                 href={href}

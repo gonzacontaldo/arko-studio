@@ -9,7 +9,8 @@ export default function Hero({ onOpenModal }) {
           <iframe
             className="w-full h-full"
             src={`https://www.youtube.com/embed/${HERO_VIDEO_ID}?autoplay=1&mute=1&loop=1&playlist=${HERO_VIDEO_ID}&controls=0&showinfo=0&rel=0&modestbranding=1&playsinline=1&iv_load_policy=3`}
-            title="Hero background"
+            title="Video de producción audiovisual inmobiliaria de ARKO Studio"
+            loading="lazy"
             frameBorder="0"
             allow="autoplay; encrypted-media"
           />
@@ -18,11 +19,10 @@ export default function Hero({ onOpenModal }) {
       </div>
       <div className="relative z-10 max-w-4xl px-4 md:px-24">
         <h1 className="font-headline font-extrabold text-3xl sm:text-5xl md:text-7xl text-white text-locked leading-tight mb-6 break-words">
-          Vendé tus propiedades más rápido con contenido audiovisual de calidad
+          Fotografía y video inmobiliario en Buenos Aires
         </h1>
         <p className="text-white/90 text-base sm:text-xl font-light max-w-2xl mb-10 leading-relaxed">
-          Tours virtuales 360°, Perspectivas únicas con drone, Fotografías profesionales y videos para redes sociales diseñados para destacar cada
-          propiedad.
+          Producción audiovisual para propiedades: fotografía profesional, video, drone, planos y tours virtuales 360° en CABA y Zona Norte.
         </p>
         <div className="flex flex-wrap gap-4">
           <button

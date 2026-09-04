@@ -1,5 +1,11 @@
 {
   "rewrites": [
+    { "source": "/portfolio", "destination": "/portfolio/index.html" },
+    { "source": "/fotografia-inmobiliaria", "destination": "/fotografia-inmobiliaria/index.html" },
+    { "source": "/video-inmobiliario", "destination": "/video-inmobiliario/index.html" },
+    { "source": "/drone-inmobiliario", "destination": "/drone-inmobiliario/index.html" },
+    { "source": "/tour-virtual-360", "destination": "/tour-virtual-360/index.html" },
+    { "source": "/planos-2d", "destination": "/planos-2d/index.html" },
     { "source": "/((?!api/).*)", "destination": "/" }
   ]
 }

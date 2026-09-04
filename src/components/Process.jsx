@@ -49,7 +49,7 @@ export default function Process() {
               >
                 {number}
               </div>
-              <h4 className="font-headline font-bold text-lg">{title}</h4>
+              <h3 className="font-headline font-bold text-lg">{title}</h3>
               <p className="text-sm text-on-surface-variant">{description}</p>
             </div>
           ))}

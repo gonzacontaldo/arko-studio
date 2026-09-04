@@ -1,5 +1,5 @@
 import BEFORE_IMG from '../assets/BeforeAfter/Before.jpg';
-import AFTER_IMG from '../assets/BeforeAfter/After.jpg';
+import AFTER_IMG from '../assets/BeforeAfter/After-optimized.jpg';
 
 export default function BeforeAfter() {
   return (
@@ -15,6 +15,8 @@ export default function BeforeAfter() {
               src={BEFORE_IMG}
               alt="Interior con iluminación deficiente, tomado con celular"
               loading="lazy"
+              width="1200"
+              height="900"
             />
             <div className="absolute top-6 left-6 bg-on-surface/80 text-white px-4 py-1 text-xs font-bold uppercase tracking-widest">
               Foto real en un portal inmobiliario
@@ -26,6 +28,8 @@ export default function BeforeAfter() {
               src={AFTER_IMG}
               alt="Interior con iluminación profesional y composición balanceada"
               loading="lazy"
+              width="1200"
+              height="900"
             />
             <div className="absolute top-6 right-6 bg-secondary text-on-secondary px-4 py-1 text-xs font-bold uppercase tracking-widest">
               Contenido profesional

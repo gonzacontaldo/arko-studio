@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import ServiceModal from './ServiceModal';
+import { Link } from 'react-router-dom';
 
 // ─── Imágenes de ejemplo por servicio ────────────────────────────────────────
 // Reemplazá cada src con las imágenes reales de tu portafolio
@@ -21,6 +22,7 @@ const IMGS = {
 
 const services = [
   {
+    slug: 'fotografia-inmobiliaria',
     icon: 'photo_camera',
     title: 'Fotografía Inmobiliaria',
     description:
@@ -36,6 +38,7 @@ const services = [
     ],
   },
   {
+    slug: 'video-inmobiliario',
     icon: 'movie',
     title: 'Videos Cinematograficos',
     description:
@@ -50,6 +53,7 @@ const services = [
     ],
   },
   {
+    slug: 'planos-2d',
     icon: 'architecture',
     title: 'Planos 2D',
     description:
@@ -64,6 +68,7 @@ const services = [
     ],
   },
   {
+    slug: 'tour-virtual-360',
     icon: 'vrpano',
     title: 'Tours Virtuales 360°',
     description:
@@ -79,6 +84,7 @@ const services = [
     ],
   },
   {
+    slug: 'drone-inmobiliario',
     icon: 'flight_takeoff',
     title: 'Tomas Aéreas 360°',
     description:
@@ -124,6 +130,9 @@ export default function Services({ onOpenBudget }) {
                   <li key={f}>• {f}</li>
                 ))}
               </ul>
+              <Link to={`/${service.slug}`} className="text-secondary font-headline font-bold text-xs uppercase tracking-widest hover:underline underline-offset-4">
+                Conocer el servicio
+              </Link>
               <button
                 onClick={() => setSelectedService(service)}
                 className="mt-auto flex items-center gap-1.5 text-secondary font-headline font-bold text-xs uppercase tracking-widest hover:gap-3 transition-all duration-200 group"

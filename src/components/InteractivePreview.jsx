@@ -103,6 +103,7 @@ export default function InteractivePreview() {
 
   return (
     <section className="py-16 md:py-32 px-4 md:px-8 bg-surface-container-lowest space-y-16 md:space-y-24">
+      <h2 className="sr-only">Formatos audiovisuales para presentar propiedades</h2>
       <div className="max-w-7xl mx-auto">
 
         {/* ── Tour Virtual 360° ──────────────────────────────────────────────── */}

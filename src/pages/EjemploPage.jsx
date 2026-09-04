@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import logoImg from '../assets/Logo.png';
 import PropertyModal from '../components/PropertyModal';
 import { fetchEjemplo } from '../lib/portfolio';
+import Seo from '../components/Seo';
 
 const WHATSAPP = 'https://wa.me/5491176498888?text=Hola%2C%20vi%20la%20ficha%20de%20ejemplo%20y%20quiero%20este%20tipo%20de%20contenido%20para%20mis%20propiedades.';
 
@@ -74,6 +75,7 @@ export default function EjemploPage() {
 
   return (
     <div className="bg-surface text-on-surface font-body min-h-screen">
+      <Seo title="Ficha de ejemplo | ARKO Studio" description="Ejemplo de presentación audiovisual de una propiedad." path="/ejemplo" noindex />
 
       {/* ── Top bar ────────────────────────────────────────────────────── */}
       <header className="sticky top-0 z-40 glass-nav border-b border-outline-variant/20">

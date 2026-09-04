@@ -10,6 +10,7 @@ import Clientes from '../admin/Clientes';
 import Agenda from '../admin/Agenda';
 import Procedimientos from '../admin/Procedimientos';
 import HubLogo from '../admin/HubLogo';
+import Seo from '../components/Seo';
 
 const TABS = [
   { key: 'dashboard',    label: 'Inicio',        icon: 'dashboard' },
@@ -26,15 +27,15 @@ export default function AdminPage() {
 
   // Cargando estado de sesión
   if (session === undefined) {
-    return <div className="min-h-screen flex items-center justify-center bg-surface-container-low text-on-surface-variant text-sm">Cargando…</div>;
+    return <><Seo title="Administración | ARKO Studio" description="Panel privado de ARKO Studio." path="/admin" noindex /><div className="min-h-screen flex items-center justify-center bg-surface-container-low text-on-surface-variant text-sm">Cargando…</div></>;
   }
 
   // No logueado → pantalla de login
-  if (!session) return <Login />;
+  if (!session) return <><Seo title="Administración | ARKO Studio" description="Panel privado de ARKO Studio." path="/admin" noindex /><Login /></>;
 
   // Logueado → hub
   return (
-    <div className="min-h-screen bg-surface-container-low font-body">
+    <><Seo title="Administración | ARKO Studio" description="Panel privado de ARKO Studio." path="/admin" noindex /><div className="min-h-screen bg-surface-container-low font-body">
       {/* Header */}
       <header className="sticky top-0 z-40 glass-nav border-b border-outline-variant/30">
         <div className="max-w-6xl mx-auto px-4 md:px-8 py-3 flex items-center justify-between gap-4">
@@ -80,6 +81,6 @@ export default function AdminPage() {
           {tab === 'procedimientos' && <Procedimientos />}
         </div>
       </div>
-    </div>
+    </div></>
   );
 }

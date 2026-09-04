@@ -1,4 +1,6 @@
 User-agent: *
 Allow: /
+Disallow: /admin
+Disallow: /ejemplo
 
-Sitemap: https://arkostudio.com.ar/sitemap.xml
+Sitemap: https://www.arkostudio.com.ar/sitemap.xml

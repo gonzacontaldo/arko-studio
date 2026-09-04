@@ -27,6 +27,7 @@ const values = [
 export default function ValueSection() {
   return (
     <section className="py-16 md:py-32 px-4 md:px-8 bg-surface">
+      <h2 className="sr-only">Beneficios del contenido audiovisual inmobiliario</h2>
       <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 md:gap-16">
         {values.map(({ icon, title, description }) => (
           <div key={title} className="space-y-4">

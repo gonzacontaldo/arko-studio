@@ -1,148 +1,31 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es-AR">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-    <!-- ── SEO ──────────────────────────────────────────────────────────── -->
-    <title>ARKO Studio | Fotografía Inmobiliaria y Tours Virtuales 360° – CABA y GBA</title>
-    <meta
-      name="description"
-      content="Fotografía inmobiliaria profesional, tours virtuales 360°, videos para redes y drone en CABA y Gran Buenos Aires. Vendé o alquilá tu propiedad más rápido con contenido visual premium."
-    />
-    <meta name="keywords" content="fotografía inmobiliaria, fotografía de propiedades, tours virtuales 360, matterport argentina, video inmobiliario, drone inmobiliario, fotografía real estate, fotografía departamentos, CABA, Gran Buenos Aires, GBA, Buenos Aires" />
+    <title>Fotografía y Video Inmobiliario en Buenos Aires | ARKO Studio</title>
+    <meta name="description" content="Fotografía profesional, video, drone, planos y tours virtuales 360° para propiedades, inmobiliarias y desarrolladoras en Buenos Aires y Zona Norte." />
+    <meta name="robots" content="index, follow, max-image-preview:large" />
     <meta name="theme-color" content="#2d3435" />
-    <link rel="canonical" href="https://arkostudio.com.ar/" />
-
-    <!-- ── Open Graph (WhatsApp, LinkedIn, Facebook) ────────────────────── -->
-    <meta property="og:type"        content="website" />
-    <meta property="og:url"         content="https://arkostudio.com.ar/" />
-    <meta property="og:title"       content="ARKO Studio | Fotografía y Tours Virtuales para Real Estate" />
-    <meta
-      property="og:description"
-      content="Fotografía inmobiliaria profesional, videos para redes y tours virtuales 360° en CABA y GBA. Vendé más rápido con contenido visual premium."
-    />
-    <!-- Reemplazá esta URL con la imagen real de preview (1200×630 px recomendado) -->
-    <meta property="og:image"       content="https://arkostudio.com.ar/og-preview.jpg" />
-    <meta property="og:image:width" content="1200" />
-    <meta property="og:image:height" content="630" />
-    <meta property="og:locale"      content="es_AR" />
-    <meta property="og:site_name"   content="ARKO Studio" />
-
-    <!-- ── Twitter / X ─────────────────────────────────────────────────── -->
-    <meta name="twitter:card"        content="summary_large_image" />
-    <meta name="twitter:title"       content="ARKO Studio | Fotografía y Tours Virtuales para Real Estate" />
-    <meta
-      name="twitter:description"
-      content="Fotografía inmobiliaria, videos para redes y tours virtuales 360°. CABA y GBA."
-    />
-    <meta name="twitter:image"       content="https://arkostudio.com.ar/og-preview.jpg" />
-
-    <!-- ── Favicon ──────────────────────────────────────────────────────── -->
-    <link rel="icon"             type="image/svg+xml" href="/favicon.png" />
-    <!-- Fallback PNG para navegadores viejos (opcional, generalo con realfavicongenerator.net) -->
-    <!-- <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" /> -->
-
-    <!-- ── Fuentes ──────────────────────────────────────────────────────── -->
+    <link rel="canonical" href="https://www.arkostudio.com.ar/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://www.arkostudio.com.ar/" />
+    <meta property="og:title" content="Fotografía y Video Inmobiliario en Buenos Aires | ARKO Studio" />
+    <meta property="og:description" content="Fotografía profesional, video, drone, planos y tours virtuales 360° para propiedades en Buenos Aires y Zona Norte." />
+    <meta property="og:image" content="https://www.arkostudio.com.ar/portfolio-web/Civis/Portada.jpg" />
+    <meta property="og:locale" content="es_AR" />
+    <meta property="og:site_name" content="ARKO Studio" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Fotografía y Video Inmobiliario en Buenos Aires | ARKO Studio" />
+    <meta name="twitter:description" content="Fotografía profesional, video, drone, planos y tours virtuales 360° para propiedades en Buenos Aires y Zona Norte." />
+    <meta name="twitter:image" content="https://www.arkostudio.com.ar/portfolio-web/Civis/Portada.jpg" />
+    <link rel="icon" type="image/png" href="/favicon.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800&family=Inter:wght@300;400;500;600&display=swap"
-      rel="stylesheet"
-    />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
-      rel="stylesheet"
-    />
-    <!-- ── Structured Data (JSON-LD) ────────────────────────────────────── -->
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "LocalBusiness",
-      "name": "ARKO Studio",
-      "description": "Fotografía inmobiliaria profesional, tours virtuales 360°, videos para redes y drone para agentes inmobiliarios, constructoras y desarrolladores en CABA y Gran Buenos Aires.",
-      "url": "https://arkostudio.com.ar",
-      "logo": "https://arkostudio.com.ar/favicon.svg",
-      "image": "https://arkostudio.com.ar/og-preview.jpg",
-      "telephone": "+54-9-11-4434-0580",
-      "priceRange": "$$",
-      "currenciesAccepted": "ARS",
-      "paymentAccepted": "Cash, Credit Card, Bank Transfer",
-      "areaServed": [
-        { "@type": "City", "name": "Buenos Aires" },
-        { "@type": "AdministrativeArea", "name": "Gran Buenos Aires" },
-        { "@type": "Place", "name": "CABA" },
-        { "@type": "Place", "name": "GBA Norte" },
-        { "@type": "Place", "name": "GBA Sur" },
-        { "@type": "Place", "name": "GBA Oeste" },
-        { "@type": "Place", "name": "Nordelta" },
-        { "@type": "Place", "name": "Tigre" }
-      ],
-      "address": {
-        "@type": "PostalAddress",
-        "addressLocality": "Buenos Aires",
-        "addressCountry": "AR"
-      },
-      "sameAs": [
-        "https://www.instagram.com/arkostudio",
-        "https://www.linkedin.com/company/arkostudio"
-      ],
-      "hasOfferCatalog": {
-        "@type": "OfferCatalog",
-        "name": "Servicios de Fotografía Inmobiliaria",
-        "itemListElement": [
-          {
-            "@type": "Offer",
-            "itemOffered": {
-              "@type": "Service",
-              "name": "Fotografía Inmobiliaria Profesional",
-              "description": "Sesiones fotográficas de propiedades con edición profesional para agentes y constructoras."
-            }
-          },
-          {
-            "@type": "Offer",
-            "itemOffered": {
-              "@type": "Service",
-              "name": "Tour Virtual 360°",
-              "description": "Tours virtuales interactivos con Matterport y Kuula para visitas online de propiedades."
-            }
-          },
-          {
-            "@type": "Offer",
-            "itemOffered": {
-              "@type": "Service",
-              "name": "Video Inmobiliario",
-              "description": "Videos para redes sociales y portales inmobiliarios, horizontal y vertical (Reels, TikTok)."
-            }
-          },
-          {
-            "@type": "Offer",
-            "itemOffered": {
-              "@type": "Service",
-              "name": "Fotografía y Video con Drone",
-              "description": "Imágenes y video aéreo con drone DJI para propiedades, barrios privados y emprendimientos."
-            }
-          },
-          {
-            "@type": "Offer",
-            "itemOffered": {
-              "@type": "Service",
-              "name": "Planos 2D",
-              "description": "Planos arquitectónicos 2D renderizados para publicaciones y marketing inmobiliario."
-            }
-          }
-        ]
-      }
-    }
-    </script>
-    <!-- ── Google Analytics ─────────────────────────────────────────────── -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-081V4H3XRD"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-081V4H3XRD');
-    </script>
+    <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','G-081V4H3XRD');</script>
   </head>
   <body>
     <div id="root"></div>

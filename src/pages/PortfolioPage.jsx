@@ -5,6 +5,7 @@ import { fetchPortfolio } from '../lib/portfolio';
 import PortfolioGrid from '../components/PortfolioGrid';
 import Footer from '../components/Footer';
 import logoImg from '../assets/Logo.png';
+import Seo from '../components/Seo';
 
 export default function PortfolioPage() {
   const [activeFilter, setActiveFilter] = useState('all');
@@ -22,6 +23,7 @@ export default function PortfolioPage() {
 
   return (
     <div className="bg-surface text-on-surface font-body selection:bg-secondary/30 min-h-screen flex flex-col">
+      <Seo title="Portfolio de Fotografía y Video Inmobiliario | ARKO Studio" description="Trabajos de fotografía, video, drone y tours virtuales 360° realizados por ARKO Studio para propiedades en Buenos Aires." path="/portfolio" />
 
       {/* ── Header slim ───────────────────────────────────────────────── */}
       <header className="sticky top-0 z-50 glass-nav border-b border-outline-variant/20">
@@ -45,7 +47,7 @@ export default function PortfolioPage() {
       </header>
 
       {/* ── Título ────────────────────────────────────────────────────── */}
-      <section className="px-8 pt-16 pb-10 max-w-7xl mx-auto w-full">
+      <main className="flex-1"><section className="px-8 pt-16 pb-10 max-w-7xl mx-auto w-full">
         <span className="text-secondary font-bold text-xs tracking-widest uppercase mb-4 block">Portfolio</span>
         <h1 className="font-headline font-extrabold text-4xl md:text-5xl text-locked mb-4">Portfolio Completo</h1>
         <p className="text-on-surface-variant text-base max-w-2xl">
@@ -73,9 +75,9 @@ export default function PortfolioPage() {
       </div>
 
       {/* ── Galería ───────────────────────────────────────────────────── */}
-      <div className="flex-1">
+      <div>
         <PortfolioGrid items={filtered} />
-      </div>
+      </div></main>
 
       <Footer />
     </div>

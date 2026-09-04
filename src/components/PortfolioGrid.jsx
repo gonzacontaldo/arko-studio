@@ -29,6 +29,8 @@ export default function PortfolioGrid({ items }) {
               src={property.cover}
               alt={property.title}
               loading="lazy"
+              width="1200"
+              height="900"
             />
 
             {/* Watermark fijo */}
