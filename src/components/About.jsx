@@ -38,7 +38,7 @@ export default function About() {
               className="flex items-center gap-2 text-sm text-on-surface-variant hover:text-secondary transition-colors"
             >
               <span className="material-symbols-outlined text-secondary text-lg">photo_camera</span>
-              @arkostudio
+              @arkostudio.ar
             </a>
             <a
               href="tel:+5491176498888"
@@ -48,11 +48,11 @@ export default function About() {
               +54 9 11 7649-8888
             </a>
             <a
-              href="mailto:contacto@arkostudio.com.ar"
+              href="mailto:gonzalo@arkostudio.com.ar"
               className="flex items-center gap-2 text-sm text-on-surface-variant hover:text-secondary transition-colors"
             >
               <span className="material-symbols-outlined text-secondary text-lg">mail</span>
-              contacto@arkostudio.com.ar
+              gonzalo@arkostudio.com.ar
             </a>
           </div>
         </div>

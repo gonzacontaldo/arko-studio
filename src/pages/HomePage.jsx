@@ -25,7 +25,7 @@ export default function HomePage() {
       <Seo
         title="Fotografía y Video Inmobiliario en Buenos Aires | ARKO Studio"
         description="Fotografía profesional, video, drone, planos y tours virtuales 360° para propiedades, inmobiliarias y desarrolladoras en Buenos Aires y Zona Norte."
-        schema={{ '@context': 'https://schema.org', '@type': 'LocalBusiness', name: 'ARKO Studio', url: SITE_URL, description: 'Producción de contenido audiovisual inmobiliario: fotografía, video, drone, planos y tours virtuales 360° en Buenos Aires.', logo: `${SITE_URL}/favicon.png`, image: `${SITE_URL}/portfolio-web/Civis/Portada.jpg`, telephone: '+54 9 11 7649-8888', areaServed: ['Buenos Aires', 'CABA', 'Zona Norte'] }}
+        schema={{ '@context': 'https://schema.org', '@type': 'LocalBusiness', name: 'Arko Studio', url: SITE_URL, description: 'Producción de contenido audiovisual inmobiliario: fotografía, video, drone, planos y tours virtuales 360° en Buenos Aires.', logo: `${SITE_URL}/favicon.png`, image: `${SITE_URL}/portfolio-web/Civis/Portada.jpg`, telephone: '+54 9 11 7649-8888', email: 'gonzalo@arkostudio.com.ar', sameAs: ['https://instagram.com/arkostudio.ar', 'https://www.youtube.com/@arkostudio-media'], openingHoursSpecification: [{ '@type': 'OpeningHoursSpecification', dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'], opens: '08:00', closes: '21:00' }], areaServed: [{ '@type': 'AdministrativeArea', name: 'Provincia de Buenos Aires' }, { '@type': 'City', name: 'Ciudad Autónoma de Buenos Aires' }, { '@type': 'Place', name: 'Zona Norte de Buenos Aires' }] }}
       />
       <Navbar onOpenModal={open} />
 

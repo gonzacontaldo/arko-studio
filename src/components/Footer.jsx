@@ -1,7 +1,8 @@
 const contactLinks = [
-  { icon: 'photo_camera', label: '@arkostudio', href: 'https://instagram.com/' },
+  { icon: 'photo_camera', label: '@arkostudio.ar', href: 'https://instagram.com/arkostudio.ar' },
+  { icon: 'smart_display', label: 'YouTube', href: 'https://www.youtube.com/@arkostudio-media' },
   { icon: 'phone',        label: '+54 9 11 7649-8888',   href: 'tel:+5491176498888' },
-  { icon: 'mail',         label: 'contacto@arkostudio.com.ar', href: 'mailto:contacto@arkostudio.com.ar' },
+  { icon: 'mail',         label: 'gonzalo@arkostudio.com.ar', href: 'mailto:gonzalo@arkostudio.com.ar' },
 ];
 
 const serviceLinks = [
@@ -32,7 +33,7 @@ export default function Footer() {
         {/* Marca */}
         <div>
           <div className="font-headline font-bold text-lg text-stone-900 dark:text-stone-100 uppercase mb-4">
-            ARKO Studio
+            Arko Studio
           </div>
           <p className="font-body text-sm text-stone-500 leading-relaxed max-w-xs">
             Contenido multimedia inmobiliario de alto nivel para agentes, constructoras y desarrolladores.
