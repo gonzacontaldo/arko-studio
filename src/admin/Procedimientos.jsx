@@ -73,7 +73,6 @@ const ALL_SERVICIOS = CATEGORIAS.flatMap(
   c => c.servicios.map(s => ({ ...s, categoria: c.key }))
 );
 
-const ALL_SERVICIOS = CATEGORIAS.flatMap(c => c.servicios.map(s => ({ ...s, categoria: c.key })));
 
 export default function Procedimientos() {
   const [guias, setGuias]   = useState({});   // slug → fila
