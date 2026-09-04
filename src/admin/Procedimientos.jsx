@@ -4,27 +4,74 @@ import { supabase } from '../lib/supabase';
 
 const CATEGORIAS = [
   {
-    key: 'produccion', label: 'Producción',
+    key: 'operaciones',
+    label: 'Operaciones',
     servicios: [
-      { slug: 'preparar-casa', label: 'Preparar la Casa' },
-      { slug: 'fotografia',    label: 'Fotografía' },
-      { slug: 'video-reels',   label: 'Video Cinematográfico / Reels' },
-      { slug: 'drone-fpv',     label: 'Drone / FPV' },
-      { slug: 'planos',        label: 'Planos' },
-      { slug: 'tour-360',      label: 'Tour 360' },
+      { slug: 'onboarding-cliente', label: 'Onboarding del Cliente' },
+      { slug: 'reserva-shooting', label: 'Reserva de Shooting' },
+      { slug: 'preparacion-previa', label: 'Preparación Previa al Shooting' },
+      { slug: 'preparar-propiedad', label: 'Preparar la Propiedad' },
+      { slug: 'llegada-propiedad', label: 'Llegada a la Propiedad' },
+      { slug: 'reprogramaciones-cancelaciones', label: 'Reprogramaciones y Cancelaciones' },
+      { slug: 'contingencias', label: 'Contingencias' },
     ],
   },
+
   {
-    key: 'postproduccion', label: 'Post-Producción',
+    key: 'produccion',
+    label: 'Producción',
     servicios: [
-      { slug: 'edicion-imagenes', label: 'Edición de Imágenes' },
-      { slug: 'edicion-video',    label: 'Edición de Video' },
-      { slug: 'edicion-tour',     label: 'Edición de tour virtual' },
-      { slug: 'edicion-drone',    label: 'Edición de tomas Drone' },
-      { slug: 'edicion-planos',   label: 'Edición de planos 2D' },
+      { slug: 'fotografia-profesional', label: 'Fotografía Profesional' },
+      { slug: 'video-cinematografico', label: 'Video Cinematográfico' },
+      { slug: 'reel-agente', label: 'Reel con Agente' },
+      { slug: 'planos', label: 'Planos' },
+      { slug: 'tour-360', label: 'Tour 360°' },
+      { slug: 'drone', label: 'Drone' },
+    ],
+  },
+
+  {
+    key: 'postproduccion',
+    label: 'Post-Producción',
+    servicios: [
+      { slug: 'organizacion-archivos', label: 'Organización de Archivos' },
+      { slug: 'edicion-fotografia', label: 'Edición de Fotografía' },
+      { slug: 'edicion-video', label: 'Edición de Video' },
+      { slug: 'edicion-planos', label: 'Edición de Planos' },
+      { slug: 'edicion-tour-360', label: 'Edición de Tour 360°' },
+      { slug: 'edicion-drone', label: 'Edición de Drone' },
+      { slug: 'seleccion-musica', label: 'Selección de Música' },
+    ],
+  },
+
+  {
+    key: 'calidad-entrega',
+    label: 'Calidad y Entrega',
+    servicios: [
+      { slug: 'control-calidad-fotografia', label: 'Control de Calidad — Fotografía' },
+      { slug: 'control-calidad-video', label: 'Control de Calidad — Video' },
+      { slug: 'control-calidad-general', label: 'Control de Calidad General' },
+      { slug: 'entrega-cliente', label: 'Entrega al Cliente' },
+      { slug: 'modificaciones-revisiones', label: 'Modificaciones y Revisiones' },
+    ],
+  },
+
+  {
+    key: 'empresa',
+    label: 'Empresa',
+    servicios: [
+      { slug: 'estandar-visual', label: 'Estándar Visual' },
+      { slug: 'estandar-servicio', label: 'Estándar de Servicio' },
+      { slug: 'equipamiento', label: 'Equipamiento' },
+      { slug: 'mantenimiento-equipo', label: 'Mantenimiento del Equipo' },
+      { slug: 'presupuestos', label: 'Presupuestos' },
     ],
   },
 ];
+
+const ALL_SERVICIOS = CATEGORIAS.flatMap(
+  c => c.servicios.map(s => ({ ...s, categoria: c.key }))
+);
 
 const ALL_SERVICIOS = CATEGORIAS.flatMap(c => c.servicios.map(s => ({ ...s, categoria: c.key })));
 
