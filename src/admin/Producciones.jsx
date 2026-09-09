@@ -202,6 +202,14 @@ function Editor({ value, onClose, onSaved }) {
     return { ...f, fotos, cover: f.cover === url ? (fotos[0] || null) : f.cover };
   });
 
+  const moveFoto = (index, direction) => setForm(f => {
+    const destination = index + direction;
+    if (destination < 0 || destination >= f.fotos.length) return f;
+    const fotos = [...f.fotos];
+    [fotos[index], fotos[destination]] = [fotos[destination], fotos[index]];
+    return { ...f, fotos };
+  });
+
   const save = async () => {
     if (!form.titulo.trim()) { setError('Poné un título.'); return; }
     setSaving(true); setError('');
@@ -270,19 +278,27 @@ function Editor({ value, onClose, onSaved }) {
         {/* Fotos */}
         <div className="mb-4">
           <label className="block text-xs font-headline uppercase tracking-widest text-on-surface-variant mb-2">Fotos</label>
-          <div className="flex flex-wrap gap-2 mb-2">
-            {form.fotos.map(url => (
-              <div key={url} className="relative group">
-                <img src={url} alt="" className={`w-20 h-16 object-cover rounded border-2 ${form.cover === url ? 'border-secondary' : 'border-transparent'}`} />
-                <button onClick={() => set({ cover: url })} title="Marcar como portada" className="absolute bottom-0 left-0 bg-black/60 text-white text-[9px] px-1 rounded-tr">{form.cover === url ? 'portada' : 'portada'}</button>
-                <button onClick={() => removeFoto(url)} className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-error text-white text-xs flex items-center justify-center">×</button>
+          <p className="text-xs text-on-surface-variant mb-3">Elegí la portada tocando una foto. Usá las flechas para ordenar la galería sin cambiar la portada. Los cambios se aplican al guardar.</p>
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-3">
+            {form.fotos.map((url, index) => (
+              <div key={url} className={`overflow-hidden rounded-lg border-2 ${form.cover === url ? 'border-secondary bg-secondary/5' : 'border-outline-variant/40'}`}>
+                <button type="button" disabled={saving} onClick={() => set({ cover: url })} aria-label={`Usar foto ${index + 1} como portada`} aria-pressed={form.cover === url} className="block w-full focus-visible:outline focus-visible:outline-2 focus-visible:outline-secondary">
+                  <img src={url} alt={`Foto ${index + 1} de la propiedad`} className="w-full aspect-[4/3] object-cover" />
+                  <span className={`block py-2 text-xs font-semibold ${form.cover === url ? 'bg-secondary text-white' : 'text-secondary'}`}>{form.cover === url ? '✓ Portada seleccionada' : 'Elegir como portada'}</span>
+                </button>
+                <div className="flex items-center justify-between gap-1 px-1 py-1">
+                  <button type="button" disabled={saving || index === 0} onClick={() => moveFoto(index, -1)} aria-label={`Mover foto ${index + 1} antes`} className="min-w-[36px] min-h-[44px] rounded hover:bg-secondary/10 disabled:opacity-30">←</button>
+                  <span className="text-xs text-on-surface-variant">{index + 1} / {form.fotos.length}</span>
+                  <button type="button" disabled={saving || index === form.fotos.length - 1} onClick={() => moveFoto(index, 1)} aria-label={`Mover foto ${index + 1} después`} className="min-w-[36px] min-h-[44px] rounded hover:bg-secondary/10 disabled:opacity-30">→</button>
+                </div>
+                <button type="button" disabled={saving} onClick={() => removeFoto(url)} className="w-full min-h-[44px] text-error text-xs border-t border-outline-variant/30 hover:bg-error/5" aria-label={`Quitar foto ${index + 1}`}>Quitar foto</button>
               </div>
             ))}
           </div>
           <label className="inline-flex items-center gap-2 text-sm text-secondary font-medium cursor-pointer">
             <span className="material-symbols-outlined text-lg">add_photo_alternate</span>
             {uploading ? 'Subiendo…' : 'Agregar fotos'}
-            <input type="file" accept="image/*" multiple className="hidden" onChange={e => uploadFotos(e.target.files)} />
+            <input type="file" accept="image/*" multiple disabled={uploading || saving} className="hidden" onChange={e => { const files = Array.from(e.target.files || []); e.target.value = ''; if (files.length) uploadFotos(files); }} />
           </label>
         </div>
 
