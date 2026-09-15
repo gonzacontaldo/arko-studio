@@ -6,6 +6,7 @@ const MATTERPORT_URL = 'https://my.matterport.com/show/?m=coM5kSn424q&brand=0';
 // Ejemplo: https://www.youtube.com/watch?v=dQw4w9WgXcQ  →  'dQw4w9WgXcQ'
 const YT_HORIZONTAL = 'ni3x6uBh2ZA'; // Video landscape — portales y sitio web
 const YT_VERTICAL   = 'SAIckW_n0g0'; // Reel vertical    — Instagram / TikTok
+const YT_FPV        = 'FdnXaE2IYpw'; // Video de drone FPV — ID de YouTube
 
 // ─── Reemplazá esta URL con tu imagen de plano real ───────────────────────────
 const FLOOR_PLAN_IMAGE = 'https://static.tokkobroker.com/pictures/6811203_16941810600148600011027949836947230498386497061057409250758090562184505248578.jpg';
@@ -147,6 +148,25 @@ export default function InteractivePreview() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
             <VideoHorizontal videoId={YT_HORIZONTAL} />
             <VideoVertical   videoId={YT_VERTICAL} />
+          </div>
+        </div>
+
+        {/* ── Drone FPV ────────────────────────────────────────────────────── */}
+        <div className="space-y-5 mt-16 md:mt-24">
+          <div>
+            <SectionLabel>Drone FPV</SectionLabel>
+            <h3 className="font-headline font-extrabold text-2xl md:text-3xl text-locked">Recorré cada espacio en un solo vuelo</h3>
+            <p className="mt-3 text-on-surface-variant max-w-2xl leading-relaxed">
+              Un recorrido inmersivo y dinámico que conecta interiores y exteriores
+              para mostrar la propiedad desde una nueva perspectiva.
+            </p>
+          </div>
+          <div className="aspect-video w-full bg-stone-900 rounded-xl relative overflow-hidden border border-outline-variant/20 shadow-lg">
+            {YT_FPV ? (
+              <YoutubeEmbed videoId={YT_FPV} title="Recorrido con drone FPV — ARKO Studio" />
+            ) : (
+              <VideoPlaceholder icon="flight_takeoff" label="Próximamente: recorrido con drone FPV" />
+            )}
           </div>
         </div>
 
