@@ -9,6 +9,7 @@ import Producciones from '../admin/Producciones';
 import Clientes from '../admin/Clientes';
 import Agenda from '../admin/Agenda';
 import Procedimientos from '../admin/Procedimientos';
+import Finanzas from '../admin/Finanzas';
 import HubLogo from '../admin/HubLogo';
 import Seo from '../components/Seo';
 
@@ -18,6 +19,7 @@ const TABS = [
   { key: 'leads',        label: 'Leads',         icon: 'contacts' },
   { key: 'clientes',     label: 'Clientes',      icon: 'group'    },
   { key: 'produccion',   label: 'Producción',    icon: 'movie'    },
+  { key: 'finanzas', label: 'Finanzas', icon: 'account_balance_wallet' },
   { key: 'procedimientos', label: 'Procedimientos', icon: 'menu_book' },
 ];
 
@@ -54,12 +56,12 @@ export default function AdminPage() {
 
       {/* Tabs */}
       <div className="max-w-6xl mx-auto px-4 md:px-8 pt-6">
-        <div className="flex gap-2 mb-6">
+        <div className="flex gap-2 mb-6 overflow-x-auto pb-2">
           {TABS.map(t => (
             <button
               key={t.key}
               onClick={() => setTab(t.key)}
-              className={`flex items-center gap-2 font-headline font-bold text-xs uppercase tracking-widest px-4 py-2 rounded-full border transition-all ${
+              className={`flex shrink-0 items-center gap-2 font-headline font-bold text-xs uppercase tracking-widest px-4 py-2 rounded-full border transition-all ${
                 tab === t.key
                   ? 'bg-secondary text-on-secondary border-secondary'
                   : 'bg-transparent text-on-surface-variant border-outline-variant hover:border-secondary'
@@ -76,6 +78,7 @@ export default function AdminPage() {
           {tab === 'dashboard'  && <Dashboard onGo={setTab} />}
           {tab === 'agenda'     && <Agenda onGo={setTab} />}
           {tab === 'leads'      && <Leads />}
+          {tab === 'finanzas' && <Finanzas />}
           {tab === 'clientes'   && <Clientes />}
           {tab === 'produccion' && <Producciones />}
           {tab === 'procedimientos' && <Procedimientos />}

@@ -1,0 +1,49 @@
+.finances { color: #2d3435; }
+.fin-heading { display: flex; justify-content: space-between; align-items: center; gap: 1rem; margin-bottom: 1.25rem; flex-wrap: wrap; }
+.fin-heading h2 { font: 750 1.8rem 'Montserrat', sans-serif; letter-spacing: -.04em; margin: .25rem 0; }
+.finances h3 { font-size: .95rem; font-weight: 700; }
+.fin-eyebrow { font-size: .6rem; letter-spacing: .15em; color: #785a1a; font-weight: 700; }
+.fin-muted { font-size: .75rem; color: #5a6061; line-height: 1.6; }
+.fin-button { border: 1px solid #d5dcda; background: white; border-radius: .6rem; padding: .65rem 1rem; font-size: .8rem; font-weight: 600; transition: background .15s; }
+.fin-button:hover { background: #f0f3ef; }
+.fin-button:disabled, .fin-link:disabled { opacity: .5; cursor: not-allowed; }
+.fin-primary { background: #785a1a; border-color: #785a1a; color: #fff; }
+.fin-primary:hover { background: #624910; }
+.fin-link { font-size: .75rem; color: #785a1a; font-weight: 600; }
+.fin-link:hover { text-decoration: underline; }
+.finances button:focus-visible, .fin-dialog button:focus-visible, .finances summary:focus-visible { outline: 2px solid #785a1a; outline-offset: 3px; }
+.fin-rate { display: flex; align-items: center; gap: .6rem; background: #f0f2ef; border: 1px solid #e1e5df; padding: .7rem 1rem; border-radius: .6rem; font-size: .7rem; }
+.fin-tabs { display: flex; gap: 1.5rem; border-bottom: 1px solid #e1e5df; overflow-x: auto; margin: 1.3rem 0; }
+.fin-tabs button { white-space: nowrap; padding: .7rem 0; font-size: .8rem; color: #5a6061; border-bottom: 2px solid transparent; }
+.fin-tabs .active { color: #785a1a; font-weight: 700; border-color: #785a1a; }
+.fin-tabs button span { background: #ebe7dc; padding: .1rem .4rem; border-radius: .4rem; font-size: .65rem; margin-left: .4rem; }
+.fin-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; margin: 1.25rem 0; font-size: .8rem; }
+.fin-stats { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 1rem; }
+.fin-stat { border: 1px solid #dee4df; background: white; padding: 1.2rem; border-radius: .8rem; }
+.fin-stat p { font-size: .75rem; font-weight: 600; margin-bottom: .8rem; }
+.fin-stat strong { display: block; font-size: clamp(1rem, 2.2vw, 1.75rem); letter-spacing: -.035em; overflow-wrap: anywhere; font-variant-numeric: tabular-nums; }
+.fin-stat span { display: block; font-size: .65rem; color: #5a6061; margin-top: .5rem; }
+.fin-stat.income strong { color: #24745d; }.fin-stat.expense strong { color: #a55038; }
+.fin-stat.balance { background: #283e37; border-color: #283e37; color: white; }.fin-stat.balance span { color: #cad9d3; }
+.fin-panel { background: #fff; border: 1px solid #e0e5e1; border-radius: .8rem; padding: 1.25rem; }
+.fin-legend { display: flex; gap: 1rem; font-size: .65rem; justify-content: flex-end; margin-bottom: .7rem; }
+.fin-legend span { display: flex; align-items: center; gap: .3rem; }.fin-legend i { width: .5rem; height: .5rem; border-radius: 2px; }
+.fin-chart { display: flex; gap: .5rem; height: 180px; }
+.fin-chart-month { flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: center; }
+.fin-chart-bars { height: 145px; width: 100%; display: flex; gap: 3px; align-items: flex-end; justify-content: center; border-bottom: 1px solid #e0e5e1; background: repeating-linear-gradient(to top, transparent 0, transparent 35px, #f0f2ef 35px, #f0f2ef 36px); }
+.fin-chart-bars div { width: 30%; max-width: 19px; border-radius: 3px 3px 0 0; }
+.fin-chart .income, .fin-legend .income { background: #488575; }.fin-chart .expense, .fin-legend .expense { background: #d5a472; }
+.fin-chart-month button { font-size: .65rem; padding: .5rem .2rem; color: #5a6061; }.fin-chart-month button.selected { color: #785a1a; font-weight: 800; }
+.fin-list-row { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: .85rem 0; border-bottom: 1px solid #edf0ec; font-size: .8rem; }.fin-list-row:last-child { border-bottom: 0; }
+.fin-progress { height: 6px; background: #edf0ec; border-radius: 8px; overflow: hidden; }.fin-progress div { height: 100%; background: #488575; border-radius: 8px; }
+.fin-badge { display: inline-block; font-size: .62rem; font-weight: 600; background: #edf0ec; color: #5a6061; padding: .2rem .5rem; border-radius: .3rem; margin: .2rem 0; }
+.fin-badge.income { background: #e3f1e9; color: #23654c; }.fin-badge.expense { background: #f9e9e2; color: #963f29; }.fin-badge.pending { background: #fcf2d8; color: #795a16; }
+.fin-filters { display: grid; grid-template-columns: 1.5fr 1fr 1fr 1.2fr; gap: .6rem; }
+.fin-table { width: 100%; font-size: .75rem; border-collapse: collapse; }.fin-table th { text-align: left; font-size: .65rem; font-weight: 500; color: #5a6061; background: #f0f3ef; padding: .7rem; }.fin-table td { padding: .9rem .7rem; border-bottom: 1px solid #e6ebe5; font-variant-numeric: tabular-nums; }.fin-table tr:hover td { background: #f9faf8; }
+.fin-empty { padding: 3rem 1.5rem; text-align: center; color: #5a6061; font-size: .85rem; border: 1px dashed #cdd7d0; border-radius: .8rem; }
+.fin-note { font-size: .75rem; line-height: 1.6; color: #5a6061; background: #f0f3ef; padding: .8rem; border-radius: .6rem; }
+.fin-footer { font-size: .62rem; color: #5a6061; margin-top: 2rem; }.fin-footer a { text-decoration: underline; }
+.fin-dialog { border: 0; border-radius: 1rem; width: min(620px, calc(100vw - 2rem)); max-height: calc(100dvh - 3rem); padding: 1.7rem; background: #f9f9f9; color: #2d3435; box-shadow: 0 25px 100px #0003; }
+.fin-dialog::backdrop { background: #182b2477; backdrop-filter: blur(3px); }.fin-field { display: flex; flex-direction: column; gap: .4rem; font-size: .75rem; color: #5a6061; }.fin-field input:disabled,.fin-field select:disabled { opacity: .6; }.fin-icon { font-size: 1.5rem; width: 2rem; height: 2rem; }
+@media(max-width: 700px) { .fin-stats { gap: .5rem; }.fin-stat { padding: .8rem; }.fin-stat p { font-size: .65rem; }.fin-filters { grid-template-columns: 1fr 1fr; }.fin-rate { flex-wrap: wrap; }.fin-panel { padding: 1rem; }.fin-tabs { gap: 1rem; } }
+@media(max-width: 520px) { .fin-stats { grid-template-columns: 1fr; }.fin-stat strong { font-size: 1.5rem; }.fin-stat { padding: 1rem; } }
