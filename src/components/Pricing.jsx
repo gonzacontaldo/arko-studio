@@ -1,3 +1,4 @@
+import { SERVICES, SERVICE_BY_ID, PACKS, ADDONS } from './pricingData';
 import { useState, useEffect, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 
@@ -5,31 +6,6 @@ const MIN_M2  = 100;
 const MAX_M2  = 500;
 const STEP_M2 = 100;
 const WA_NUMBER = '5491176498888';
-
-// Servicios à la carte. base = precio hasta 100 m²; per100 = suma por cada 100 m² adicional.
-const SERVICES = [
-  { id: 'foto',   icon: 'photo_camera',   name: 'Fotografía HDR',  desc: 'Interiores y exteriores con edición HDR premium.',        base: 125000, per100: 25000 },
-  { id: 'tour',   icon: 'vrpano',         name: 'Tour virtual 360° 4K',  desc: 'Desarrollado en Kuula. Incluye 3 meses de hosting.',      base: 50000,  per100: 25000 },
-  { id: 'cine',   icon: 'movie',          name: 'Video cinematográfico', desc: 'Recorrido audiovisual profesional de 1 a 2 minutos.',     base: 125000, per100: 25000 },
-  { id: 'fpv',    icon: 'flight_takeoff', name: 'Video FPV',             desc: 'Vuelo inmersivo con drone FPV: recorrido continuo y dinámico.', base: 125000, per100: 25000 },
-  { id: 'reel',   icon: 'smartphone',     name: 'Reel para redes',       desc: 'Video vertical con agente inmobiliario para Instagram y TikTok.',      base: 125000, per100: 25000 },
-  { id: 'planos', icon: 'architecture',   name: 'Planos 2D',             desc: 'Plano esquemático de la propiedad. Dentro de un pack, a menor precio.', base: 50000, per100: 25000 },
-];
-
-const SERVICE_BY_ID = Object.fromEntries(SERVICES.map(s => [s.id, s]));
-
-// Packs con precio fijo. base = precio hasta 100 m²; per100 = suma por cada 100 m² adicional.
-const PACKS = [
-  { id: 'base',      name: 'Base',      tagline: 'Lo esencial para publicar.',            services: ['foto', 'planos', 'tour'],                 base: 175000, per100: 25000 },
-  { id: 'destacado', name: 'Destacado', tagline: 'Sumá un video en el formato que elijas.', services: ['foto', 'tour', 'planos'], videos: 1, base: 285000, per100: 50000, highlight: true },
-  { id: 'completo',  name: 'Completo',  tagline: 'Mostrá la propiedad con dos formatos de video.', services: ['foto', 'tour', 'planos'], videos: 2, base: 395000, per100: 50000 },
-];
-
-const ADDONS = [
-  { name: 'Transición día a noche', desc: 'Edición crepuscular del exterior.', price: 50000 },
-  { name: 'Tour en Matterport', desc: 'Genera un modelo 3D interactivo de la propiedad.', price: 50000 },
-  { name: 'Participación del broker inmobiliario', desc: 'El broker aparece en el video para presentar la propiedad.', price: 50000 },
-];
 
 const LOGISTICS = [
   {
@@ -84,11 +60,6 @@ export default function Pricing({ onOpenModal }) {
   }, [tipsOpen, logModal, closeTips]);
 
   const m2Label = m2 >= MAX_M2 ? `${fmt(MAX_M2)}+ m²` : `${fmt(m2)} m²`;
-
-  const packLink = (pack) => {
-    const text = `Hola, me interesa el pack ${pack.name} para una propiedad de ${m2Label}. ¿Me pasás un presupuesto?`;
-    return `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(text)}`;
-  };
 
   return (
     <>
@@ -202,9 +173,9 @@ export default function Pricing({ onOpenModal }) {
                   )}
                 </ul>
 
-                <a
-                  href={packLink(pack)}
-                  target="_blank" rel="noopener noreferrer"
+                <button
+                  type="button"
+                  onClick={() => onOpenModal({ pack: pack.id, m2 })}
                   className={`w-full py-3 font-headline font-bold text-xs uppercase tracking-widest rounded-xl transition-all duration-150 active:scale-[0.98] flex items-center justify-center gap-2 ${
                     pack.highlight
                       ? 'editorial-gradient text-on-secondary shadow-md hover:opacity-90'
@@ -212,7 +183,7 @@ export default function Pricing({ onOpenModal }) {
                   }`}
                 >
                   Solicitar
-                </a>
+                </button>
               </div>
             ))}
           </div>
@@ -265,14 +236,14 @@ export default function Pricing({ onOpenModal }) {
               </p>
             </div>
             <div className="md:w-72 flex-shrink-0">
-              <a
-                href={`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent('Hola, me interesa una producción. ¿Me pasás un presupuesto?')}`}
-                target="_blank" rel="noopener noreferrer"
+              <button
+                type="button"
+                onClick={onOpenModal}
                 className="w-full py-4 editorial-gradient text-on-secondary font-headline font-bold text-sm uppercase tracking-widest rounded-xl transition-all duration-150 hover:opacity-90 active:scale-[0.98] shadow-md mb-3 flex items-center justify-center gap-2"
               >
                 <svg viewBox="0 0 24 24" className="w-4 h-4 fill-current shrink-0" xmlns="http://www.w3.org/2000/svg"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
                 Quiero mi presupuesto
-              </a>
+              </button>
               <p className="text-[11px] text-on-surface-variant text-center leading-relaxed">
                 Te respondemos en menos de 24 hs.
               </p>
