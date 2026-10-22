@@ -8,7 +8,7 @@ const WA_NUMBER = '5491176498888';
 
 // Servicios à la carte. base = precio hasta 100 m²; per100 = suma por cada 100 m² adicional.
 const SERVICES = [
-  { id: 'foto',   icon: 'photo_camera',   name: 'Fotografía editorial',  desc: 'Interiores y exteriores con edición HDR premium.',        base: 125000, per100: 25000 },
+  { id: 'foto',   icon: 'photo_camera',   name: 'Fotografía HDR',  desc: 'Interiores y exteriores con edición HDR premium.',        base: 125000, per100: 25000 },
   { id: 'tour',   icon: 'vrpano',         name: 'Tour virtual 360° 4K',  desc: 'Desarrollado en Kuula. Incluye 3 meses de hosting.',      base: 50000,  per100: 25000 },
   { id: 'cine',   icon: 'movie',          name: 'Video cinematográfico', desc: 'Recorrido audiovisual profesional de 1 a 2 minutos.',     base: 125000, per100: 25000 },
   { id: 'fpv',    icon: 'flight_takeoff', name: 'Video FPV',             desc: 'Vuelo inmersivo con drone FPV: recorrido continuo y dinámico.', base: 125000, per100: 25000 },
@@ -21,14 +21,13 @@ const SERVICE_BY_ID = Object.fromEntries(SERVICES.map(s => [s.id, s]));
 // Packs con precio fijo. base = precio hasta 100 m²; per100 = suma por cada 100 m² adicional.
 const PACKS = [
   { id: 'base',      name: 'Base',      tagline: 'Lo esencial para publicar.',            services: ['foto', 'planos', 'tour'],                 base: 175000, per100: 25000 },
-  { id: 'destacado', name: 'Destacado', tagline: 'Sumá impacto aéreo inmersivo.',         services: ['foto', 'planos', 'tour', 'fpv'],          base: 285000, per100: 50000, highlight: true },
-  { id: 'redes',     name: 'Redes',     tagline: 'Pensado para performance en redes.',    services: ['foto', 'planos', 'reel', 'cine'],         base: 350000, per100: 50000 },
-  { id: 'completo',  name: 'Completo',  tagline: 'La producción integral, sin dejar nada afuera.', services: ['foto', 'planos', 'tour', 'fpv', 'cine'], base: 395000, per100: 50000 },
+  { id: 'destacado', name: 'Destacado', tagline: 'Sumá un video en el formato que elijas.', services: ['foto', 'tour', 'planos'], videos: 1, base: 285000, per100: 50000, highlight: true },
+  { id: 'completo',  name: 'Completo',  tagline: 'Mostrá la propiedad con dos formatos de video.', services: ['foto', 'tour', 'planos'], videos: 2, base: 395000, per100: 50000 },
 ];
 
 const ADDONS = [
-  { name: 'Transición día a noche',                 desc: 'Edición crepuscular del exterior.' },
-  { name: 'Tour en Matterport',        desc: 'Genera un modelo 3D interactivo de la propiedad.' },
+  { name: 'Transición día a noche', desc: 'Edición crepuscular del exterior.', price: 50000 },
+  { name: 'Tour en Matterport', desc: 'Genera un modelo 3D interactivo de la propiedad.', price: 50000 },
 ];
 
 const LOGISTICS = [
@@ -159,7 +158,7 @@ export default function Pricing({ onOpenModal }) {
             <h3 className="font-headline font-extrabold text-xl md:text-2xl text-locked">Packs</h3>
             <span className="text-xs text-on-surface-variant">Combinaciones con mejor precio</span>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {PACKS.map(pack => (
               <div
                 key={pack.id}
@@ -189,6 +188,17 @@ export default function Pricing({ onOpenModal }) {
                       {SERVICE_BY_ID[id].name}
                     </li>
                   ))}
+                  {pack.videos && (
+                    <li className="flex items-start gap-2 text-xs text-on-surface">
+                      <span className="material-symbols-outlined text-secondary text-base">check</span>
+                      <span>
+                        {pack.videos === 1 ? '1 video a elección' : '2 videos a elección'}
+                        <span className="block text-on-surface-variant leading-relaxed mt-1">
+                          Cinematográfico, FPV o reel para redes.
+                        </span>
+                      </span>
+                    </li>
+                  )}
                 </ul>
 
                 <a
@@ -211,11 +221,13 @@ export default function Pricing({ onOpenModal }) {
         <div className="mt-16 bg-white rounded-2xl border border-outline-variant/40 shadow-sm overflow-hidden">
           {/* Add-ons */}
           <div className="p-8 md:p-12 border-b border-outline-variant/20">
-            <p className="text-xs uppercase tracking-widest text-on-surface-variant font-medium mb-6">Add-ons opcionales</p>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <p className="text-xs uppercase tracking-widest text-on-surface-variant font-medium mb-2">Add-ons opcionales</p>
+            <p className="text-sm text-on-surface-variant mb-6">Para videos cinematográficos o reels. Precio por adicional, IVA incluido.</p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {ADDONS.map(addon => (
                 <div key={addon.name} className="px-5 py-4 bg-surface-container-low/60 rounded-xl">
                   <p className="text-sm font-medium text-on-surface mb-0.5">{addon.name}</p>
+                  <p className="text-lg font-bold text-secondary font-headline mb-1">$ {fmt(addon.price)}</p>
                   <p className="text-xs text-on-surface-variant">{addon.desc}</p>
                 </div>
               ))}
@@ -366,3 +378,4 @@ export default function Pricing({ onOpenModal }) {
     </>
   );
 }
+
