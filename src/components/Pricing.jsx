@@ -28,6 +28,7 @@ const PACKS = [
 const ADDONS = [
   { name: 'Transición día a noche', desc: 'Edición crepuscular del exterior.', price: 50000 },
   { name: 'Tour en Matterport', desc: 'Genera un modelo 3D interactivo de la propiedad.', price: 50000 },
+  { name: 'Participación del broker inmobiliario', desc: 'El broker aparece en el video para presentar la propiedad.', price: 50000 },
 ];
 
 const LOGISTICS = [
@@ -223,7 +224,7 @@ export default function Pricing({ onOpenModal }) {
           <div className="p-8 md:p-12 border-b border-outline-variant/20">
             <p className="text-xs uppercase tracking-widest text-on-surface-variant font-medium mb-2">Add-ons opcionales</p>
             <p className="text-sm text-on-surface-variant mb-6">Para videos cinematográficos o reels. Precio por adicional, IVA incluido.</p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
               {ADDONS.map(addon => (
                 <div key={addon.name} className="px-5 py-4 bg-surface-container-low/60 rounded-xl">
                   <p className="text-sm font-medium text-on-surface mb-0.5">{addon.name}</p>
@@ -378,4 +379,3 @@ export default function Pricing({ onOpenModal }) {
     </>
   );
 }
-
