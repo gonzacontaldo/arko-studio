@@ -10,8 +10,8 @@ export function cleanText(value,max,label) {
 export function validateRequest(input,catalog) {
  const name=cleanText(input.name,120,'tu nombre'),email=cleanText(input.email,254,'tu email').toLowerCase();
  if(!/^[^\s@,;<>]+@[^\s@,;<>]+\.[^\s@,;<>]+$/.test(email))throw new FlowError('Ingresá un email válido.');
- const zone=cleanText(input.zone,200,'la zona'),timing=cleanText(input.timing,80,'el plazo');
- if(!TIMINGS.includes(timing))throw new FlowError('Seleccioná un plazo de producción.');
+ const zone=cleanText(input.zone,200,'la zona'),timing=input.timing==null||input.timing===''?'A definir al reservar':cleanText(input.timing,80,'el plazo');
+ if(timing!=='A definir al reservar'&&!TIMINGS.includes(timing))throw new FlowError('Seleccioná un plazo de producción.');
  const m2=Number(input.m2);if(!Number.isFinite(m2)||m2<1||m2>100000)throw new FlowError('Ingresá una superficie entre 1 y 100.000 m².');
  const pack=catalog.packs.find(p=>p.id===input.pack);if(!pack)throw new FlowError('Seleccioná un pack válido.');
  const videos=input.videos||[],addons=input.addons||[];

@@ -3,8 +3,7 @@ import { PACKS as DEFAULT_PACKS, SERVICE_BY_ID as DEFAULT_SERVICES, ADDONS as DE
 import { useCommercialConfig, commercialApi } from '../lib/commercial';
 
 const VIDEOS = ['cine', 'fpv', 'reel'];
-const TIMING = ['Esta semana', 'En las próximas 2 semanas', 'Dentro de un mes', 'Más adelante', 'Todavía no tengo fecha'];
-const emptyForm = () => ({ pack: '', m2: '', name: '', email: '', zone: '', timing: '', videos: [], addons: [], message: '' });
+const emptyForm = () => ({ pack: '', m2: '', name: '', email: '', zone: '', videos: [], addons: [], message: '' });
 const priceFor = (pack, m2) => pack.base + pack.per100 * Math.max(0, Math.ceil((Number(m2) - 100) / 100));
 const money = n => `$ ${n.toLocaleString('es-AR')}`;
 
@@ -16,6 +15,8 @@ export default function BudgetModal({ isOpen, onClose, initialSelection }) {
   const requestKey = useRef(crypto.randomUUID());
   const [sending, setSending] = useState(false);
   const [submitError, setSubmitError] = useState('');
+  const [reservationUrl, setReservationUrl] = useState('');
+  useEffect(() => { if (reservationUrl) { panel.current?.scrollTo(0, 0); panel.current?.focus(); } }, [reservationUrl]);
   const [form, setForm] = useState(emptyForm);
   const [errors, setErrors] = useState({});
   const panel = useRef(null);
@@ -62,7 +63,6 @@ export default function BudgetModal({ isOpen, onClose, initialSelection }) {
     if (!form.name.trim()) next.name = 'Ingresá tu nombre.';
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())) next.email = 'Ingresá un email válido.';
     if (!form.zone.trim()) next.zone = 'Indicá el barrio o localidad de la propiedad.';
-    if (!TIMING.includes(form.timing)) next.timing = 'Seleccioná cuándo querés producir.';
     if (selected?.videos && form.videos.length !== selected.videos) next.videos = `Elegí ${selected.videos} ${selected.videos === 1 ? 'video' : 'videos'}.`;
     setErrors(next);
     if (Object.keys(next).length) {
@@ -73,7 +73,8 @@ export default function BudgetModal({ isOpen, onClose, initialSelection }) {
       setSending(true); setSubmitError('');
       try {
         const result = await commercialApi('submit', { method:'POST', body:{ ...form, website:e.currentTarget.elements.website.value, requestKey:requestKey.current } });
-        window.location.assign('/presupuesto#' + result.token);
+        setReservationUrl('/presupuesto#' + result.token);
+        setSending(false);
       } catch (error) { setSubmitError(error.message); setSending(false); }
       return;
     }
@@ -81,7 +82,7 @@ export default function BudgetModal({ isOpen, onClose, initialSelection }) {
       '¡Hola! Quiero solicitar un presupuesto para una producción.',
       `Nombre: ${form.name.trim()}`, `Email: ${form.email.trim()}`,
       `Pack: ${selected.name}`, `Superficie: ${form.m2} m²`,
-      `Zona de la propiedad: ${form.zone.trim()}`, `Plazo de producción: ${form.timing}`,
+      `Zona de la propiedad: ${form.zone.trim()}`,
       form.videos.length ? `Videos: ${form.videos.map(id => SERVICE_BY_ID[id].name).join(', ')}` : '',
       form.addons.length ? `Adicionales: ${form.addons.join(', ')} (${ADDONS.filter(a => form.addons.includes(a.name)).map(a => money(a.price)).join(' / ')})` : '',
       `Precio estimado: ${money(estimate)} (IVA incluido; sujeto a confirmación según locación y características del inmueble).`,
@@ -98,10 +99,15 @@ export default function BudgetModal({ isOpen, onClose, initialSelection }) {
       <div className="absolute inset-0 bg-on-surface/60 backdrop-blur-sm" />
       <div ref={panel} role="dialog" aria-modal="true" aria-labelledby="budget-title" tabIndex={-1} className="relative bg-white w-full max-w-4xl max-h-[90dvh] overflow-y-auto rounded-2xl shadow-2xl" onClick={e => e.stopPropagation()}>
         <div className="editorial-gradient px-5 md:px-8 py-6 flex justify-between items-start gap-4">
-          <div><p className="text-white/70 text-xs uppercase tracking-widest mb-2">Arko Studio</p><h2 id="budget-title" className="font-headline font-extrabold text-2xl text-white">Armá tu producción</h2><p className="text-white/80 text-sm mt-2">Elegí tu pack y contanos sobre la propiedad para recibir una propuesta.</p></div>
+          <div><p className="text-white/70 text-xs uppercase tracking-widest mb-2">Arko Studio</p><h2 id="budget-title" className="font-headline font-extrabold text-2xl text-white">{reservationUrl ? 'Recibimos tu consulta' : 'Armá tu producción'}</h2><p className="text-white/80 text-sm mt-2">{reservationUrl ? 'El siguiente paso es elegir tu semana.' : 'Elegí tu pack y contanos sobre la propiedad para recibir una propuesta.'}</p></div>
           <button type="button" onClick={onClose} aria-label="Cerrar" className="text-white p-2"><span className="material-symbols-outlined">close</span></button>
         </div>
-        <form onSubmit={submit} noValidate className="p-5 md:p-8 space-y-7">
+        {reservationUrl ? <section className="p-5 md:p-8 space-y-5" aria-live="polite">
+          <p>Gracias, {form.name.trim()}. Vamos a enviarte el presupuesto a <strong>{form.email.trim()}</strong>. Podés elegir tu semana de producción ahora o volver desde el enlace del mail.</p>
+          <a href={reservationUrl} className="block text-center editorial-gradient text-white font-bold text-sm py-4 rounded-lg">Elegir semana y reservar</a>
+          <p className="text-sm text-on-surface-variant">El cupo se retiene por 72 horas una vez que elegís la semana. La reserva se confirma con la seña de $15.000.</p>
+          <button type="button" onClick={onClose} className="text-sm underline text-secondary">Seguir recorriendo la web</button>
+        </section> : <form onSubmit={submit} noValidate className="p-5 md:p-8 space-y-7">
           <fieldset><legend className="font-headline font-bold mb-3">1. Elegí tu pack *</legend>
             <div className="grid md:grid-cols-3 gap-3">
               {PACKS.map(pack => <label key={pack.id} className={`relative border-2 rounded-xl p-4 cursor-pointer ${form.pack === pack.id ? 'border-secondary bg-secondary/5' : 'border-outline-variant/50'}`}>
@@ -119,15 +125,14 @@ export default function BudgetModal({ isOpen, onClose, initialSelection }) {
             <div><label htmlFor="budget-name" className="block text-sm font-semibold mb-2">Nombre completo *</label><input {...fieldProps('name')} autoComplete="name" maxLength={120} placeholder="Tu nombre y apellido" className={inputClass} />{error('name')}</div>
             <div><label htmlFor="budget-email" className="block text-sm font-semibold mb-2">Email *</label><input {...fieldProps('email')} type="email" autoComplete="email" maxLength={254} placeholder="tu@email.com" className={inputClass} />{error('email')}</div>
             <div><label htmlFor="budget-zone" className="block text-sm font-semibold mb-2">Zona de la propiedad *</label><input {...fieldProps('zone')} maxLength={200} placeholder="Ej: Palermo, CABA / Nordelta, Tigre" className={inputClass} />{error('zone')}</div>
-            <div><label htmlFor="budget-timing" className="block text-sm font-semibold mb-2">¿Cuándo querés hacer la producción? *</label><select {...fieldProps('timing')} className={inputClass}><option value="">Seleccioná un plazo</option>{TIMING.map(t => <option key={t}>{t}</option>)}</select>{error('timing')}</div>
           </div></fieldset>
-          <div><label htmlFor="budget-message" className="block text-sm font-semibold mb-2">Comentarios (opcional)</label><textarea id="budget-message" value={form.message} onChange={e => change('message', e.target.value)} rows={3} maxLength={2000} placeholder="Tipo de propiedad, fecha tentativa u otros detalles…" className={inputClass} /></div>
+          <div><label htmlFor="budget-message" className="block text-sm font-semibold mb-2">Comentarios (opcional)</label><textarea id="budget-message" value={form.message} onChange={e => change('message', e.target.value)} rows={3} maxLength={2000} placeholder="Tipo de propiedad u otros detalles…" className={inputClass} /></div>
           <div className="bg-surface rounded-xl p-4"><p className="font-bold">{estimate !== null ? `Total estimado: ${money(estimate)}` : 'Elegí un pack e ingresá los m² para ver el total.'}</p><p className="text-xs text-on-surface-variant mt-2">IVA incluido. El valor final se confirma según locación, terreno, amenities y requerimientos de producción. La fecha está sujeta a disponibilidad.</p></div>
           <input name="website" tabIndex={-1} autoComplete="off" aria-hidden="true" className="hidden" />
           {submitError && <p role="alert" className="text-error text-sm">{submitError}</p>}
-          <button type="submit" disabled={sending || config.loading} className="w-full editorial-gradient text-white font-bold text-sm py-4 rounded-lg disabled:opacity-50">{sending ? 'Guardando tu consulta…' : config.enabled ? 'Recibir presupuesto y elegir semana' : 'Continuar por WhatsApp'}</button>
-          <p className="text-center text-on-surface-variant text-xs">{config.enabled ? 'Guardaremos tu solicitud y te enviaremos la propuesta por email. Podrás elegir tu semana desde la siguiente pantalla. Los recordatorios se pueden detener desde cada mensaje.' : 'Se abrirá WhatsApp con todos los datos y el precio estimado. Enviá el mensaje para que recibamos tu consulta. Usaremos tu email para contactarte sobre este pedido.'}</p>
-        </form>
+          <button type="submit" disabled={sending || config.loading} className="w-full editorial-gradient text-white font-bold text-sm py-4 rounded-lg disabled:opacity-50">{sending ? 'Guardando tu consulta…' : config.enabled ? 'Enviar solicitud de presupuesto' : 'Continuar por WhatsApp'}</button>
+          <p className="text-center text-on-surface-variant text-xs">{config.enabled ? 'Guardaremos tu solicitud y te enviaremos la propuesta por email. Al terminar, te mostraremos un botón para elegir tu semana. Los recordatorios se pueden detener desde cada mensaje.' : 'Se abrirá WhatsApp con todos los datos y el precio estimado. Enviá el mensaje para que recibamos tu consulta. Usaremos tu email para contactarte sobre este pedido.'}</p>
+        </form>}
       </div>
     </div>
   );

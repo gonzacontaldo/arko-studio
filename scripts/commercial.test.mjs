@@ -101,3 +101,10 @@ test('Mercado Pago return parameters do not alter the private quote token',async
  for(const suffix of ['', '?collection_id=null&status=null', '&baja=1', '?payment_id=123&status=approved'])assert.equal(quoteId(quoteTokenFromHash('#'+token+suffix)),quoteId(token));
  assert.equal(quoteTokenFromHash(''),'');
 });
+
+test('quote submission does not require a production date before choosing a week',()=>{
+ const {timing,...withoutTiming}=request;
+ assert.equal(validateRequest(withoutTiming,catalog).timing,'A definir al reservar');
+ assert.equal(validateRequest({...withoutTiming,timing:''},catalog).timing,'A definir al reservar');
+ assert.equal(validateRequest(request,catalog).timing,timing);
+});
