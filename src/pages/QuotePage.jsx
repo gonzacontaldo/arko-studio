@@ -1,11 +1,12 @@
 import {useEffect,useState} from 'react';
 import {commercialApi} from '../lib/commercial';
 import Seo from '../components/Seo';
+import {quoteTokenFromHash} from '../lib/quoteLink';
 const money=n=>`$ ${Number(n).toLocaleString('es-AR')}`;
 const date=v=>new Date(v).toLocaleString('es-AR',{timeZone:'America/Argentina/Buenos_Aires',dateStyle:'medium',timeStyle:'short'});
 const week=v=>{const start=new Date(`${v}T12:00:00Z`),end=new Date(start);end.setUTCDate(start.getUTCDate()+4);return `${start.toLocaleDateString('es-AR',{timeZone:'UTC'})} al ${end.toLocaleDateString('es-AR',{timeZone:'UTC'})}`;};
 export default function QuotePage(){
- const [token]=useState(()=>window.location.hash.slice(1).split('&')[0]);
+ const [token]=useState(()=>quoteTokenFromHash(window.location.hash));
  const [data,setData]=useState(null),[error,setError]=useState(''),[busy,setBusy]=useState(false),[unsubscribed,setUnsubscribed]=useState(false),[tick,setTick]=useState(Date.now());
  const [accept,setAccept]=useState(false);
  const load=async()=>{const result=await commercialApi('quote',{token});setData(result);};

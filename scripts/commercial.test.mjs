@@ -94,3 +94,10 @@ test('manual reply handling is explicit and defaults to webhook',async()=>{
  try{delete process.env.COMMERCIAL_REPLY_MODE;assert.equal(readiness().replyMode,'webhook');process.env.COMMERCIAL_REPLY_MODE='manual';assert.equal(readiness().replyMode,'manual');process.env.COMMERCIAL_REPLY_MODE='typo';assert.equal(readiness().replyMode,'webhook');}
  finally{if(previous===undefined)delete process.env.COMMERCIAL_REPLY_MODE;else process.env.COMMERCIAL_REPLY_MODE=previous;}
 });
+
+test('Mercado Pago return parameters do not alter the private quote token',async()=>{
+ const {quoteTokenFromHash}=await import('../src/lib/quoteLink.js');
+ const token=quoteToken(randomUUID());
+ for(const suffix of ['', '?collection_id=null&status=null', '&baja=1', '?payment_id=123&status=approved'])assert.equal(quoteId(quoteTokenFromHash('#'+token+suffix)),quoteId(token));
+ assert.equal(quoteTokenFromHash(''),'');
+});
