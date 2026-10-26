@@ -7,6 +7,7 @@ const PortfolioPage = lazy(() => import('./pages/PortfolioPage'));
 const AdminPage = lazy(() => import('./pages/AdminPage'));
 const EjemploPage = lazy(() => import('./pages/EjemploPage'));
 const ServicePage = lazy(() => import('./pages/ServicePage'));
+const QuotePage = lazy(() => import('./pages/QuotePage'));
 
 function HashScroll() {
   const { pathname, hash } = useLocation();
@@ -48,6 +49,7 @@ export default function App() {
           <Route path="/:serviceSlug" element={<ServicePage />} />
           <Route path="/ejemplo" element={<EjemploPage />} />
           <Route path="/admin" element={<AdminPage />} />
+          <Route path="/presupuesto" element={<QuotePage />} />
         </Routes>
       </Suspense>
       <SpeedInsights />

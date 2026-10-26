@@ -1,4 +1,5 @@
-import { SERVICES, SERVICE_BY_ID, PACKS, ADDONS } from './pricingData';
+import { SERVICES as DEFAULT_SERVICES, PACKS as DEFAULT_PACKS, ADDONS as DEFAULT_ADDONS } from './pricingData';
+import { useCommercialConfig } from '../lib/commercial';
 import { useState, useEffect, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 
@@ -39,6 +40,11 @@ function priceFor(item, m2) {
 }
 
 export default function Pricing({ onOpenModal }) {
+  const config = useCommercialConfig();
+  const SERVICES = config.catalog?.services || DEFAULT_SERVICES;
+  const PACKS = config.catalog?.packs || DEFAULT_PACKS;
+  const ADDONS = config.catalog?.addons || DEFAULT_ADDONS;
+  const SERVICE_BY_ID = Object.fromEntries(SERVICES.map(s => [s.id, s]));
   const [m2, setM2] = useState(MIN_M2);
 
   const [tipsOpen, setTipsOpen] = useState(false);

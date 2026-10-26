@@ -31,3 +31,6 @@ Thumbs.db
 
 # Vite cache
 .vite/
+
+# Local development databases and scratch files
+work/

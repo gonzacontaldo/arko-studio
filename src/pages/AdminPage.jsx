@@ -10,12 +10,14 @@ import Clientes from '../admin/Clientes';
 import Agenda from '../admin/Agenda';
 import Procedimientos from '../admin/Procedimientos';
 import Finanzas from '../admin/Finanzas';
+import Commercial from '../admin/Commercial';
 import HubLogo from '../admin/HubLogo';
 import Seo from '../components/Seo';
 
 const TABS = [
   { key: 'dashboard',    label: 'Inicio',        icon: 'dashboard' },
   { key: 'agenda',       label: 'Agenda',        icon: 'calendar_month' },
+  { key: 'commercial', label: 'Consultas y reservas', icon: 'event_available' },
   { key: 'leads',        label: 'Leads',         icon: 'contacts' },
   { key: 'clientes',     label: 'Clientes',      icon: 'group'    },
   { key: 'produccion',   label: 'Producción',    icon: 'movie'    },
@@ -77,6 +79,7 @@ export default function AdminPage() {
         <div className="bg-surface rounded-2xl border border-outline-variant/40 shadow-sm p-6 md:p-8 mb-12">
           {tab === 'dashboard'  && <Dashboard onGo={setTab} />}
           {tab === 'agenda'     && <Agenda onGo={setTab} />}
+          {tab === 'commercial' && <Commercial />}
           {tab === 'leads'      && <Leads />}
           {tab === 'finanzas' && <Finanzas />}
           {tab === 'clientes'   && <Clientes />}

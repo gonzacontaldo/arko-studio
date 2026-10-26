@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
-import { PACKS, SERVICE_BY_ID, ADDONS } from './pricingData';
+import { PACKS as DEFAULT_PACKS, SERVICE_BY_ID as DEFAULT_SERVICES, ADDONS as DEFAULT_ADDONS } from './pricingData';
+import { useCommercialConfig, commercialApi } from '../lib/commercial';
 
 const VIDEOS = ['cine', 'fpv', 'reel'];
 const TIMING = ['Esta semana', 'En las próximas 2 semanas', 'Dentro de un mes', 'Más adelante', 'Todavía no tengo fecha'];
@@ -8,13 +9,20 @@ const priceFor = (pack, m2) => pack.base + pack.per100 * Math.max(0, Math.ceil((
 const money = n => `$ ${n.toLocaleString('es-AR')}`;
 
 export default function BudgetModal({ isOpen, onClose, initialSelection }) {
+  const config = useCommercialConfig();
+  const PACKS = config.catalog?.packs || DEFAULT_PACKS;
+  const ADDONS = config.catalog?.addons || DEFAULT_ADDONS;
+  const SERVICE_BY_ID = config.catalog ? Object.fromEntries(config.catalog.services.map(s => [s.id, s])) : DEFAULT_SERVICES;
+  const requestKey = useRef(crypto.randomUUID());
+  const [sending, setSending] = useState(false);
+  const [submitError, setSubmitError] = useState('');
   const [form, setForm] = useState(emptyForm);
   const [errors, setErrors] = useState({});
   const panel = useRef(null);
   const selected = PACKS.find(p => p.id === form.pack);
   const canAddExtras = form.videos.some(id => id === 'cine' || id === 'reel');
   const validArea = Number(form.m2) > 0 && Number.isFinite(Number(form.m2));
-  const estimate = selected && validArea ? priceFor(selected, form.m2) + form.addons.length * 50000 : null;
+  const estimate = selected && validArea ? priceFor(selected, form.m2) + ADDONS.filter(a => form.addons.includes(a.name)).reduce((sum, a) => sum + a.price, 0) : null;
 
   useEffect(() => {
     if (!isOpen) return;
@@ -41,11 +49,12 @@ export default function BudgetModal({ isOpen, onClose, initialSelection }) {
 
   if (!isOpen) return null;
   const change = (field, value) => {
+    requestKey.current = crypto.randomUUID();
     setForm(prev => ({ ...prev, [field]: value, ...(field === 'pack' ? { videos: [], addons: [] } : {}), ...(field === 'videos' && !value.some(id => id === 'cine' || id === 'reel') ? { addons: [] } : {}) }));
     setErrors(prev => ({ ...prev, [field]: undefined }));
   };
   const toggle = (field, value) => change(field, form[field].includes(value) ? form[field].filter(v => v !== value) : [...form[field], value]);
-  const submit = e => {
+  const submit = async e => {
     e.preventDefault();
     const next = {};
     if (!selected) next.pack = 'Elegí un pack.';
@@ -60,13 +69,21 @@ export default function BudgetModal({ isOpen, onClose, initialSelection }) {
       panel.current?.querySelector(`[name="${Object.keys(next)[0]}"]`)?.focus();
       return;
     }
+    if (config.enabled) {
+      setSending(true); setSubmitError('');
+      try {
+        const result = await commercialApi('submit', { method:'POST', body:{ ...form, website:e.currentTarget.elements.website.value, requestKey:requestKey.current } });
+        window.location.assign('/presupuesto#' + result.token);
+      } catch (error) { setSubmitError(error.message); setSending(false); }
+      return;
+    }
     const text = [
       '¡Hola! Quiero solicitar un presupuesto para una producción.',
       `Nombre: ${form.name.trim()}`, `Email: ${form.email.trim()}`,
       `Pack: ${selected.name}`, `Superficie: ${form.m2} m²`,
       `Zona de la propiedad: ${form.zone.trim()}`, `Plazo de producción: ${form.timing}`,
       form.videos.length ? `Videos: ${form.videos.map(id => SERVICE_BY_ID[id].name).join(', ')}` : '',
-      form.addons.length ? `Adicionales: ${form.addons.join(', ')} (${money(50000)} cada uno)` : '',
+      form.addons.length ? `Adicionales: ${form.addons.join(', ')} (${ADDONS.filter(a => form.addons.includes(a.name)).map(a => money(a.price)).join(' / ')})` : '',
       `Precio estimado: ${money(estimate)} (IVA incluido; sujeto a confirmación según locación y características del inmueble).`,
       form.message.trim() ? `Comentarios: ${form.message.trim()}` : '',
     ].filter(Boolean).join('\n');
@@ -97,7 +114,7 @@ export default function BudgetModal({ isOpen, onClose, initialSelection }) {
           </fieldset>
           <div><label htmlFor="budget-m2" className="block text-sm font-bold mb-2">Superficie de la propiedad (m²) *</label><input {...fieldProps('m2')} type="number" min="1" step="any" placeholder="Ej: 150" className={inputClass} />{error('m2')}<p className="text-xs text-on-surface-variant mt-2">El precio se calcula por tramos de 100 m², redondeando al tramo siguiente.</p></div>
           {!!selected?.videos && <fieldset><legend className="font-bold text-sm mb-3">Elegí {selected.videos} {selected.videos === 1 ? 'video' : 'videos'} *</legend><div className="flex flex-wrap gap-3">{VIDEOS.map(id => <label key={id} className="border border-outline-variant rounded-lg p-3 text-sm flex gap-2 items-center"><input type="checkbox" name="videos" checked={form.videos.includes(id)} disabled={!form.videos.includes(id) && form.videos.length >= selected.videos} onChange={() => toggle('videos', id)} className="accent-secondary" />{SERVICE_BY_ID[id].name}</label>)}</div>{error('videos')}</fieldset>}
-          {canAddExtras && <fieldset><legend className="font-bold text-sm mb-1">Adicionales opcionales</legend><p className="text-xs text-on-surface-variant mb-3">Para videos cinematográficos o reels. {money(50000)} cada uno.</p>{ADDONS.map(addon => <label key={addon.name} className="flex gap-3 items-start py-2 text-sm"><input type="checkbox" checked={form.addons.includes(addon.name)} onChange={() => toggle('addons', addon.name)} className="accent-secondary mt-1" /><span>{addon.name} <strong className="text-secondary">+ {money(addon.price)}</strong></span></label>)}</fieldset>}
+          {canAddExtras && <fieldset><legend className="font-bold text-sm mb-1">Adicionales opcionales</legend><p className="text-xs text-on-surface-variant mb-3">Para videos cinematográficos o reels. Precios por adicional.</p>{ADDONS.map(addon => <label key={addon.name} className="flex gap-3 items-start py-2 text-sm"><input type="checkbox" checked={form.addons.includes(addon.name)} onChange={() => toggle('addons', addon.name)} className="accent-secondary mt-1" /><span>{addon.name} <strong className="text-secondary">+ {money(addon.price)}</strong></span></label>)}</fieldset>}
           <fieldset><legend className="font-headline font-bold mb-4">2. Contanos sobre vos y la propiedad</legend><div className="grid md:grid-cols-2 gap-4">
             <div><label htmlFor="budget-name" className="block text-sm font-semibold mb-2">Nombre completo *</label><input {...fieldProps('name')} autoComplete="name" maxLength={120} placeholder="Tu nombre y apellido" className={inputClass} />{error('name')}</div>
             <div><label htmlFor="budget-email" className="block text-sm font-semibold mb-2">Email *</label><input {...fieldProps('email')} type="email" autoComplete="email" maxLength={254} placeholder="tu@email.com" className={inputClass} />{error('email')}</div>
@@ -106,8 +123,10 @@ export default function BudgetModal({ isOpen, onClose, initialSelection }) {
           </div></fieldset>
           <div><label htmlFor="budget-message" className="block text-sm font-semibold mb-2">Comentarios (opcional)</label><textarea id="budget-message" value={form.message} onChange={e => change('message', e.target.value)} rows={3} maxLength={2000} placeholder="Tipo de propiedad, fecha tentativa u otros detalles…" className={inputClass} /></div>
           <div className="bg-surface rounded-xl p-4"><p className="font-bold">{estimate !== null ? `Total estimado: ${money(estimate)}` : 'Elegí un pack e ingresá los m² para ver el total.'}</p><p className="text-xs text-on-surface-variant mt-2">IVA incluido. El valor final se confirma según locación, terreno, amenities y requerimientos de producción. La fecha está sujeta a disponibilidad.</p></div>
-          <button type="submit" className="w-full editorial-gradient text-white font-bold text-sm py-4 rounded-lg">Continuar por WhatsApp</button>
-          <p className="text-center text-on-surface-variant text-xs">Se abrirá WhatsApp con todos los datos y el precio estimado. Enviá el mensaje para que recibamos tu consulta. Usaremos tu email para contactarte sobre este pedido.</p>
+          <input name="website" tabIndex={-1} autoComplete="off" aria-hidden="true" className="hidden" />
+          {submitError && <p role="alert" className="text-error text-sm">{submitError}</p>}
+          <button type="submit" disabled={sending || config.loading} className="w-full editorial-gradient text-white font-bold text-sm py-4 rounded-lg disabled:opacity-50">{sending ? 'Guardando tu consulta…' : config.enabled ? 'Recibir presupuesto y elegir semana' : 'Continuar por WhatsApp'}</button>
+          <p className="text-center text-on-surface-variant text-xs">{config.enabled ? 'Guardaremos tu solicitud y te enviaremos la propuesta por email. Podrás elegir tu semana desde la siguiente pantalla. Los recordatorios se pueden detener desde cada mensaje.' : 'Se abrirá WhatsApp con todos los datos y el precio estimado. Enviá el mensaje para que recibamos tu consulta. Usaremos tu email para contactarte sobre este pedido.'}</p>
         </form>
       </div>
     </div>
