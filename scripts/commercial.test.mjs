@@ -87,3 +87,10 @@ test('Zoho test mode routes email to the configured test inbox and escapes HTML'
  };
  try{await sendZoho({to:'customer@example.com',subject:'Prueba',text:'<script>alert(1)</script>',link:'https://arkostudio.com.ar/presupuesto#test'});assert.equal(sent.toAddress,'owner@example.com');assert.ok(sent.subject.startsWith('[PRUEBA]'));assert.ok(sent.content.includes('&lt;script&gt;'));assert.ok(!sent.content.includes('<script>'));}finally{globalThis.fetch=before;}
 });
+
+test('manual reply handling is explicit and defaults to webhook',async()=>{
+ const {readiness}=await import('../server/commercial/providers.js');
+ const previous=process.env.COMMERCIAL_REPLY_MODE;
+ try{delete process.env.COMMERCIAL_REPLY_MODE;assert.equal(readiness().replyMode,'webhook');process.env.COMMERCIAL_REPLY_MODE='manual';assert.equal(readiness().replyMode,'manual');process.env.COMMERCIAL_REPLY_MODE='typo';assert.equal(readiness().replyMode,'webhook');}
+ finally{if(previous===undefined)delete process.env.COMMERCIAL_REPLY_MODE;else process.env.COMMERCIAL_REPLY_MODE=previous;}
+});

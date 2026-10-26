@@ -125,3 +125,7 @@ Supervisar los primeros pedidos. Si un envío queda “Verificar en Zoho”, rev
 - https://www.zoho.com/mail/help/dev-platform/webhook.html
 - https://www.mercadopago.com.ar/developers/es/docs/checkout-pro-preferences/overview
 - https://supabase.com/docs/guides/cron
+
+
+### Pausa manual de respuestas
+Configurar `COMMERCIAL_REPLY_MODE=manual` en Vercel si Zoho no incluye webhooks. Revisar el correo y pausar el seguimiento desde el detalle de cada consulta cuando el cliente responda. Los pagos aprobados y las bajas siguen deteniendo los recordatorios automaticamente.

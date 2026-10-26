@@ -142,7 +142,7 @@ export default async function handler(req,res){
      for(const [key,min,max] of [['deposit',1,1000000],['hold_hours',1,168],['quote_days',1,90]])if(!Number.isInteger(data[key])||data[key]<min||data[key]>max)throw new FlowError(`Revisá ${key}.`);
      validateCatalog(data.catalog);if(data.deposit>Math.min(...data.catalog.packs.map(p=>p.base)))throw new FlowError('La reserva no puede superar el precio del pack más económico.');if(typeof data.terms!=='string'||data.terms.trim().length<30||data.terms.length>5000)throw new FlowError('Completá las condiciones comerciales.');
      const ready=readiness();if(data.enabled&&(!ready.links||!ready.scheduler||!ready.email||!data.emails_enabled))throw new FlowError('Conectá enlaces, tareas y Zoho antes de activar el formulario.');
-     if(data.emails_enabled&&(!ready.email||(!ready.testMode&&!ready.replies)))throw new FlowError('Conectá Zoho y las respuestas antes de activar los mails.');
+     if(data.emails_enabled&&(!ready.email||(!ready.testMode&&ready.replyMode!=='manual'&&!ready.replies)))throw new FlowError('Conectá Zoho y las respuestas antes de activar los mails.');
      if(data.payments_enabled&&!ready.payments)throw new FlowError('Conectá Mercado Pago primero.');
     }else if(op==='week'){
      if(!/^\d{4}-\d{2}-\d{2}$/.test(data.week_start)||new Date(`${data.week_start}T12:00:00Z`).getUTCDay()!==1||!Number.isInteger(data.capacity)||data.capacity<0||data.capacity>100||typeof data.enabled!=='boolean')throw new FlowError('Elegí un lunes y una capacidad válida.');
