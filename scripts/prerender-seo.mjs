@@ -24,7 +24,7 @@ for (const route of routes) {
   html = replace(html, /(<meta property="og:description" content=")(.*?)(" \/>)/, route.description);
   html = replace(html, /(<meta name="twitter:title" content=")(.*?)(" \/>)/, route.title);
   html = replace(html, /(<meta name="twitter:description" content=")(.*?)(" \/>)/, route.description);
-  const business = { '@type': 'LocalBusiness', name: 'Arko Studio', url: site, telephone: '+54 9 11 7649-8888', email: 'gonzalo@arkostudio.com.ar', sameAs: ['https://instagram.com/arkostudio.ar', 'https://www.youtube.com/@arkostudio-media'] };
+  const business = { '@type': 'LocalBusiness', name: 'Arko Studio', url: site, telephone: '+54 9 11 7649-8888', email: 'contacto@arkostudio.com.ar', sameAs: ['https://instagram.com/arkostudio.ar', 'https://www.youtube.com/@arkostudio-media'] };
   const areaServed = [{ '@type': 'AdministrativeArea', name: 'Provincia de Buenos Aires' }, { '@type': 'City', name: 'Ciudad Autónoma de Buenos Aires' }, { '@type': 'Place', name: 'Zona Norte de Buenos Aires' }];
   const schema = route.path === '/' ? { '@context': 'https://schema.org', ...business, description: route.description, logo: `${site}/favicon.png`, image, openingHoursSpecification: [{ '@type': 'OpeningHoursSpecification', dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'], opens: '08:00', closes: '21:00' }], areaServed } : { '@context': 'https://schema.org', '@type': route.path === '/portfolio' ? 'CollectionPage' : 'Service', name: route.h1, url, description: route.description, ...(route.path !== '/portfolio' && { provider: business, areaServed }) };
   html = html.replace('</head>', `<script type="application/ld+json">${JSON.stringify(schema).replace(/</g, '\\u003c')}</script></head>`);

@@ -30,7 +30,7 @@ export default function ServicePage() {
     '@context': 'https://schema.org', '@type': 'Service', name: service.h1,
     description: service.description, url: `${SITE_URL}${path}`,
     areaServed: [{ '@type': 'AdministrativeArea', name: 'Provincia de Buenos Aires' }, { '@type': 'City', name: 'Ciudad Autónoma de Buenos Aires' }, { '@type': 'Place', name: 'Zona Norte de Buenos Aires' }],
-    provider: { '@type': 'LocalBusiness', name: 'Arko Studio', url: SITE_URL, telephone: '+54 9 11 7649-8888', email: 'gonzalo@arkostudio.com.ar', sameAs: ['https://instagram.com/arkostudio.ar', 'https://www.youtube.com/@arkostudio-media'] },
+    provider: { '@type': 'LocalBusiness', name: 'Arko Studio', url: SITE_URL, telephone: '+54 9 11 7649-8888', email: 'contacto@arkostudio.com.ar', sameAs: ['https://instagram.com/arkostudio.ar', 'https://www.youtube.com/@arkostudio-media'] },
   };
 
   return (

@@ -40,7 +40,7 @@ Las variables deben cargarse en el entorno correcto (Preview/Production), y desp
 1. Confirmar el plan y la región de la cuenta (com/eu/in/com.au/jp/ca). Verificar que la cuenta permita el acceso necesario a API y webhooks.
 2. Crear la autorización OAuth de Zoho para enviar mensajes con el alcance mínimo `ZohoMail.messages.CREATE`. Obtener Client ID, Client Secret y un Refresh Token con acceso offline. Esto se realiza desde la cuenta de Zoho; no requiere compartir tu contraseña.
 3. Obtener el Account ID del buzón con la API de cuentas de Zoho (alcance de lectura de cuentas para esta consulta inicial, si es necesario).
-4. Cargar `ZOHO_CLIENT_ID`, `ZOHO_CLIENT_SECRET`, `ZOHO_REFRESH_TOKEN`, `ZOHO_ACCOUNT_ID`, `ZOHO_REGION` y `ZOHO_FROM_ADDRESS` en Vercel. El remitente debe pertenecer al buzón o ser un alias autorizado.
+4. Cargar `ZOHO_CLIENT_ID`, `ZOHO_CLIENT_SECRET`, `ZOHO_REFRESH_TOKEN`, `ZOHO_ACCOUNT_ID`, `ZOHO_REGION` en Vercel. El remitente configurado en el código es `contacto@arkostudio.com.ar`: debe pertenecer al buzón de `ZOHO_ACCOUNT_ID` o ser un alias autorizado en Zoho. `ZOHO_FROM_ADDRESS` ya no se utiliza.
 5. En el admin, guardar un borrador de plantilla y usar “Enviar prueba del borrador guardado”. Comprobar recepción y contenido. “Aceptado por Zoho” significa aceptado por la API, no una prueba de lectura ni de entrega en la bandeja principal.
 
 ### Detectar respuestas

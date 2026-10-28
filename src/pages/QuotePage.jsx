@@ -50,7 +50,7 @@ export default function QuotePage(){
     {confirmed&&<section className="bg-green-50 border border-green-300 rounded-xl p-6"><h2 className="text-xl font-bold">Reserva confirmada</h2><p className="mt-2">Recibimos {money(q.deposit)}. Tenés un cupo para la semana del {week(r.week_start)}. Te contactaremos para coordinar el día y horario.</p></section>}
     {review&&<p className="p-5 bg-amber-50 rounded-xl">Recibimos un pago que requiere revisión. No vuelvas a pagar. Te vamos a contactar para resolverlo.</p>}
     {!holding&&!confirmed&&r?.status==='expired'&&!expired&&<p>La retención anterior venció. Podés elegir entre las semanas disponibles.</p>}
-    <section className="text-sm text-on-surface-variant"><p>¿Tenés dudas? Respondé al mail de tu presupuesto o escribinos a <a className="underline" href="mailto:gonzalo@arkostudio.com.ar">gonzalo@arkostudio.com.ar</a>.</p>
+    <section className="text-sm text-on-surface-variant"><p>¿Tenés dudas? Respondé al mail de tu presupuesto o escribinos a <a className="underline" href="mailto:contacto@arkostudio.com.ar">contacto@arkostudio.com.ar</a>.</p>
      {unsubscribed||q.unsubscribed?<p className="mt-3">Los recordatorios de esta consulta están desactivados.</p>:<button className="underline mt-3" disabled={busy} onClick={()=>action('unsubscribe')}>Dejar de recibir recordatorios de esta consulta</button>}
     </section>
    </>}

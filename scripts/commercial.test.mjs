@@ -85,7 +85,7 @@ test('Zoho test mode routes email to the configured test inbox and escapes HTML'
   if(String(url).includes('/oauth/'))return new Response(JSON.stringify({access_token:'test',expires_in:3600}));
   sent=JSON.parse(options.body);return new Response(JSON.stringify({status:{code:200},data:{messageId:'test-message'}}));
  };
- try{await sendZoho({to:'customer@example.com',subject:'Prueba',text:'<script>alert(1)</script>',link:'https://arkostudio.com.ar/presupuesto#test'});assert.equal(sent.toAddress,'owner@example.com');assert.ok(sent.subject.startsWith('[PRUEBA]'));assert.ok(sent.content.includes('&lt;script&gt;'));assert.ok(!sent.content.includes('<script>'));}finally{globalThis.fetch=before;}
+ try{await sendZoho({to:'customer@example.com',subject:'Prueba',text:'<script>alert(1)</script>',link:'https://arkostudio.com.ar/presupuesto#test'});assert.equal(sent.fromAddress,'contacto@arkostudio.com.ar');assert.equal(sent.toAddress,'owner@example.com');assert.ok(sent.subject.startsWith('[PRUEBA]'));assert.ok(sent.content.includes('&lt;script&gt;'));assert.ok(!sent.content.includes('<script>'));}finally{globalThis.fetch=before;}
 });
 
 test('manual reply handling is explicit and defaults to webhook',async()=>{
