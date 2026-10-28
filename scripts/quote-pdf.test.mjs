@@ -60,7 +60,7 @@ test('Zoho uploads the actual PDF before dispatch and uses the returned attachme
   globalThis.fetch = async (url, options) => {
     if (String(url).includes('/oauth/')) return new Response(JSON.stringify({ access_token: 'test', expires_in: 3600 }));
     calls.push({ url: String(url), ...options });
-    if (String(url).includes('/attachments?')) return new Response(JSON.stringify({ status: { code: 200 }, data: { storeName: 'store', attachmentName: attachment.filename, attachmentPath: '/Mail/quote.pdf' } }));
+    if (String(url).includes('/attachments?')) return new Response(JSON.stringify({ status: { code: 200 }, data: [{ storeName: 'store', attachmentName: attachment.filename, attachmentPath: '/Mail/quote.pdf' }] }));
     return new Response(JSON.stringify({ status: { code: 200 }, data: { messageId: 'sent' } }));
   };
   try {
