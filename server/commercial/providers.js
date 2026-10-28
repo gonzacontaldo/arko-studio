@@ -22,12 +22,22 @@ export async function sendZoho({to,subject,text,link,unsubscribe,attachments=[],
  const uploaded=[];
  for(const attachment of attachments){
   if(!Buffer.isBuffer(attachment.content)||!attachment.content.length||attachment.content.length>10*1024*1024||!/^Presupuesto-ARKO-[A-F0-9-]+\.pdf$/.test(attachment.filename))throw new FlowError('Adjunto PDF inválido.',503);
+  const form=new FormData();
+  form.append('attach',new Blob([attachment.content],{type:'application/pdf'}),attachment.filename);
   let upload;
-  try{upload=await fetch(`${region[1]}/api/accounts/${encodeURIComponent(process.env.ZOHO_ACCOUNT_ID)}/messages/attachments?fileName=${encodeURIComponent(attachment.filename)}&isInline=false`,{method:'POST',signal:AbortSignal.timeout(15000),headers:{Authorization:`Zoho-oauthtoken ${cachedZoho.value}`,'Content-Type':'application/pdf'},body:attachment.content});}catch{throw new FlowError('No pudimos subir el PDF a Zoho.',502);}
+  // fetch supplies the multipart boundary; setting Content-Type manually corrupts the upload.
+  try{upload=await fetch(`${region[1]}/api/accounts/${encodeURIComponent(process.env.ZOHO_ACCOUNT_ID)}/messages/attachments?uploadType=multipart&isInline=false`,{method:'POST',signal:AbortSignal.timeout(15000),headers:{Authorization:`Zoho-oauthtoken ${cachedZoho.value}`,Accept:'application/json'},body:form});}catch{throw new FlowError('No pudimos subir el PDF a Zoho.',502);}
   let result;try{result=await upload.json();}catch{throw new FlowError('Zoho no confirmó la carga del PDF.',502);}
   if(upload.status===401)cachedZoho=null;
   const data=Array.isArray(result.data)?result.data[0]:result.data;
-  if(!upload.ok||Number(result.status?.code)!==200||!data?.storeName||!data.attachmentName||!data.attachmentPath)throw new FlowError('Zoho rechazó el adjunto PDF.',502);
+  if(!upload.ok||Number(result.status?.code)!==200||!data?.storeName||!data.attachmentName||!data.attachmentPath){
+   const rawCode=result.data?.errorCode||result.data?.errorcode||result.errorCode||result.error?.code;
+   const code=/^[A-Za-z0-9_.-]{1,80}$/.test(String(rawCode||''))?String(rawCode):'';
+   const status=Number(result.status?.code)||upload.status;
+   const missing=['storeName','attachmentName','attachmentPath'].filter(key=>!data?.[key]);
+   console.error('commercial_zoho_attachment_error',{http:upload.status,status,code,missing});
+   throw new FlowError(`Zoho rechazó el adjunto PDF (HTTP ${upload.status}, estado ${status}${code?`, código ${code}`:''}${upload.ok&&status===200?`, faltan ${missing.join(', ')}`:''}).`,502);
+  }
   uploaded.push({storeName:data.storeName,attachmentName:data.attachmentName,attachmentPath:data.attachmentPath});
  }
  const html=`<div style="font-family:Arial,sans-serif;max-width:640px;margin:auto;color:#292524"><h2 style="color:#826527">ARKO Studio</h2><div style="white-space:pre-wrap;line-height:1.6">${escapeHtml(text)}</div>${link ? `<p><a style="display:inline-block;background:#826527;color:white;padding:14px 20px;text-decoration:none;border-radius:8px" href="${escapeHtml(link)}">${escapeHtml(linkLabel)}</a></p>` : ''}${unsubscribe ? `<p style="font-size:12px"><a href="${escapeHtml(unsubscribe)}">Dejar de recibir recordatorios</a></p>` : ''}</div>`;

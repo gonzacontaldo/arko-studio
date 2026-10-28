@@ -65,7 +65,12 @@ test('Zoho uploads the actual PDF before dispatch and uses the returned attachme
   };
   try {
     await sendZoho({ to: 'customer@example.com', subject: 'Presupuesto', text: 'Adjunto.', attachments: [attachment] });
-    assert.equal(calls.length, 2); assert.equal(calls[0].body, attachment.content);
+    assert.equal(calls.length, 2);
+    assert.ok(calls[0].url.includes('uploadType=multipart&isInline=false'));
+    assert.equal(calls[0].headers['Content-Type'], undefined);
+    const file=calls[0].body.get('attach');
+    assert.equal(file.name, attachment.filename); assert.equal(file.type, 'application/pdf');
+    assert.deepEqual(Buffer.from(await file.arrayBuffer()), attachment.content);
     const sent = JSON.parse(calls[1].body); assert.equal(sent.toAddress, 'owner@example.com');
     assert.deepEqual(sent.attachments, [{ storeName: 'store', attachmentName: attachment.filename, attachmentPath: '/Mail/quote.pdf' }]);
     calls.length = 0;
@@ -119,7 +124,7 @@ test('admin email preview uses the same PDF attachment flow', async () => {
   const res = { setHeader() {}, status(value) { status = value; return this; }, json(value) { response = value; return this; } };
   try {
     await handler(req, res); assert.equal(status, 200, JSON.stringify(response));
-    assert.equal(upload.subarray(0, 5).toString(), '%PDF-'); assert.equal(sent.attachments.length, 1);
+    assert.equal(Buffer.from(await upload.get('attach').arrayBuffer()).subarray(0, 5).toString(), '%PDF-'); assert.equal(sent.attachments.length, 1);
     assert.ok(sent.content.includes('adjunto')); assert.ok(sent.content.includes('Elegir semana y reservar'));
   } finally { globalThis.fetch = before; }
 });
