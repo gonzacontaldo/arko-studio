@@ -69,7 +69,7 @@ create table if not exists public.com_jobs(
 );
 create index if not exists com_jobs_due_idx on public.com_jobs(status,due_at);
 insert into public.com_templates(key,title,subject,body) values
-('quote','Presupuesto','Tu propuesta ARKO [{codigo}]',E'Hola, {nombre}.\n\nGracias por consultar por la propiedad en {zona}.\n\n{detalle}\n\nTotal: {total}\nReserva: {reserva}\nSaldo: {saldo}\nVigencia: {vigencia}\n\n{condiciones}\n\nElegí tu semana y reservá desde este enlace:\n{enlace}\n\nPodés responder este mail si tenés dudas.'),
+('quote','Presupuesto','Tu presupuesto ARKO [{codigo}]',E'Hola, {nombre}.\n\nEncontrarás adjunto tu presupuesto formal de ARKO Studio.\n\nPara elegir tu semana de producción y reservar la fecha, hacé clic en el botón de abajo.\n\nSaludos,\nARKO Studio'),
 ('choose_week','Elegir semana','¿Elegimos tu semana de producción? [{codigo}]',E'Hola, {nombre}. ¿Pudiste revisar tu propuesta? Podés elegir una semana disponible acá:\n{enlace}\n\nSi tenés una duda, respondé este correo.\n\nPara detener los recordatorios:\n{baja}'),
 ('hold','Cupo retenido','Guardamos tu cupo de producción [{codigo}]',E'Hola, {nombre}. Retuvimos un cupo para la semana {semana} hasta {vencimiento}.\n\nConfirmalo abonando la reserva de {reserva}:\n{enlace}\n\nEl día exacto se coordina según el clima y el acceso a la propiedad.'),
 ('reminder','Recordatorio de pago','Tu cupo sigue pendiente de confirmación [{codigo}]',E'Hola, {nombre}. Tu cupo para la semana {semana} está retenido hasta {vencimiento}.\n\nPodés confirmar tu reserva de {reserva} desde acá:\n{enlace}\n\nSi ya pagaste, estamos verificando el estado. Podés responder este mail para consultarnos.\n\nDetener recordatorios:\n{baja}'),

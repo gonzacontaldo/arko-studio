@@ -1,0 +1,1 @@
+export const QUOTE_EMAIL_BODY = 'Hola, {nombre}.\n\nEncontrarás adjunto tu presupuesto formal de ARKO Studio.\n\nPara elegir tu semana de producción y reservar la fecha, hacé clic en el botón de abajo.\n\nSaludos,\nARKO Studio';

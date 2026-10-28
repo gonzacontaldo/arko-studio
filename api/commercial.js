@@ -1,9 +1,9 @@
 import {randomUUID,createHmac,timingSafeEqual} from 'node:crypto';
 import {PACKS,SERVICES,ADDONS} from '../src/components/pricingData.js';
 import {db,rpc,settings,requireAdmin} from '../server/commercial/db.js';
-import {FlowError,validateRequest,validateCatalog,quoteToken,quoteId,hash,verifyMpSignature,paymentMatches,renderTemplate} from '../server/commercial/domain.js';
+import {FlowError,validateRequest,validateCatalog,quoteToken,quoteId,hash,verifyMpSignature,paymentMatches} from '../server/commercial/domain.js';
 import {isTestMode,readiness,siteUrl,mp,sendZoho} from '../server/commercial/providers.js';
-import {processJobs,messageVariables} from '../server/commercial/jobs.js';
+import {processJobs,prepareEmail} from '../server/commercial/jobs.js';
 export const config={api:{bodyParser:false},maxDuration:60};
 const UUID=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const defaultCatalog={packs:PACKS,services:SERVICES,addons:ADDONS};
@@ -129,10 +129,10 @@ export default async function handler(req,res){
    }
    if(action==='admin_test_email'&&req.method==='POST'){
     const key=String(body.key||''),[t]=await db(`com_templates?key=eq.${encodeURIComponent(key)}`);if(!t)throw new FlowError('Plantilla inexistente.');
-    const sample={id:randomUUID(),name:'Cliente de prueba',zone:'Palermo',m2:150,email:user.email,snapshot:{pack:'Destacado',services:['Fotografía HDR','Tour','Planos'],videos:['Cinematográfico'],addons:[]},total:335000,deposit:15000,valid_until:new Date(Date.now()+14*86400000).toISOString(),terms:'Condiciones de ejemplo.'};
-    const vars=messageVariables(sample,{week_start:'2026-11-09',hold_until:new Date(Date.now()+72*3600000).toISOString()});
-    const rendered=renderTemplate({subject:t.draft_subject??t.subject,body:t.draft_body??t.body},vars);
-    await sendZoho({to:process.env.COMMERCIAL_TEST_EMAIL||user.email,subject:`PRUEBA DE PLANTILLA: ${rendered.subject}`,text:rendered.text});
+    const s=await settings(),data=validateRequest({name:'Cliente de prueba',email:user.email,zone:'Palermo',propertyType:'Casa',m2:150,pack:'destacado',videos:['cine'],addons:[]},catalog(s));
+    const sample={...data,id:randomUUID(),total:data.snapshot.total,deposit:s.deposit,created_at:new Date().toISOString(),is_test:true,valid_until:new Date(Date.now()+s.quote_days*86400000).toISOString(),terms:s.terms};
+    const rendered=await prepareEmail(key,sample,{week_start:'2026-11-09',hold_until:new Date(Date.now()+72*3600000).toISOString()},{subject:t.draft_subject??t.subject,body:t.draft_body??t.body});
+    await sendZoho({to:process.env.COMMERCIAL_TEST_EMAIL||user.email,...rendered,subject:`PRUEBA DE PLANTILLA: ${rendered.subject}`});
     return res.status(200).json({ok:true});
    }
    if(action==='admin_mutate'&&req.method==='POST'){

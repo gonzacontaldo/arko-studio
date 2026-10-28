@@ -1,4 +1,5 @@
 import {useEffect,useState} from 'react';
+import {QUOTE_EMAIL_BODY} from '../lib/quoteEmail';
 import {commercialApi} from '../lib/commercial';
 const money=v=>`$ ${Number(v).toLocaleString('es-AR')}`;
 const date=v=>v?new Date(v).toLocaleString('es-AR',{timeZone:'America/Argentina/Buenos_Aires',dateStyle:'short',timeStyle:'short'}):'—';
@@ -61,10 +62,11 @@ function Weeks({data,busy,save}){
 function Templates({data,busy,mutate,run}){
  const [key,setKey]=useState('quote'),[subject,setSubject]=useState(''),[body,setBody]=useState('');
  const t=data.templates.find(t=>t.key===key);
- useEffect(()=>{if(t){setSubject(t.draft_subject??t.subject);setBody(t.draft_body??t.body);}},[t]);
+ useEffect(()=>{if(t){setSubject(t.draft_subject??t.subject);setBody(t.key==='quote'?QUOTE_EMAIL_BODY:(t.draft_body??t.body));}},[t]);
  return <div className="space-y-4"><select className={input} value={key} onChange={e=>setKey(e.target.value)}>{data.templates.map(t=><option key={t.key} value={t.key}>{t.title}</option>)}</select>
  <p className="text-xs text-on-surface-variant">Campos: {'{nombre}, {codigo}, {zona}, {detalle}, {total}, {reserva}, {saldo}, {semana}, {vencimiento}, {vigencia}, {condiciones}, {enlace}, {baja}'}. El código de consulta se agrega al asunto para asociar las respuestas.</p>
- <label className="block text-sm">Asunto<input className={input} value={subject} maxLength={300} onChange={e=>setSubject(e.target.value)}/></label><label className="block text-sm">Mensaje<textarea className={input} rows={12} value={body} maxLength={10000} onChange={e=>setBody(e.target.value)}/></label>
+ {key==='quote'&&<p className="p-3 bg-surface-container-low rounded-lg text-sm">El presupuesto formal se genera como PDF adjunto con el desglose de precios, servicios y condiciones. El mensaje de acompañamiento es breve y fijo. La prueba también incluye el PDF.</p>}
+ <label className="block text-sm">Asunto<input className={input} value={subject} maxLength={300} onChange={e=>setSubject(e.target.value)}/></label><label className="block text-sm">Mensaje<textarea className={input} rows={12} readOnly={key==='quote'} value={body} maxLength={10000} onChange={e=>setBody(e.target.value)}/></label>
  <div className="flex gap-2 flex-wrap"><button className={button} disabled={busy} onClick={()=>mutate('template_draft',null,{key,subject,body})}>Guardar borrador</button><button className={button} disabled={busy||t?.draft_body==null} onClick={()=>mutate('template_publish',null,{key,enabled:t.enabled})}>Publicar borrador guardado</button><button className={button} disabled={busy||!data.readiness.email} onClick={()=>run(()=>commercialApi('admin_test_email',{admin:true,method:'POST',body:{key}}),'Mail de prueba enviado al destinatario configurado.')}>Enviar prueba del borrador guardado</button><button className={button} disabled={busy} onClick={()=>mutate('template_toggle',null,{key,enabled:!t.enabled})}>{t?.enabled?'Pausar plantilla':'Activar plantilla'}</button></div>
  <details><summary className="cursor-pointer text-sm">Vista previa del texto</summary><pre className="whitespace-pre-wrap bg-surface-container-low p-4 rounded-lg text-sm">{body.replaceAll('{nombre}','Martín').replaceAll('{zona}','Palermo').replaceAll('{reserva}','$ 15.000').replaceAll('{total}','$ 335.000').replaceAll('{saldo}','$ 320.000').replaceAll('{enlace}','[Enlace privado de la propuesta]')}</pre></details>
  <h4 className="font-bold">Envíos que necesitan atención</h4>{data.jobs.filter(j=>['failed','uncertain'].includes(j.status)).map(j=><p key={j.id} className="text-sm text-red-700">{j.template_key} · {JOB[j.status]} · {j.last_error} · <button className="underline" onClick={()=>navigator.clipboard.writeText(j.quote_id)}>Copiar ID de consulta</button></p>)}

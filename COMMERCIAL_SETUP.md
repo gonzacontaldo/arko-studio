@@ -43,6 +43,18 @@ Las variables deben cargarse en el entorno correcto (Preview/Production), y desp
 4. Cargar `ZOHO_CLIENT_ID`, `ZOHO_CLIENT_SECRET`, `ZOHO_REFRESH_TOKEN`, `ZOHO_ACCOUNT_ID`, `ZOHO_REGION` en Vercel. El remitente configurado en el código es `contacto@arkostudio.com.ar`: debe pertenecer al buzón de `ZOHO_ACCOUNT_ID` o ser un alias autorizado en Zoho. `ZOHO_FROM_ADDRESS` ya no se utiliza.
 5. En el admin, guardar un borrador de plantilla y usar “Enviar prueba del borrador guardado”. Comprobar recepción y contenido. “Aceptado por Zoho” significa aceptado por la API, no una prueba de lectura ni de entrega en la bandeja principal.
 
+### Presupuesto formal en PDF
+
+El primer correo de presupuesto incluye un PDF adjunto generado por el servidor. El cuerpo es breve y fijo: indica que el presupuesto está adjunto y ofrece un botón para elegir semana y reservar. El asunto sigue siendo editable. Las plantillas antiguas guardadas en la base no vuelven a insertar precios y condiciones en el cuerpo del primer correo. Los recordatorios mantienen sus plantillas habituales.
+
+El PDF usa los valores y condiciones guardados en cada propuesta: cliente, inmueble, superficie, servicios, precio base, tramos adicionales de 100 m², adicionales, total con IVA incluido, seña y saldo. Los packs se presentan como conjunto y sus servicios se explican sin atribuirles precios individuales ficticios. Las nuevas consultas guardan el desglose y las descripciones en `snapshot`; no se necesita una migración. Las propuestas anteriores conservan el importe acordado, sin reconstruir precios históricos con el catálogo actual.
+
+Zoho carga el PDF mediante `POST /api/accounts/{accountId}/messages/attachments` antes de enviar el mensaje con los metadatos del adjunto. Usa el mismo alcance `ZohoMail.messages.CREATE`. Si falla la generación o carga del PDF, no se envía un correo sin adjunto. Una respuesta ambigua al envío se mantiene como `uncertain`, para evitar duplicados.
+
+En Comercial → Plantillas → Presupuesto, “Enviar prueba del borrador guardado” prueba el mismo circuito con un PDF de ejemplo marcado sin validez comercial. Comprobar el adjunto y el botón en el buzón de pruebas antes de habilitar envíos de producción. No se envían mensajes reales durante las pruebas automatizadas.
+
+Validación local: `node --test scripts/commercial.test.mjs scripts/quote-pdf.test.mjs`. Ejemplo visual: `node scripts/preview-quote-pdf.mjs` genera `output/pdf/presupuesto-arko-ejemplo.pdf` con datos ficticios.
+
 ### Detectar respuestas
 
 Crear `ZOHO_INBOUND_SECRET` aleatorio de al menos 32 caracteres en Vercel. Configurar un outgoing webhook en Zoho Mail para correos entrantes con asunto que contenga el código de consulta. URL:

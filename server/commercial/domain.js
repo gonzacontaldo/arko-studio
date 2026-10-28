@@ -29,7 +29,12 @@ export function validateRequest(input,catalog) {
  const extras=catalog.addons.filter(a=>addons.includes(a.name));
  const total=pack.base+pack.per100*Math.max(0,Math.ceil((m2-100)/100))+extras.reduce((sum,a)=>sum+a.price,0);
  if(!Number.isSafeInteger(total)||total<=0)throw new FlowError('El precio requiere revisión.',503);
- return {name,email,zone,timing,m2,pack:pack.id,videos,addons,message:(input.message||'').trim(),snapshot:{propertyType,pack:pack.name,services:pack.services.map(id=>catalog.services.find(s=>s.id===id)?.name||id),videos:videos.map(id=>catalog.services.find(s=>s.id===id)?.name||id),addons:extras.map(a=>({name:a.name,price:a.price})),total}};
+ const tranches=Math.max(0,Math.ceil((m2-100)/100));
+ const item=(description,quantity,unitPrice)=>({description,quantity,unitPrice,total:quantity*unitPrice});
+ const priced=custom?chosen:[{...pack,name:`Pack ${pack.name}`}];
+ const lineItems=priced.flatMap(s=>[item(`${s.name} - hasta 100 m²`,1,s.base),...(tranches&&s.per100?[item(`${s.name} - tramo adicional de hasta 100 m²`,tranches,s.per100)]:[])]).concat(extras.map(a=>item(a.name,1,a.price)));
+ const serviceDetails=[...pack.services,...videos].map(id=>{const service=catalog.services.find(s=>s.id===id);return {name:service?.name||id,description:service?.desc||''};});
+ return {name,email,zone,timing,m2,pack:pack.id,videos,addons,message:(input.message||'').trim(),snapshot:{propertyType,pack:pack.name,services:pack.services.map(id=>catalog.services.find(s=>s.id===id)?.name||id),videos:videos.map(id=>catalog.services.find(s=>s.id===id)?.name||id),serviceDetails,lineItems,addons:extras.map(a=>({name:a.name,price:a.price,description:a.desc||''})),total}};
 }
 export function validateCatalog(c) {
  if(!c||!Array.isArray(c.packs)||!Array.isArray(c.services)||!Array.isArray(c.addons))throw new FlowError('Catálogo inválido.');

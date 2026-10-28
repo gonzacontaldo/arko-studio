@@ -34,3 +34,5 @@ Thumbs.db
 
 # Local development databases and scratch files
 work/
+tmp/pdfs/
+output/pdf/

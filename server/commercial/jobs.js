@@ -1,6 +1,14 @@
 import {db,rpc,settings} from './db.js';
 import {money,quoteToken,renderTemplate} from './domain.js';
 import {sendZoho,siteUrl,isTestMode} from './providers.js';
+import {createQuotePdf} from './quotePdf.js';
+import {QUOTE_EMAIL_BODY} from '../../src/lib/quoteEmail.js';
+
+export async function prepareEmail(key,q,r,template){
+ const vars=messageVariables(q,r);
+ const rendered=renderTemplate({...template,body:key==='quote'?QUOTE_EMAIL_BODY:template.body},vars);
+ return {...rendered,link:vars.enlace,...(key==='quote'?{attachments:[await createQuotePdf(q,{link:vars.enlace})],linkLabel:'Elegir semana y reservar'}:{})};
+}
 
 export function messageVariables(q,r){
  const date=v=>v?new Date(v).toLocaleString('es-AR',{timeZone:'America/Argentina/Buenos_Aires',dateStyle:'medium',timeStyle:'short'}):'Sin elegir';
@@ -39,7 +47,7 @@ export async function processJobs(limit=2){
     const recent=await db(`com_jobs?quote_id=eq.${q.id}&template_key=eq.reminder&status=eq.sent&sent_at=gte.${encodeURIComponent(since)}&select=id&limit=1`);
     if(recent.length){await patch({status:'cancelled'});continue;}
    }
-   const vars=messageVariables(q,r),rendered=renderTemplate(t,vars);
+   const vars=messageVariables(q,r),rendered=await prepareEmail(j.template_key,q,r,t);
    if(!rendered.subject.includes(q.id))rendered.subject += ' ['+q.id+']';
    if(['choose_week','reminder','expired','recovery'].includes(j.template_key)&&!rendered.text.includes(vars.baja))rendered.text+='\n\nDetener recordatorios: '+vars.baja;
    await patch({rendered_subject:rendered.subject,rendered_body:rendered.text});
@@ -47,7 +55,7 @@ export async function processJobs(limit=2){
    const [freshQ]=await db(`com_quotes?id=eq.${q.id}`);
    const freshR=r?(await db(`com_reservations?id=eq.${r.id}`))[0]:null;
    if(!jobEligible(j,freshQ,freshR)){await patch({status:'cancelled'});continue;}
-   const providerId=await sendZoho({to:q.email,...rendered,link:vars.enlace,unsubscribe:['choose_week','reminder','expired','recovery'].includes(j.template_key)?vars.baja:undefined});
+   const providerId=await sendZoho({to:q.email,...rendered,unsubscribe:['choose_week','reminder','expired','recovery'].includes(j.template_key)?vars.baja:undefined});
    await patch({status:'sent',sent_at:new Date().toISOString(),provider_id:providerId});sent++;
   }catch(error){
    // An ambiguous provider response must be reviewed, not retried automatically.
