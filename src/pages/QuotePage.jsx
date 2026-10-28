@@ -28,7 +28,8 @@ export default function QuotePage(){
     {data.testMode&&<p className="p-3 rounded-lg bg-amber-100 text-amber-900">Entorno de prueba. Esta propuesta no confirma una producción real.</p>}
     <section className="bg-white border border-outline-variant rounded-xl p-5 md:p-8 space-y-3">
      <p>Hola, {q.name}. Recibimos tu solicitud para la propiedad en <strong>{q.zone}</strong>.</p>
-     <h2 className="text-xl font-bold">Pack {q.snapshot.pack} · {q.m2} m²</h2>
+     <h2 className="text-xl font-bold">{q.snapshot.pack} · {q.m2} m²</h2>
+     {q.snapshot.propertyType && <p className="text-sm">Tipo de propiedad: {q.snapshot.propertyType}</p>}
      <ul className="space-y-1">{[...q.snapshot.services,...q.snapshot.videos].map((s,i)=><li key={i}>✓ {s}</li>)}{q.snapshot.addons.map(a=><li key={a.name}>✓ {a.name} · {money(a.price)}</li>)}</ul>
      <div className="border-t pt-3 space-y-1"><p className="text-xl font-bold">{q.approved?'Total':'Total estimado'}: {money(q.total)}</p><p>Reserva: {money(q.deposit)} · Saldo: {money(q.total-q.deposit)}</p><p className="text-xs">IVA incluido. Vigencia de la propuesta: {date(q.valid_until)}.</p></div>
      <p className="text-sm text-on-surface-variant whitespace-pre-wrap">{q.terms}</p>

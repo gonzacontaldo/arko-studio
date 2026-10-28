@@ -13,8 +13,15 @@ export function validateRequest(input,catalog) {
  const zone=cleanText(input.zone,200,'la zona'),timing=input.timing==null||input.timing===''?'A definir al reservar':cleanText(input.timing,80,'el plazo');
  if(timing!=='A definir al reservar'&&!TIMINGS.includes(timing))throw new FlowError('Seleccioná un plazo de producción.');
  const m2=Number(input.m2);if(!Number.isFinite(m2)||m2<1||m2>100000)throw new FlowError('Ingresá una superficie entre 1 y 100.000 m².');
- const pack=catalog.packs.find(p=>p.id===input.pack);if(!pack)throw new FlowError('Seleccioná un pack válido.');
- const videos=input.videos||[],addons=input.addons||[];
+ const custom=input.pack==='custom';
+ const services=input.services||[];
+ if(custom&&(!Array.isArray(services)||!services.length||new Set(services).size!==services.length||services.some(id=>!catalog.services.some(s=>s.id===id))))throw new FlowError('Elegí al menos un servicio válido.');
+ const chosen=custom?catalog.services.filter(s=>services.includes(s.id)):[];
+ const pack=custom?{id:'custom',name:'A la carta',services:services.filter(id=>!VIDEO_IDS.includes(id)),videos:services.filter(id=>VIDEO_IDS.includes(id)).length,base:chosen.reduce((sum,s)=>sum+s.base,0),per100:chosen.reduce((sum,s)=>sum+s.per100,0)}:catalog.packs.find(p=>p.id===input.pack);if(!pack)throw new FlowError('Seleccioná un pack válido.');
+ const propertyTypes=['Lote / terreno','Casa','Departamento','Oficina / local','Complejo de oficinas','Edificio entero','Otro'];
+ const propertyType=input.propertyType==null?'':cleanText(input.propertyType,80,'el tipo de propiedad');
+ if(propertyType&&!propertyTypes.includes(propertyType))throw new FlowError('Seleccioná un tipo de propiedad válido.');
+ const videos=custom?services.filter(id=>VIDEO_IDS.includes(id)):(input.videos||[]),addons=input.addons||[];
  if(!Array.isArray(videos)||new Set(videos).size!==videos.length||videos.length!==(pack.videos||0)||videos.some(v=>!VIDEO_IDS.includes(v)))throw new FlowError(`Elegí ${pack.videos||0} videos para este pack.`);
  if(!Array.isArray(addons)||new Set(addons).size!==addons.length||addons.some(a=>!catalog.addons.some(x=>x.name===a)))throw new FlowError('Revisá los adicionales.');
  if(addons.length&&!videos.some(v=>v==='cine'||v==='reel'))throw new FlowError('Los adicionales requieren video cinematográfico o reel.');
@@ -22,11 +29,12 @@ export function validateRequest(input,catalog) {
  const extras=catalog.addons.filter(a=>addons.includes(a.name));
  const total=pack.base+pack.per100*Math.max(0,Math.ceil((m2-100)/100))+extras.reduce((sum,a)=>sum+a.price,0);
  if(!Number.isSafeInteger(total)||total<=0)throw new FlowError('El precio requiere revisión.',503);
- return {name,email,zone,timing,m2,pack:pack.id,videos,addons,message:(input.message||'').trim(),snapshot:{pack:pack.name,services:pack.services.map(id=>catalog.services.find(s=>s.id===id)?.name||id),videos:videos.map(id=>catalog.services.find(s=>s.id===id)?.name||id),addons:extras.map(a=>({name:a.name,price:a.price})),total}};
+ return {name,email,zone,timing,m2,pack:pack.id,videos,addons,message:(input.message||'').trim(),snapshot:{propertyType,pack:pack.name,services:pack.services.map(id=>catalog.services.find(s=>s.id===id)?.name||id),videos:videos.map(id=>catalog.services.find(s=>s.id===id)?.name||id),addons:extras.map(a=>({name:a.name,price:a.price})),total}};
 }
 export function validateCatalog(c) {
  if(!c||!Array.isArray(c.packs)||!Array.isArray(c.services)||!Array.isArray(c.addons))throw new FlowError('Catálogo inválido.');
  if(c.packs.length!==3||['base','destacado','completo'].some(id=>!c.packs.some(p=>p.id===id)))throw new FlowError('El catálogo debe tener Base, Destacado y Completo.');
+ if(c.services.some(s=>!Number.isInteger(s.base)||s.base<1||!Number.isInteger(s.per100)||s.per100<0))throw new FlowError('Revisá los precios de los servicios.');
  const ids=c.services.map(s=>s.id);if(new Set(ids).size!==ids.length)throw new FlowError('Servicios duplicados.');
  for(const p of c.packs)if(!p.name||!Array.isArray(p.services)||p.services.some(id=>!ids.includes(id))||!Number.isInteger(p.base)||p.base<1||!Number.isInteger(p.per100)||p.per100<0||(p.videos||0)!==({base:0,destacado:1,completo:2})[p.id])throw new FlowError('Revisá los packs y sus precios.');
  if(c.addons.some(a=>!a.name||!Number.isInteger(a.price)||a.price<0)||new Set(c.addons.map(a=>a.name)).size!==c.addons.length)throw new FlowError('Revisá los adicionales.');
