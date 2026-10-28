@@ -102,7 +102,7 @@ test('scheduled quote dispatch sends the generated attachment and short body', a
   try {
     assert.equal((await processJobs(1)).sent, 1);
     assert.equal(sent.attachments.length, 1); assert.ok(sent.content.includes('adjunto')); assert.ok(!sent.content.includes('TOTAL ANTIGUO'));
-    assert.ok(patches.some(p => p.status === 'sent'));
+    assert.ok(patches.some(p => p.status === 'sent' && p.last_error === null));
   } finally { globalThis.fetch = before; }
 });
 

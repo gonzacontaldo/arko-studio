@@ -56,7 +56,7 @@ export async function processJobs(limit=2){
    const freshR=r?(await db(`com_reservations?id=eq.${r.id}`))[0]:null;
    if(!jobEligible(j,freshQ,freshR)){await patch({status:'cancelled'});continue;}
    const providerId=await sendZoho({to:q.email,...rendered,unsubscribe:['choose_week','reminder','expired','recovery'].includes(j.template_key)?vars.baja:undefined});
-   await patch({status:'sent',sent_at:new Date().toISOString(),provider_id:providerId});sent++;
+   await patch({status:'sent',last_error:null,sent_at:new Date().toISOString(),provider_id:providerId});sent++;
   }catch(error){
    // An ambiguous provider response must be reviewed, not retried automatically.
    await patch({status:error.message==='EMAIL_UNCERTAIN'?'uncertain':j.attempts>=3?'failed':'pending',last_error:error.message.slice(0,250),due_at:new Date(Date.now()+j.attempts*15*60000).toISOString()});
