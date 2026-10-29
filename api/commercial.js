@@ -36,7 +36,7 @@ async function createCheckout(q){
  const preference=await mp('checkout/preferences','POST',{
   items:[{id:r.id,title:'Reserva de producción ARKO Studio',quantity:1,currency_id:'ARS',unit_price:r.deposit}],
   external_reference:r.id,notification_url:`${siteUrl()}/api/commercial?action=mp_webhook`,
-  back_urls:{success:`${siteUrl()}/presupuesto#${quoteToken(q.id)}`,pending:`${siteUrl()}/presupuesto#${quoteToken(q.id)}`,failure:`${siteUrl()}/presupuesto#${quoteToken(q.id)}`},
+  back_urls:{success:`${siteUrl()}/#reserva=${quoteToken(q.id)}`,pending:`${siteUrl()}/#reserva=${quoteToken(q.id)}`,failure:`${siteUrl()}/#reserva=${quoteToken(q.id)}`},
   expires:true,expiration_date_from:new Date(r.created_at).toISOString(),expiration_date_to:new Date(r.hold_until).toISOString(),
   payment_methods:{installments:1,excluded_payment_types:[{id:'ticket'},{id:'atm'}]},
   metadata:{reservation_id:r.id,quote_id:q.id},auto_return:'approved'
@@ -122,11 +122,11 @@ export default async function handler(req,res){
    if(action==='admin_detail'&&req.method==='GET'){
     const id=assertUuid(req.query.id);const [events,jobs]=await Promise.all([db(`com_events?quote_id=eq.${id}&order=created_at.desc&limit=100`),db(`com_jobs?quote_id=eq.${id}&order=due_at`)]);return res.status(200).json({events,jobs});
    }
-   if(action==='admin_link'&&req.method==='POST')return res.status(200).json({url:`${siteUrl()}/presupuesto#${quoteToken(assertUuid(body.id))}`});
+   if(action==='admin_link'&&req.method==='POST')return res.status(200).json({url:`${siteUrl()}/#reserva=${quoteToken(assertUuid(body.id))}`});
    if(action==='admin_test_quote'&&req.method==='POST'){
     if(!isTestMode())throw new FlowError('Creá pruebas en el entorno de pruebas.');
     const s=await settings(),data=validateRequest(body,catalog(s));const result=await rpc('com_create_quote',{p_id:randomUUID(),p_request_key:randomUUID(),p_data:data,p_ip:hash(user.id),p_test:true});
-    return res.status(201).json({url:`${siteUrl()}/presupuesto#${quoteToken(result.id)}`});
+    return res.status(201).json({url:`${siteUrl()}/#reserva=${quoteToken(result.id)}`});
    }
    if(action==='admin_test_email'&&req.method==='POST'){
     const key=String(body.key||''),[t]=await db(`com_templates?key=eq.${encodeURIComponent(key)}`);if(!t)throw new FlowError('Plantilla inexistente.');

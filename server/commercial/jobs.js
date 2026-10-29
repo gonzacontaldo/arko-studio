@@ -13,7 +13,7 @@ export async function prepareEmail(key,q,r,template){
 
 export function messageVariables(q,r){
  const date=v=>v?new Date(v).toLocaleString('es-AR',{timeZone:'America/Argentina/Buenos_Aires',dateStyle:'medium',timeStyle:'short'}):'Sin elegir';
- const link=`${siteUrl()}/presupuesto#${quoteToken(q.id)}`;
+ const link=`${siteUrl()}/#reserva=${quoteToken(q.id)}`;
  return {codigo:q.id,nombre:q.name,zona:q.zone,total:money(q.total),reserva:money(q.deposit),saldo:money(q.total-q.deposit),vigencia:date(q.valid_until),semana:r?.week_start||'Sin elegir',vencimiento:date(r?.hold_until),condiciones:q.terms,enlace:link,baja:`${link}&baja=1`,detalle:[`Pack ${q.snapshot.pack} · ${q.m2} m²`,...q.snapshot.services,...q.snapshot.videos,...q.snapshot.addons.map(a=>`${a.name}: ${money(a.price)}`)].join('\n')};
 }
 export function jobEligible(job,q,r,now=Date.now()){

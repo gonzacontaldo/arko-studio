@@ -1,3 +1,4 @@
+import {useNavigate} from 'react-router-dom';
 import { useState, useEffect, useRef } from 'react';
 import { PACKS as DEFAULT_PACKS, SERVICE_BY_ID as DEFAULT_SERVICES, ADDONS as DEFAULT_ADDONS } from './pricingData';
 import { useCommercialConfig, commercialApi } from '../lib/commercial';
@@ -10,6 +11,7 @@ const emptyForm = () => ({ propertyType: '', services: [], pack: '', m2: '', nam
 const money = n => `$ ${n.toLocaleString('es-AR')}`;
 
 export default function BudgetModal({ isOpen, onClose, initialSelection }) {
+  const navigate=useNavigate();
   const config = useCommercialConfig();
   const PACKS = config.catalog?.packs || DEFAULT_PACKS;
   const ADDONS = config.catalog?.addons || DEFAULT_ADDONS;
@@ -97,7 +99,7 @@ export default function BudgetModal({ isOpen, onClose, initialSelection }) {
       try {
         const result = await commercialApi('submit', { method:'POST', body:{ ...form, website:e.currentTarget.elements.website.value, requestKey:requestKey.current } });
         setPending(result.stage==='pending_review');
-        setReservationUrl('/presupuesto#' + result.token);
+        setReservationUrl('/#reserva=' + result.token);
         setSending(false);
       } catch (error) { setSubmitError(error.message); setSending(false); }
       return;
@@ -132,7 +134,7 @@ export default function BudgetModal({ isOpen, onClose, initialSelection }) {
           <p className="text-sm text-on-surface-variant">Si no encontrás el mail, revisá la carpeta de spam o correo no deseado.</p>
           <div className="border-t border-outline-variant/50 pt-4 space-y-3">
             <p className="text-sm text-on-surface-variant">¿Ya revisaste la propuesta y estás conforme? También podés continuar desde acá.</p>
-            <a href={reservationUrl} className="inline-flex items-center justify-center border border-outline-variant text-on-surface-variant text-sm font-medium px-4 py-2 rounded-lg hover:border-secondary hover:text-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-secondary">Elegir semana y reservar</a>
+            <a href={reservationUrl} onClick={e=>{e.preventDefault();onClose();navigate(reservationUrl);}} className="inline-flex items-center justify-center border border-outline-variant text-on-surface-variant text-sm font-medium px-4 py-2 rounded-lg hover:border-secondary hover:text-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-secondary">Elegir semana y reservar</a>
             <p className="text-xs text-on-surface-variant">La retención del cupo empieza recién cuando elegís una semana. La reserva se confirma con el pago de la seña.</p>
           </div>
           </>}<button type="button" onClick={onClose} className="text-sm underline text-secondary">Seguir recorriendo la web</button>

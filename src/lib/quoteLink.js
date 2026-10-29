@@ -1,1 +1,1 @@
-export const quoteTokenFromHash=hash=>String(hash||'').replace(/^#/,'').split(/[?&]/,1)[0];
+export const quoteTokenFromHash=hash=>String(hash||'').replace(/^#(?:reserva=)?/,'').split(/[?&]/,1)[0];

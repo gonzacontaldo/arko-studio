@@ -1,3 +1,4 @@
+import {quoteTokenFromHash} from '../src/lib/quoteLink.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {createHmac,randomUUID} from 'node:crypto';
@@ -116,4 +117,13 @@ test('a la carte uses catalog prices, saves property type and separates video de
  for(const services of [[],['fake'],['foto','foto']])assert.throws(()=>validateRequest({...request,pack:'custom',services},catalog));
  assert.throws(()=>validateRequest({...request,pack:'custom',services:['foto'],addons:[ADDONS[0].name]},catalog));
  assert.throws(()=>validateRequest({...request,propertyType:'invalid'},catalog));
+});
+
+
+test('reservation links preserve private tokens across new popup and legacy email links',()=>{
+ const token='12345678-1234-4123-8123-123456789abc.signature';
+ assert.equal(quoteTokenFromHash('#reserva='+token),token);
+ assert.equal(quoteTokenFromHash('#reserva='+token+'&baja=1'),token);
+ assert.equal(quoteTokenFromHash('#reserva='+token+'?collection_status=approved'),token);
+ assert.equal(quoteTokenFromHash('#'+token),token);
 });

@@ -7,12 +7,14 @@ const PortfolioPage = lazy(() => import('./pages/PortfolioPage'));
 const AdminPage = lazy(() => import('./pages/AdminPage'));
 const EjemploPage = lazy(() => import('./pages/EjemploPage'));
 const ServicePage = lazy(() => import('./pages/ServicePage'));
+const ReservationModal = lazy(() => import('./components/ReservationModal'));
 const QuotePage = lazy(() => import('./pages/QuotePage'));
 
 function HashScroll() {
   const { pathname, hash } = useLocation();
 
   useEffect(() => {
+    if (hash.startsWith('#reserva=')) return undefined;
     if (!hash) {
       if (pathname === '/') window.scrollTo(0, 0);
       return undefined;
@@ -51,6 +53,7 @@ export default function App() {
           <Route path="/admin" element={<AdminPage />} />
           <Route path="/presupuesto" element={<QuotePage />} />
         </Routes>
+        <ReservationModal />
       </Suspense>
       <SpeedInsights />
     </>
