@@ -149,3 +149,23 @@ test('Matterport can upgrade a tour in Base and a la carte without requiring vid
  }
  assert.throws(()=>validateRequest({...request,pack:'custom',services:['foto'],addons:['Tour en Matterport']},catalog));
 });
+
+test('new inquiry alerts target the studio and open the authenticated admin detail',async()=>{
+ const {prepareEmail,jobRecipient}=await import('../server/commercial/jobs.js');
+ const original=process.env.COMMERCIAL_SITE_URL;process.env.COMMERCIAL_SITE_URL='https://www.arkostudio.com.ar';
+ try{
+  const q={...validateRequest(request,catalog),id:randomUUID(),total:null,is_test:true,stage:'closed',paused:true,unsubscribed:true};
+  q.snapshot.requiresReview=true;
+  const job={template_key:'admin_notice'};
+  assert.equal(jobRecipient(job,q),'contacto@arkostudio.com.ar');
+  assert.equal(jobRecipient({template_key:'quote'},q),q.email);
+  assert.equal(jobEligible(job,q,null),true);
+  assert.equal(jobEligible(job,{...q,is_test:false},null),false);
+  const email=await prepareEmail('admin_notice',q,null,{});
+  assert.ok(email.subject.includes('Presupuesto a medida'));
+  assert.ok(email.text.includes(q.email));
+  assert.ok(email.text.includes('Importe pendiente'));
+  assert.equal(email.link,`https://www.arkostudio.com.ar/admin?tab=commercial&quote=${q.id}`);
+  assert.equal(email.attachments,undefined);
+ }finally{if(original===undefined)delete process.env.COMMERCIAL_SITE_URL;else process.env.COMMERCIAL_SITE_URL=original;}
+});

@@ -4,7 +4,18 @@ import {sendZoho,siteUrl,isTestMode} from './providers.js';
 import {createQuotePdf} from './quotePdf.js';
 import {QUOTE_EMAIL_BODY} from '../../src/lib/quoteEmail.js';
 
+export const ADMIN_NOTICE_TO='contacto@arkostudio.com.ar';
+export const jobRecipient=(job,q)=>job.template_key==='admin_notice'?ADMIN_NOTICE_TO:q.email;
 export async function prepareEmail(key,q,r,template){
+ if(key==='admin_notice')return {
+  subject:`Nueva consulta web ARKO${q.snapshot.requiresReview?' — Presupuesto a medida':''}`,
+  text:[`Ingresó una solicitud de ${q.name}.`,`Email: ${q.email}`,`Propiedad: ${q.snapshot.propertyType||'A confirmar'}`,`Zona: ${q.zone}`,`Superficie: ${q.m2} m²`,`Selección: ${q.snapshot.pack}`,
+   `Servicios: ${[...q.snapshot.services,...q.snapshot.videos].join(', ')}`,
+   ...(q.snapshot.addons||[]).map(a=>`Adicional: ${a.name}`),
+   q.total==null?'Importe pendiente: preparar cotización a medida desde el admin.':`Presupuesto: ${money(q.total)}`,
+   q.message?`Comentarios: ${q.message}`:'',`Consulta: ${q.id}`].filter(Boolean).join('\n'),
+  link:`${siteUrl()}/admin?tab=commercial&quote=${encodeURIComponent(q.id)}`,linkLabel:'Ver consulta en el admin'
+ };
  if(key==='received')return {subject:template.subject,text:`Hola ${q.name}, recibimos tu solicitud para ${q.zone}.\n\nUna persona de nuestro equipo se va a poner en contacto con vos para preparar un presupuesto a medida.\n\nARKO Studio`};
  const vars=messageVariables(q,r);
  const rendered=renderTemplate({...template,body:key==='quote'?QUOTE_EMAIL_BODY:template.body},vars);
@@ -17,7 +28,9 @@ export function messageVariables(q,r){
  return {codigo:q.id,nombre:q.name,zona:q.zone,total:money(q.total),reserva:money(q.deposit),saldo:money(q.total-q.deposit),vigencia:date(q.valid_until),semana:r?.week_start||'Sin elegir',vencimiento:date(r?.hold_until),condiciones:q.terms,enlace:link,baja:`${link}&baja=1`,detalle:[`Pack ${q.snapshot.pack} · ${q.m2} m²`,...q.snapshot.services,...q.snapshot.videos,...q.snapshot.addons.map(a=>`${a.name}: ${money(a.price)}`)].join('\n')};
 }
 export function jobEligible(job,q,r,now=Date.now()){
- if(!q||q.stage==='closed'||q.is_test!==isTestMode())return false;
+ if(!q||q.is_test!==isTestMode())return false;
+ if(job.template_key==='admin_notice')return true;
+ if(q.stage==='closed')return false;
  const commercial=['choose_week','reminder','recovery','expired'];
  if(commercial.includes(job.template_key)&&(q.paused||q.unsubscribed))return false;
  if(job.template_key==='received')return !!q.snapshot.requiresReview;
@@ -57,7 +70,7 @@ export async function processJobs(limit=2){
    const [freshQ]=await db(`com_quotes?id=eq.${q.id}`);
    const freshR=r?(await db(`com_reservations?id=eq.${r.id}`))[0]:null;
    if(!jobEligible(j,freshQ,freshR)){await patch({status:'cancelled'});continue;}
-   const providerId=await sendZoho({to:q.email,...rendered,unsubscribe:['choose_week','reminder','expired','recovery'].includes(j.template_key)?vars.baja:undefined});
+   const providerId=await sendZoho({to:jobRecipient(j,q),...rendered,unsubscribe:['choose_week','reminder','expired','recovery'].includes(j.template_key)?vars.baja:undefined});
    await patch({status:'sent',last_error:null,sent_at:new Date().toISOString(),provider_id:providerId});sent++;
   }catch(error){
    // An ambiguous provider response must be reviewed, not retried automatically.

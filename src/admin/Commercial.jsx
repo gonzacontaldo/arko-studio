@@ -10,7 +10,7 @@ const JOB={pending:'Programado',processing:'Enviando',sent:'Aceptado por Zoho',c
 const button='border border-secondary text-secondary px-3 py-2 rounded-lg text-sm font-semibold disabled:opacity-40';
 const input='input w-full';
 export default function Commercial(){
- const [data,setData]=useState(null),[error,setError]=useState(''),[notice,setNotice]=useState(''),[busy,setBusy]=useState(false),[tab,setTab]=useState('queries'),[selected,setSelected]=useState(null),[detail,setDetail]=useState(null),[filter,setFilter]=useState('all'),[search,setSearch]=useState('');
+ const [data,setData]=useState(null),[error,setError]=useState(''),[notice,setNotice]=useState(''),[busy,setBusy]=useState(false),[tab,setTab]=useState('queries'),[selected,setSelected]=useState(()=>{const id=new URLSearchParams(window.location.search).get('quote');return /^[0-9a-f-]{36}$/i.test(id||'')?id:null;}),[detail,setDetail]=useState(null),[filter,setFilter]=useState('all'),[search,setSearch]=useState('');
  const load=async()=>{const result=await commercialApi('admin',{admin:true});setData(result);};
  useEffect(()=>{load().catch(e=>setError(e.message));},[]);
  useEffect(()=>{let active=true;setDetail(null);if(selected)commercialApi(`admin_detail&id=${selected}`,{admin:true}).then(d=>{if(active)setDetail(d);}).catch(e=>{if(active)setError(e.message);});return()=>{active=false;};},[selected,data]);

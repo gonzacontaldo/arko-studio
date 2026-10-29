@@ -27,7 +27,7 @@ const TABS = [
 
 export default function AdminPage() {
   const session = useSession();
-  const [tab, setTab] = useState('dashboard');
+  const [tab, setTab] = useState(()=>new URLSearchParams(window.location.search).get('tab')==='commercial'?'commercial':'dashboard');
 
   // Cargando estado de sesión
   if (session === undefined) {
