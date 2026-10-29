@@ -1,3 +1,4 @@
+import {questionsFor} from '../../src/lib/propertyPricing.js';
 import {db,rpc,settings} from './db.js';
 import {money,quoteToken,renderTemplate} from './domain.js';
 import {sendZoho,siteUrl,isTestMode} from './providers.js';
@@ -5,6 +6,7 @@ import {createQuotePdf} from './quotePdf.js';
 import {QUOTE_EMAIL_BODY} from '../../src/lib/quoteEmail.js';
 
 export async function prepareEmail(key,q,r,template){
+ if(key==='received')return {subject:template.subject,text:`Hola ${q.name}, recibimos tu solicitud para ${q.zone}.\n\n${q.snapshot.pack}\n${[...q.snapshot.services,...q.snapshot.videos].join(', ')}\n${questionsFor(q.snapshot.propertyType).map(([k,label])=>`${label}: ${q.snapshot.scope?.[k]||'—'}`).join('\n')}\n\nVamos a revisar el alcance y contactarte para preparar tu presupuesto. Luego recibirás el PDF y el enlace para reservar.`};
  const vars=messageVariables(q,r);
  const rendered=renderTemplate({...template,body:key==='quote'?QUOTE_EMAIL_BODY:template.body},vars);
  return {...rendered,link:vars.enlace,...(key==='quote'?{attachments:[await createQuotePdf(q,{link:vars.enlace})],linkLabel:'Elegir semana y reservar'}:{})};
@@ -19,6 +21,7 @@ export function jobEligible(job,q,r,now=Date.now()){
  if(!q||q.stage==='closed'||q.is_test!==isTestMode())return false;
  const commercial=['choose_week','reminder','recovery','expired'];
  if(commercial.includes(job.template_key)&&(q.paused||q.unsubscribed))return false;
+ if(job.template_key==='received')return !!q.snapshot.requiresReview;
  if(job.template_key==='quote')return !!q.approved_at;
  if(job.template_key==='choose_week')return q.stage==='ready'&&new Date(q.valid_until).getTime()>now&&!r;
  if(['hold','reminder'].includes(job.template_key))return q.stage==='reserved'&&r?.status==='held'&&new Date(r.hold_until).getTime()>now;

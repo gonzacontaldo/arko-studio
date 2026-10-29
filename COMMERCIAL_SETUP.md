@@ -141,3 +141,12 @@ Supervisar los primeros pedidos. Si un envío queda “Verificar en Zoho”, rev
 
 ### Pausa manual de respuestas
 Configurar `COMMERCIAL_REPLY_MODE=manual` en Vercel si Zoho no incluye webhooks. Revisar el correo y pausar el seguimiento desde el detalle de cada consulta cuando el cliente responda. Los pagos aprobados y las bajas siguen deteniendo los recordatorios automaticamente.
+
+
+## Precios por propiedad y cotizaciones manuales
+
+Antes de desplegar esta versión, ejecutar `supabase/11_property_quotes.sql` en el SQL Editor de Supabase, después de las migraciones 09 y 10. No modifica los importes de propuestas anteriores. Esta migración permite solicitudes sin importe y agrega el mail de recepción y la edición de cotizaciones.
+
+Complejos, campos y otras propiedades quedan siempre por revisar, incluso con aprobación automática activada. En Consultas → Ver ficha se muestran WhatsApp y todas las respuestas. Agregar conceptos con cantidades y precios unitarios (IVA incluido), describir el alcance, guardar y luego aprobar para programar el PDF y habilitar reserva. El vencimiento comienza nuevamente al aprobar. Los mails se envían con el cron y Zoho existentes.
+
+Verificar antes de habilitar: solicitud de complejo sin precio ni reserva, mail de recepción sin PDF, guardado de conceptos, aprobación y PDF con el importe acordado. Las pruebas locales no envían emails ni ejecutan SQL remoto.

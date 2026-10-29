@@ -116,6 +116,7 @@ export async function createQuotePdf(q, { link } = {}) {
   }
   heading('04 / CONDICIONES Y RESERVA');
   block(q.terms, { size: 9 });
+  if(q.snapshot.scopeOfWork) block(`Alcance acordado: ${q.snapshot.scopeOfWork}`, {size:9});
   block('La reserva corresponde a un cupo dentro de la semana elegida. El día y horario se coordinan según disponibilidad, clima y acceso a la propiedad.', { size: 9 });
   if (link) {
     ensure(60); y += 8;

@@ -56,7 +56,8 @@ export default async function handler(req,res){
   if(action==='config'&&req.method==='GET'){
    if(!readiness().database)return res.status(200).json({enabled:false});
    let s;try{s=await settings();}catch{return res.status(200).json({enabled:false});}
-   const ready=readiness();return res.status(200).json({enabled:s.enabled&&!ready.testMode&&ready.links,catalog:catalog(s),deposit:s.deposit});
+   let manualQuotes=false;try{manualQuotes=(await rpc('com_property_quotes_version',{}))===1;}catch{}
+   const ready=readiness();return res.status(200).json({manualQuotes,enabled:s.enabled&&!ready.testMode&&ready.links,catalog:catalog(s),deposit:s.deposit});
   }
   if(action==='submit'&&req.method==='POST'){
    const s=await settings();if(!s.enabled||isTestMode())throw new FlowError('Las consultas automáticas todavía no están habilitadas.',503);
@@ -151,7 +152,13 @@ export default async function handler(req,res){
     }else if(['template_publish','template_toggle'].includes(op)){if(typeof data.enabled!=='boolean')throw new FlowError('Revisá la plantilla.');}
     else if(op==='notes'){if(typeof data.notes!=='string'||data.notes.length>10000)throw new FlowError('Notas inválidas.');}
     else if(op==='pause'){if(typeof data.paused!=='boolean')throw new FlowError('Estado inválido.');}
-    else if(!['approve','close','retry_job'].includes(op))throw new FlowError('Acción desconocida.');
+    else if(op==='quote_draft'){
+     if(!Array.isArray(data.lineItems)||!data.lineItems.length||data.lineItems.length>30)throw new FlowError('Agregá entre 1 y 30 conceptos.');
+     for(const item of data.lineItems)if(typeof item.description!=='string'||!item.description.trim()||item.description.length>300||!Number.isSafeInteger(item.quantity)||item.quantity<1||!Number.isSafeInteger(item.unitPrice)||item.unitPrice<1||item.total!==item.quantity*item.unitPrice)throw new FlowError('Revisá los conceptos y sus importes.');
+     const total=data.lineItems.reduce((sum,item)=>sum+item.total,0);if(!Number.isSafeInteger(total)||total>2000000000||data.total!==total)throw new FlowError('Total inválido.');
+     if(typeof data.scopeOfWork!=='string'||data.scopeOfWork.trim().length<10||data.scopeOfWork.length>3000)throw new FlowError('Describí el alcance acordado.');
+    }
+    else if(!['approve' ,'close','retry_job'].includes(op))throw new FlowError('Acción desconocida.');
     const result=await rpc('com_admin_action',{p_action:op,p_id:body.id?assertUuid(body.id):null,p_data:data,p_actor:user.id});return res.status(200).json(result);
    }
   }

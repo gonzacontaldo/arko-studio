@@ -31,7 +31,8 @@ export default function QuotePage(){
      <h2 className="text-xl font-bold">{q.snapshot.pack} · {q.m2} m²</h2>
      {q.snapshot.propertyType && <p className="text-sm">Tipo de propiedad: {q.snapshot.propertyType}</p>}
      <ul className="space-y-1">{[...q.snapshot.services,...q.snapshot.videos].map((s,i)=><li key={i}>✓ {s}</li>)}{q.snapshot.addons.map(a=><li key={a.name}>✓ {a.name} · {money(a.price)}</li>)}</ul>
-     <div className="border-t pt-3 space-y-1"><p className="text-xl font-bold">{q.approved?'Total':'Total estimado'}: {money(q.total)}</p><p>Reserva: {money(q.deposit)} · Saldo: {money(q.total-q.deposit)}</p><p className="text-xs">IVA incluido. Vigencia de la propuesta: {date(q.valid_until)}.</p></div>
+     {q.total!==null && <div className="border-t pt-3 space-y-1"><p className="text-xl font-bold">{q.approved?'Total':'Total estimado'}: {money(q.total)}</p><p>Reserva: {money(q.deposit)} · Saldo: {money(q.total-q.deposit)}</p><p className="text-xs">IVA incluido. Vigencia de la propuesta: {date(q.valid_until)}.</p></div>}
+     {q.snapshot.scopeOfWork&&<p className="whitespace-pre-wrap">{q.snapshot.scopeOfWork}</p>}
      <p className="text-sm text-on-surface-variant whitespace-pre-wrap">{q.terms}</p>
     </section>
     {!q.approved&&<p className="bg-white p-5 rounded-xl">Tu solicitud está en revisión. Te enviaremos el presupuesto confirmado por email cuando verifiquemos las características y la locación.</p>}

@@ -1,3 +1,4 @@
+import {PROPERTY_TYPES,requiresReview,propertyPrice,areaRule,questionsFor} from '../../src/lib/propertyPricing.js';
 import { createHash, createHmac, timingSafeEqual } from 'node:crypto';
 export const TIMINGS = ['Esta semana', 'En las próximas 2 semanas', 'Dentro de un mes', 'Más adelante', 'Todavía no tengo fecha'];
 export const VIDEO_IDS = ['cine', 'fpv', 'reel'];
@@ -17,24 +18,29 @@ export function validateRequest(input,catalog) {
  const services=input.services||[];
  if(custom&&(!Array.isArray(services)||!services.length||new Set(services).size!==services.length||services.some(id=>!catalog.services.some(s=>s.id===id))))throw new FlowError('Elegí al menos un servicio válido.');
  const chosen=custom?catalog.services.filter(s=>services.includes(s.id)):[];
- const pack=custom?{id:'custom',name:'A la carta',services:services.filter(id=>!VIDEO_IDS.includes(id)),videos:services.filter(id=>VIDEO_IDS.includes(id)).length,base:chosen.reduce((sum,s)=>sum+s.base,0),per100:chosen.reduce((sum,s)=>sum+s.per100,0)}:catalog.packs.find(p=>p.id===input.pack);if(!pack)throw new FlowError('Seleccioná un pack válido.');
- const propertyTypes=['Lote / terreno','Casa','Departamento','Oficina / local','Complejo de oficinas','Edificio entero','Otro'];
+ const pack=custom?{id:'custom',name:'A la carta',services:services.filter(id=>!VIDEO_IDS.includes(id)),videos:services.filter(id=>VIDEO_IDS.includes(id)).length,base:chosen.reduce((sum,s)=>sum+s.base,0),per100:chosen.reduce((sum,s)=>sum+s.per100,0)}:catalog.packs.filter(p=>p.id===input.pack).map(p=>({...p}))[0];if(!pack)throw new FlowError('Seleccioná un pack válido.');
+ const propertyTypes=PROPERTY_TYPES;
  const propertyType=input.propertyType==null?'':cleanText(input.propertyType,80,'el tipo de propiedad');
  if(propertyType&&!propertyTypes.includes(propertyType))throw new FlowError('Seleccioná un tipo de propiedad válido.');
+ if(propertyType==='Lote / terreno'){if(custom&&services.some(id=>['planos','tour'].includes(id)))throw new FlowError('Los planos interiores y el tour virtual no están disponibles para terrenos.');pack.services=pack.services.filter(id=>!['planos','tour'].includes(id));}
  const videos=custom?services.filter(id=>VIDEO_IDS.includes(id)):(input.videos||[]),addons=input.addons||[];
  if(!Array.isArray(videos)||new Set(videos).size!==videos.length||videos.length!==(pack.videos||0)||videos.some(v=>!VIDEO_IDS.includes(v)))throw new FlowError(`Elegí ${pack.videos||0} videos para este pack.`);
  if(!Array.isArray(addons)||new Set(addons).size!==addons.length||addons.some(a=>!catalog.addons.some(x=>x.name===a)))throw new FlowError('Revisá los adicionales.');
  if(addons.length&&!videos.some(v=>v==='cine'||v==='reel'))throw new FlowError('Los adicionales requieren video cinematográfico o reel.');
  if(input.message&&(typeof input.message!=='string'||input.message.length>2000))throw new FlowError('El comentario es demasiado largo.');
+ if(propertyType==='Lote / terreno'&&addons.includes('Tour en Matterport'))throw new FlowError('Matterport no está disponible para terrenos.');
  const extras=catalog.addons.filter(a=>addons.includes(a.name));
- const total=pack.base+pack.per100*Math.max(0,Math.ceil((m2-100)/100))+extras.reduce((sum,a)=>sum+a.price,0);
+ const manual=requiresReview(propertyType), scope={};
+ const phone=manual?cleanText(input.phone,40,'tu WhatsApp'):'';
+ if(manual && !/^[+()\d\s-]{8,40}$/.test(phone))throw new FlowError('Ingresá un WhatsApp válido.');
+ for(const [key,label] of questionsFor(propertyType))scope[key]=cleanText(input.scope?.[key],1500,label);
+ const total=propertyPrice({...pack,perService:custom},m2,propertyType)+extras.reduce((sum,a)=>sum+a.price,0);
  if(!Number.isSafeInteger(total)||total<=0)throw new FlowError('El precio requiere revisión.',503);
- const tranches=Math.max(0,Math.ceil((m2-100)/100));
+ const rule=areaRule(propertyType,{...pack,perService:custom}),tranches=Math.max(0,Math.ceil((m2-rule.included)/rule.step));
  const item=(description,quantity,unitPrice)=>({description,quantity,unitPrice,total:quantity*unitPrice});
- const priced=custom?chosen:[{...pack,name:`Pack ${pack.name}`}];
- const lineItems=priced.flatMap(s=>[item(`${s.name} - hasta 100 m²`,1,s.base),...(tranches&&s.per100?[item(`${s.name} - tramo adicional de hasta 100 m²`,tranches,s.per100)]:[])]).concat(extras.map(a=>item(a.name,1,a.price)));
+ const lineItems=[item(`${pack.name} - hasta ${rule.included} m²`,1,pack.base),...(tranches?[item(`Tramo adicional de hasta ${rule.step} m²`,tranches,rule.increment)]:[])].concat(extras.map(a=>item(a.name,1,a.price)));
  const serviceDetails=[...pack.services,...videos].map(id=>{const service=catalog.services.find(s=>s.id===id);return {name:service?.name||id,description:service?.desc||''};});
- return {name,email,zone,timing,m2,pack:pack.id,videos,addons,message:(input.message||'').trim(),snapshot:{propertyType,pack:pack.name,services:pack.services.map(id=>catalog.services.find(s=>s.id===id)?.name||id),videos:videos.map(id=>catalog.services.find(s=>s.id===id)?.name||id),serviceDetails,lineItems,addons:extras.map(a=>({name:a.name,price:a.price,description:a.desc||''})),total}};
+ return {name,email,zone,timing,m2,pack:pack.id,videos,addons,message:(input.message||'').trim(),snapshot:{propertyType,requiresReview:manual,phone,scope,pack:pack.name,services:pack.services.map(id=>catalog.services.find(s=>s.id===id)?.name||id),videos:videos.map(id=>catalog.services.find(s=>s.id===id)?.name||id),serviceDetails,lineItems:manual?[]:lineItems,addons:extras.map(a=>({name:a.name,price:a.price,description:a.desc||''})),total:manual?null:total}};
 }
 export function validateCatalog(c) {
  if(!c||!Array.isArray(c.packs)||!Array.isArray(c.services)||!Array.isArray(c.addons))throw new FlowError('Catálogo inválido.');

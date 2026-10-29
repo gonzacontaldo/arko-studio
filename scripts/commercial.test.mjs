@@ -111,7 +111,7 @@ test('quote submission does not require a production date before choosing a week
 
 test('a la carte uses catalog prices, saves property type and separates video deliverables',()=>{
  const q=validateRequest({...request,pack:'custom',propertyType:'Lote / terreno',services:['foto','cine'],videos:[]},catalog);
- assert.equal(q.snapshot.total,350000);assert.equal(q.snapshot.propertyType,'Lote / terreno');
+ assert.equal(q.snapshot.total,300000);assert.equal(q.snapshot.propertyType,'Lote / terreno');
  assert.deepEqual(q.snapshot.services,['Fotografía HDR']);assert.deepEqual(q.snapshot.videos,['Video cinematográfico']);
  for(const services of [[],['fake'],['foto','foto']])assert.throws(()=>validateRequest({...request,pack:'custom',services},catalog));
  assert.throws(()=>validateRequest({...request,pack:'custom',services:['foto'],addons:[ADDONS[0].name]},catalog));
