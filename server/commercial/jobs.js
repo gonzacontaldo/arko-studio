@@ -1,4 +1,3 @@
-import {questionsFor} from '../../src/lib/propertyPricing.js';
 import {db,rpc,settings} from './db.js';
 import {money,quoteToken,renderTemplate} from './domain.js';
 import {sendZoho,siteUrl,isTestMode} from './providers.js';
@@ -6,7 +5,7 @@ import {createQuotePdf} from './quotePdf.js';
 import {QUOTE_EMAIL_BODY} from '../../src/lib/quoteEmail.js';
 
 export async function prepareEmail(key,q,r,template){
- if(key==='received')return {subject:template.subject,text:`Hola ${q.name}, recibimos tu solicitud para ${q.zone}.\n\n${q.snapshot.pack}\n${[...q.snapshot.services,...q.snapshot.videos].join(', ')}\n${questionsFor(q.snapshot.propertyType).map(([k,label])=>`${label}: ${q.snapshot.scope?.[k]||'—'}`).join('\n')}\n\nVamos a revisar el alcance y contactarte para preparar tu presupuesto. Luego recibirás el PDF y el enlace para reservar.`};
+ if(key==='received')return {subject:template.subject,text:`Hola ${q.name}, recibimos tu solicitud para ${q.zone}.\n\nUna persona de nuestro equipo se va a poner en contacto con vos para preparar un presupuesto a medida.\n\nARKO Studio`};
  const vars=messageVariables(q,r);
  const rendered=renderTemplate({...template,body:key==='quote'?QUOTE_EMAIL_BODY:template.body},vars);
  return {...rendered,link:vars.enlace,...(key==='quote'?{attachments:[await createQuotePdf(q,{link:vars.enlace})],linkLabel:'Elegir semana y reservar'}:{})};

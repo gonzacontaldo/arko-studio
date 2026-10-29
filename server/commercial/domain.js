@@ -1,4 +1,4 @@
-import {PROPERTY_TYPES,requiresReview,propertyPrice,areaRule,questionsFor} from '../../src/lib/propertyPricing.js';
+import {PROPERTY_TYPES,requiresReview,propertyPrice,areaRule} from '../../src/lib/propertyPricing.js';
 import { createHash, createHmac, timingSafeEqual } from 'node:crypto';
 export const TIMINGS = ['Esta semana', 'En las próximas 2 semanas', 'Dentro de un mes', 'Más adelante', 'Todavía no tengo fecha'];
 export const VIDEO_IDS = ['cine', 'fpv', 'reel'];
@@ -30,17 +30,14 @@ export function validateRequest(input,catalog) {
  if(input.message&&(typeof input.message!=='string'||input.message.length>2000))throw new FlowError('El comentario es demasiado largo.');
  if(propertyType==='Lote / terreno'&&addons.includes('Tour en Matterport'))throw new FlowError('Matterport no está disponible para terrenos.');
  const extras=catalog.addons.filter(a=>addons.includes(a.name));
- const manual=requiresReview(propertyType), scope={};
- const phone=manual?cleanText(input.phone,40,'tu WhatsApp'):'';
- if(manual && !/^[+()\d\s-]{8,40}$/.test(phone))throw new FlowError('Ingresá un WhatsApp válido.');
- for(const [key,label] of questionsFor(propertyType))scope[key]=cleanText(input.scope?.[key],1500,label);
+ const manual=requiresReview(propertyType);
  const total=propertyPrice({...pack,perService:custom},m2,propertyType)+extras.reduce((sum,a)=>sum+a.price,0);
  if(!Number.isSafeInteger(total)||total<=0)throw new FlowError('El precio requiere revisión.',503);
  const rule=areaRule(propertyType,{...pack,perService:custom}),tranches=Math.max(0,Math.ceil((m2-rule.included)/rule.step));
  const item=(description,quantity,unitPrice)=>({description,quantity,unitPrice,total:quantity*unitPrice});
  const lineItems=[item(`${pack.name} - hasta ${rule.included} m²`,1,pack.base),...(tranches?[item(`Tramo adicional de hasta ${rule.step} m²`,tranches,rule.increment)]:[])].concat(extras.map(a=>item(a.name,1,a.price)));
  const serviceDetails=[...pack.services,...videos].map(id=>{const service=catalog.services.find(s=>s.id===id);return {name:service?.name||id,description:service?.desc||''};});
- return {name,email,zone,timing,m2,pack:pack.id,videos,addons,message:(input.message||'').trim(),snapshot:{propertyType,requiresReview:manual,phone,scope,pack:pack.name,services:pack.services.map(id=>catalog.services.find(s=>s.id===id)?.name||id),videos:videos.map(id=>catalog.services.find(s=>s.id===id)?.name||id),serviceDetails,lineItems:manual?[]:lineItems,addons:extras.map(a=>({name:a.name,price:a.price,description:a.desc||''})),total:manual?null:total}};
+ return {name,email,zone,timing,m2,pack:pack.id,videos,addons,message:(input.message||'').trim(),snapshot:{propertyType,requiresReview:manual,pack:pack.name,services:pack.services.map(id=>catalog.services.find(s=>s.id===id)?.name||id),videos:videos.map(id=>catalog.services.find(s=>s.id===id)?.name||id),serviceDetails,lineItems:manual?[]:lineItems,addons:extras.map(a=>({name:a.name,price:a.price,description:a.desc||''})),total:manual?null:total}};
 }
 export function validateCatalog(c) {
  if(!c||!Array.isArray(c.packs)||!Array.isArray(c.services)||!Array.isArray(c.addons))throw new FlowError('Catálogo inválido.');

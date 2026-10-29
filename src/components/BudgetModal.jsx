@@ -2,10 +2,10 @@ import { useState, useEffect, useRef } from 'react';
 import { PACKS as DEFAULT_PACKS, SERVICE_BY_ID as DEFAULT_SERVICES, ADDONS as DEFAULT_ADDONS } from './pricingData';
 import { useCommercialConfig, commercialApi } from '../lib/commercial';
 
-import {PROPERTY_TYPES,requiresReview,propertyPrice,questionsFor,largeArea} from '../lib/propertyPricing';
+import {PROPERTY_TYPES,requiresReview,propertyPrice,largeArea} from '../lib/propertyPricing';
 const STEPS = ['Propiedad', 'Ubicación', 'Servicios', 'Contacto'];
 const VIDEOS = ['cine', 'fpv', 'reel'];
-const emptyForm = () => ({ propertyType: '', services: [], pack: '', m2: '', name: '', email: '', zone: '', videos: [], addons: [], message: '', phone:'', scope:{} });
+const emptyForm = () => ({ propertyType: '', services: [], pack: '', m2: '', name: '', email: '', zone: '', videos: [], addons: [], message: '' });
 
 const money = n => `$ ${n.toLocaleString('es-AR')}`;
 
@@ -63,14 +63,13 @@ export default function BudgetModal({ isOpen, onClose, initialSelection }) {
   if (!isOpen) return null;
   const change = (field, value) => {
     requestKey.current = crypto.randomUUID();
-    setForm(prev => ({ ...prev, [field]: value, ...(field === 'propertyType' ? {scope:{},services:[],pack:'',videos:[],addons:[]} : {}), ...(field === 'pack' ? { services: [], videos: [], addons: [] } : {}), ...((field === 'videos' || (field === 'services' && form.pack === 'custom')) && !value.some(id => id === 'cine' || id === 'reel') ? { addons: [] } : {}) }));
+    setForm(prev => ({ ...prev, [field]: value, ...(field === 'propertyType' ? {services:[],pack:'',videos:[],addons:[]} : {}), ...(field === 'pack' ? { services: [], videos: [], addons: [] } : {}), ...((field === 'videos' || (field === 'services' && form.pack === 'custom')) && !value.some(id => id === 'cine' || id === 'reel') ? { addons: [] } : {}) }));
     setErrors(prev => ({ ...prev, [field]: undefined }));
   };
   const toggle = (field, value) => change(field, form[field].includes(value) ? form[field].filter(v => v !== value) : [...form[field], value]);
   const submit = async e => {
     e.preventDefault();
     const next = {};
-    if(manual){for(const [key] of questionsFor(form.propertyType))if(!form.scope[key]?.trim())next.scope='Completá los detalles para que podamos cotizar.';if(!/^[+()\d\s-]{8,40}$/.test(form.phone))next.phone='Ingresá un WhatsApp válido.';}
     if (!form.propertyType) next.propertyType = 'Elegí el tipo de propiedad.';
     if (!selected && form.pack !== 'custom') next.pack = 'Elegí un pack o servicios a la carta.';
     if (form.pack === 'custom' && !form.services.length) next.services = 'Elegí al menos un servicio.';
@@ -79,7 +78,7 @@ export default function BudgetModal({ isOpen, onClose, initialSelection }) {
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())) next.email = 'Ingresá un email válido.';
     if (!form.zone.trim()) next.zone = 'Indicá el barrio o localidad de la propiedad.';
     if (selected?.videos && form.videos.length !== selected.videos) next.videos = `Elegí ${selected.videos} ${selected.videos === 1 ? 'video' : 'videos'}.`;
-    const groups = [['propertyType', 'm2', 'scope'], ['zone'], ['pack', 'services', 'videos'], ['name', 'email', 'phone']];
+    const groups = [['propertyType', 'm2'], ['zone'], ['pack', 'services', 'videos'], ['name', 'email']];
     if (step < 3) {
       const current = Object.fromEntries(Object.entries(next).filter(([key]) => groups[step].includes(key)));
       setErrors(current);
@@ -111,7 +110,6 @@ export default function BudgetModal({ isOpen, onClose, initialSelection }) {
       form.videos.length ? `Videos: ${form.videos.map(id => SERVICE_BY_ID[id].name).join(', ')}` : '',
       form.addons.length ? `Adicionales: ${form.addons.join(', ')} (${ADDONS.filter(a => form.addons.includes(a.name)).map(a => money(a.price)).join(' / ')})` : '',
       estimate!==null ? `Precio estimado: ${money(estimate)}` : 'Solicitud de cotización personalizada',
-      manual ? `WhatsApp: ${form.phone}\n${questionsFor(form.propertyType).map(([key,label])=>`${label}: ${form.scope[key]}`).join('\n')}` : '',
       form.message.trim() ? `Comentarios: ${form.message.trim()}` : '',
     ].filter(Boolean).join('\n');
     window.open(`https://wa.me/5491176498888?text=${encodeURIComponent(text)}`, '_blank', 'noopener,noreferrer');
@@ -129,7 +127,7 @@ export default function BudgetModal({ isOpen, onClose, initialSelection }) {
           <button type="button" onClick={onClose} aria-label="Cerrar" className="text-white p-2"><span className="material-symbols-outlined">close</span></button>
         </div>
         {reservationUrl ? <section className="p-5 md:p-8 space-y-5" aria-live="polite">
-          {pending ? <p>Gracias, {form.name.trim()}. Recibimos tu solicitud. Te contactaremos para definir la propuesta y enviaremos el presupuesto a <strong>{form.email.trim()}</strong>. Luego podrás reservar tu semana.</p> : <><p>Gracias, {form.name.trim()}. Vamos a enviarte el presupuesto a <strong>{form.email.trim()}</strong>. Podés elegir tu semana de producción ahora o volver desde el enlace del mail.</p>
+          {pending ? <p>Gracias, {form.name.trim()}. Recibimos tu solicitud. Una persona de nuestro equipo se va a poner en contacto con vos a través de <strong>{form.email.trim()}</strong> para preparar un presupuesto a medida.</p> : <><p>Gracias, {form.name.trim()}. Vamos a enviarte el presupuesto a <strong>{form.email.trim()}</strong>. Podés elegir tu semana de producción ahora o volver desde el enlace del mail.</p>
           <a href={reservationUrl} className="block text-center editorial-gradient text-white font-bold text-sm py-4 rounded-lg">Elegir semana y reservar</a>
           <p className="text-sm text-on-surface-variant">El cupo se retiene por 72 horas una vez que elegís la semana. La reserva se confirma con la seña de $15.000.</p>
           </>}<button type="button" onClick={onClose} className="text-sm underline text-secondary">Seguir recorriendo la web</button>
@@ -137,9 +135,8 @@ export default function BudgetModal({ isOpen, onClose, initialSelection }) {
           <nav aria-label="Progreso de la solicitud"><ol className="grid grid-cols-4 gap-2">{STEPS.map((label, i) => <li key={label}><button type="button" disabled={i > step} aria-current={i === step ? 'step' : undefined} onClick={() => setStep(i)} className={`w-full border-b-2 pb-3 text-xs sm:text-sm text-left ${i <= step ? 'border-secondary text-secondary font-bold' : 'border-outline-variant text-on-surface-variant'}`}>{i + 1}. {label}</button></li>)}</ol></nav>
           <div ref={stepTitle} key={step} tabIndex={-1} className="outline-none"><p className="text-xs text-secondary uppercase tracking-widest mb-2">Paso {step + 1} de 4</p><h3 className="font-headline font-bold text-xl">{['¿Qué propiedad vamos a mostrar?', '¿Dónde está la propiedad?', 'Elegí cómo mostrarla', '¿A quién enviamos la propuesta?'][step]}</h3></div>
           {step === 0 && <div className="space-y-6"><fieldset><legend className="font-bold text-sm mb-3">Tipo de propiedad *</legend><div className="grid grid-cols-2 sm:grid-cols-3 gap-3">{PROPERTY_TYPES.map(type => <label key={type} className={`border-2 rounded-xl p-4 cursor-pointer text-sm ${form.propertyType === type ? 'border-secondary bg-secondary/5' : 'border-outline-variant/50'}`}><input type="radio" name="propertyType" checked={form.propertyType === type} onChange={() => change('propertyType', type)} className="accent-secondary mr-2" />{type}</label>)}</div>{error('propertyType')}</fieldset>
-          <div><label htmlFor="budget-m2" className="block text-sm font-bold mb-2">Superficie de la propiedad (m²) *</label><input {...fieldProps('m2')} type="number" min="1" max="100000" step="any" placeholder="Ej: 150" className={inputClass} />{error('m2')}<p className="text-xs text-on-surface-variant mt-2">{manual ? 'Indicá los m² aproximados de los espacios a relevar; el campo completo se informa en hectáreas debajo.' : `El precio se calcula por tramos de ${largeArea(form.propertyType)?500:100} m², redondeando al tramo siguiente.`}</p></div>
+          <div><label htmlFor="budget-m2" className="block text-sm font-bold mb-2">Superficie de la propiedad (m²) *</label><input {...fieldProps('m2')} type="number" min="1" max="100000" step="any" placeholder="Ej: 150" className={inputClass} />{error('m2')}<p className="text-xs text-on-surface-variant mt-2">{manual ? 'Indicá la superficie aproximada de los espacios a mostrar.' : `El precio se calcula por tramos de ${largeArea(form.propertyType)?500:100} m², redondeando al tramo siguiente.`}</p></div>
 
-{manual && <div className="space-y-4">{questionsFor(form.propertyType).map(([key,label])=><label key={key} className="block text-sm font-semibold">{label} *<textarea name={key} rows={2} maxLength={1500} value={form.scope[key]||''} onChange={e=>change('scope',{...form.scope,[key]:e.target.value})} className={inputClass}/></label>)}{error('scope')}</div>}
 <p className="text-xs text-on-surface-variant">Indicá la superficie total a relevar. El tipo de inmueble, sus ambientes y amenities se tienen en cuenta al confirmar la propuesta formal.</p></div>}
           {step === 1 && <div><label htmlFor="budget-zone" className="block text-sm font-semibold mb-2">Barrio o localidad *</label><input {...fieldProps('zone')} maxLength={200} placeholder="Ej: Palermo, CABA / Nordelta, Tigre" className={inputClass} />{error('zone')}<p className="text-xs text-on-surface-variant mt-3">Con el barrio y la localidad podemos evaluar el traslado. Coordinamos la dirección exacta al reservar.</p></div>}
           {step === 2 && <div className="space-y-6">
@@ -163,15 +160,14 @@ export default function BudgetModal({ isOpen, onClose, initialSelection }) {
             <div><label htmlFor="budget-email" className="block text-sm font-semibold mb-2">Email *</label><input {...fieldProps('email')} type="email" autoComplete="email" maxLength={254} placeholder="tu@email.com" className={inputClass} />{error('email')}</div>
 
           </div></fieldset>
-          {manual&&<div><label htmlFor="budget-phone" className="block text-sm font-semibold">WhatsApp con código de área *<input {...fieldProps('phone')} type="tel" autoComplete="tel" maxLength={40} className={inputClass}/></label>{error('phone')}</div>}
           <div><label htmlFor="budget-message" className="block text-sm font-semibold mb-2">Comentarios (opcional)</label><textarea id="budget-message" value={form.message} onChange={e => change('message', e.target.value)} rows={3} maxLength={2000} placeholder="Ambientes, amenities, accesos u otros detalles…" className={inputClass} /></div>
           </>}
-          <div className="bg-surface rounded-xl p-4">{form.propertyType && <p className="text-sm mb-2">{form.propertyType} · {form.m2 || '—'} m²{form.zone ? ` · ${form.zone}` : ''}</p>}<p className="font-bold">{estimate !== null ? `Total estimado: ${money(estimate)}` : manual ? 'Prepararemos tu cotización según el alcance indicado.' : 'Elegí tus servicios en el paso 3 para ver el estimado.'}</p><p className="text-xs text-on-surface-variant mt-2">IVA incluido. El valor final se confirma según locación, terreno, amenities y requerimientos de producción. La fecha está sujeta a disponibilidad.</p></div>
+          <div className="bg-surface rounded-xl p-4">{form.propertyType && <p className="text-sm mb-2">{form.propertyType} · {form.m2 || '—'} m²{form.zone ? ` · ${form.zone}` : ''}</p>}<p className="font-bold">{estimate !== null ? `Total estimado: ${money(estimate)}` : manual ? 'Prepararemos un presupuesto a medida para tu propiedad.' : 'Elegí tus servicios en el paso 3 para ver el estimado.'}</p><p className="text-xs text-on-surface-variant mt-2">IVA incluido. El valor final se confirma según locación, terreno, amenities y requerimientos de producción. La fecha está sujeta a disponibilidad.</p></div>
           <input name="website" tabIndex={-1} autoComplete="off" aria-hidden="true" className="hidden" />
           {submitError && <p role="alert" className="text-error text-sm">{submitError}</p>}
           <div className="flex gap-3">{step > 0 && <button type="button" disabled={sending} onClick={() => setStep(step - 1)} className="border border-outline-variant rounded-lg px-5 text-sm">Atrás</button>}<button type="submit" disabled={sending || config.loading} className="w-full editorial-gradient text-white font-bold text-sm py-4 rounded-lg disabled:opacity-50">{step < 3 ? 'Continuar' : sending ? 'Guardando tu consulta…' : automaticSubmission ? 'Enviar solicitud de presupuesto' : 'Continuar por WhatsApp'}</button>
           </div>
-          {step === 3 && <p className="text-center text-on-surface-variant text-xs">{!automaticSubmission && manual ? 'Te conectaremos por WhatsApp con todos los detalles para preparar tu cotización.' : config.enabled && manual ? 'Recibirás un email de recepción. Te contactaremos para preparar el presupuesto y luego podrás reservar.' : config.enabled ? 'Guardaremos tu solicitud y te enviaremos la propuesta por email. Al terminar, te mostraremos un botón para elegir tu semana. Los recordatorios se pueden detener desde cada mensaje.' : 'Se abrirá WhatsApp con todos los datos y el precio estimado. Enviá el mensaje para que recibamos tu consulta. Usaremos tu email para contactarte sobre este pedido.'}</p>}
+          {step === 3 && <p className="text-center text-on-surface-variant text-xs">{!automaticSubmission && manual ? 'Te conectaremos por WhatsApp con todos los detalles para preparar tu cotización.' : config.enabled && manual ? 'Una persona de nuestro equipo se va a poner en contacto con vos para preparar un presupuesto a medida.' : config.enabled ? 'Guardaremos tu solicitud y te enviaremos la propuesta por email. Al terminar, te mostraremos un botón para elegir tu semana. Los recordatorios se pueden detener desde cada mensaje.' : 'Se abrirá WhatsApp con todos los datos y el precio estimado. Enviá el mensaje para que recibamos tu consulta. Usaremos tu email para contactarte sobre este pedido.'}</p>}
         </form>}
       </div>
     </div>
