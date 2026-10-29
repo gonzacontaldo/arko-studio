@@ -22,3 +22,16 @@ export const ADDONS = [
   { name: 'Tour en Matterport', desc: 'Genera un modelo 3D interactivo de la propiedad.', price: 50000 },
   { name: 'Participación del broker inmobiliario', desc: 'El broker aparece en el video para presentar la propiedad.', price: 50000 },
 ];
+
+// Complete older saved catalogs while preserving their configured prices.
+export function completeCatalog(saved = {}) {
+  const merge = (defaults, rows, key) => defaults.map(row => ({ ...row, ...(rows || []).find(value => value[key] === row[key]) })).concat((rows || []).filter(row => !defaults.some(value => value[key] === row[key])));
+  return {
+    services: merge(SERVICES, saved.services, 'id'),
+    addons: merge(ADDONS, saved.addons, 'name'),
+    packs: merge(PACKS, saved.packs, 'id').map(pack => ({ ...pack, services: [...new Set([...(pack.services || []), 'planos', 'tour'])] })),
+  };
+}
+export function addonAvailable(addon, services, videos) {
+  return addon.name === 'Tour en Matterport' ? services.includes('tour') : videos.some(id => id === 'cine' || id === 'reel');
+}

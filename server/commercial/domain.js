@@ -1,3 +1,4 @@
+import {addonAvailable} from '../../src/components/pricingData.js';
 import {PROPERTY_TYPES,requiresReview,propertyPrice,areaRule} from '../../src/lib/propertyPricing.js';
 import { createHash, createHmac, timingSafeEqual } from 'node:crypto';
 export const TIMINGS = ['Esta semana', 'En las próximas 2 semanas', 'Dentro de un mes', 'Más adelante', 'Todavía no tengo fecha'];
@@ -22,13 +23,11 @@ export function validateRequest(input,catalog) {
  const propertyTypes=PROPERTY_TYPES;
  const propertyType=input.propertyType==null?'':cleanText(input.propertyType,80,'el tipo de propiedad');
  if(propertyType&&!propertyTypes.includes(propertyType))throw new FlowError('Seleccioná un tipo de propiedad válido.');
- if(propertyType==='Lote / terreno'){if(custom&&services.some(id=>['planos','tour'].includes(id)))throw new FlowError('Los planos interiores y el tour virtual no están disponibles para terrenos.');pack.services=pack.services.filter(id=>!['planos','tour'].includes(id));}
  const videos=custom?services.filter(id=>VIDEO_IDS.includes(id)):(input.videos||[]),addons=input.addons||[];
  if(!Array.isArray(videos)||new Set(videos).size!==videos.length||videos.length!==(pack.videos||0)||videos.some(v=>!VIDEO_IDS.includes(v)))throw new FlowError(`Elegí ${pack.videos||0} videos para este pack.`);
  if(!Array.isArray(addons)||new Set(addons).size!==addons.length||addons.some(a=>!catalog.addons.some(x=>x.name===a)))throw new FlowError('Revisá los adicionales.');
- if(addons.length&&!videos.some(v=>v==='cine'||v==='reel'))throw new FlowError('Los adicionales requieren video cinematográfico o reel.');
+ if(catalog.addons.some(a=>addons.includes(a.name)&&!addonAvailable(a,pack.services,videos)))throw new FlowError('Matterport requiere un tour 360°. Los adicionales de video requieren video cinematográfico o reel.');
  if(input.message&&(typeof input.message!=='string'||input.message.length>2000))throw new FlowError('El comentario es demasiado largo.');
- if(propertyType==='Lote / terreno'&&addons.includes('Tour en Matterport'))throw new FlowError('Matterport no está disponible para terrenos.');
  const extras=catalog.addons.filter(a=>addons.includes(a.name));
  const manual=requiresReview(propertyType);
  const total=propertyPrice({...pack,perService:custom},m2,propertyType)+extras.reduce((sum,a)=>sum+a.price,0);

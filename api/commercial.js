@@ -1,14 +1,13 @@
 import {randomUUID,createHmac,timingSafeEqual} from 'node:crypto';
-import {PACKS,SERVICES,ADDONS} from '../src/components/pricingData.js';
+import {completeCatalog} from '../src/components/pricingData.js';
 import {db,rpc,settings,requireAdmin} from '../server/commercial/db.js';
 import {FlowError,validateRequest,validateCatalog,quoteToken,quoteId,hash,verifyMpSignature,paymentMatches} from '../server/commercial/domain.js';
 import {isTestMode,readiness,siteUrl,mp,sendZoho} from '../server/commercial/providers.js';
 import {processJobs,prepareEmail} from '../server/commercial/jobs.js';
 export const config={api:{bodyParser:false},maxDuration:60};
 const UUID=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-const defaultCatalog={packs:PACKS,services:SERVICES,addons:ADDONS};
 const bearer=req=>String(req.headers.authorization||'').replace(/^Bearer /,'');
-const catalog=s=>s.catalog?.packs?s.catalog:defaultCatalog;
+const catalog=s=>completeCatalog(s.catalog);
 const assertUuid=id=>{if(!UUID.test(id||''))throw new FlowError('Identificador inválido.');return id;};
 function constantEquals(a,b){return !!a&&!!b&&a.length===b.length&&timingSafeEqual(Buffer.from(a),Buffer.from(b));}
 async function readBody(req){

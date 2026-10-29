@@ -1,6 +1,6 @@
 import {useNavigate} from 'react-router-dom';
 import { useState, useEffect, useRef } from 'react';
-import { PACKS as DEFAULT_PACKS, SERVICE_BY_ID as DEFAULT_SERVICES, ADDONS as DEFAULT_ADDONS } from './pricingData';
+import { PACKS as DEFAULT_PACKS, SERVICE_BY_ID as DEFAULT_SERVICES, ADDONS as DEFAULT_ADDONS, addonAvailable } from './pricingData';
 import { useCommercialConfig, commercialApi } from '../lib/commercial';
 
 import {PROPERTY_TYPES,requiresReview,propertyPrice,largeArea} from '../lib/propertyPricing';
@@ -33,7 +33,8 @@ export default function BudgetModal({ isOpen, onClose, initialSelection }) {
   const priceFor=(item,m2)=>propertyPrice(item,m2,form.propertyType);
   const selected = PACKS.find(p => p.id === form.pack);
   const activeVideos = form.pack === 'custom' ? form.services : form.videos;
-  const canAddExtras = activeVideos.some(id => id === 'cine' || id === 'reel');
+  const includedServices=form.pack==='custom'?form.services:(selected?.services||[]);
+  const availableAddons=ADDONS.filter(a=>addonAvailable(a,includedServices,activeVideos));
   const validArea = Number(form.m2) >= 1 && Number(form.m2) <= 100000 && Number.isFinite(Number(form.m2));
   const customServices = Object.values(SERVICE_BY_ID).filter(s => form.services.includes(s.id));
   const estimate = !manual && validArea && (selected || customServices.length) ? (form.pack === 'custom' ? priceFor({base:customServices.reduce((n,s)=>n+s.base,0),per100:customServices.reduce((n,s)=>n+s.per100,0),perService:true},form.m2) : priceFor(selected, form.m2)) + ADDONS.filter(a => form.addons.includes(a.name)).reduce((sum, a) => sum + a.price, 0) : null;
@@ -65,7 +66,13 @@ export default function BudgetModal({ isOpen, onClose, initialSelection }) {
   if (!isOpen) return null;
   const change = (field, value) => {
     requestKey.current = crypto.randomUUID();
-    setForm(prev => ({ ...prev, [field]: value, ...(field === 'propertyType' ? {services:[],pack:'',videos:[],addons:[]} : {}), ...(field === 'pack' ? { services: [], videos: [], addons: [] } : {}), ...((field === 'videos' || (field === 'services' && form.pack === 'custom')) && !value.some(id => id === 'cine' || id === 'reel') ? { addons: [] } : {}) }));
+    setForm(prev => {
+      const next={...prev,[field]:value,...(field==='propertyType'?{services:[],pack:'',videos:[],addons:[]}:{}),...(field==='pack'?{services:[],videos:[],addons:[]}: {})};
+      const services=next.pack==='custom'?next.services:(PACKS.find(p=>p.id===next.pack)?.services||[]);
+      const videos=next.pack==='custom'?next.services:next.videos;
+      next.addons=next.addons.filter(name=>ADDONS.some(a=>a.name===name&&addonAvailable(a,services,videos)));
+      return next;
+    });
     setErrors(prev => ({ ...prev, [field]: undefined }));
   };
   const toggle = (field, value) => change(field, form[field].includes(value) ? form[field].filter(v => v !== value) : [...form[field], value]);
@@ -153,14 +160,14 @@ export default function BudgetModal({ isOpen, onClose, initialSelection }) {
                 <div className="flex gap-2 items-center mb-2"><input type="radio" name="pack" value={pack.id} checked={form.pack === pack.id} onChange={() => change('pack', pack.id)} className="accent-secondary" /><span className="font-headline font-bold">{pack.name}</span></div>
                 <p className="font-bold text-secondary mb-1">{manual ? 'A cotizar según alcance' : money(priceFor(pack, validArea ? form.m2 : 100))}</p>
                 <p className="text-xs text-on-surface-variant mb-3">{manual ? 'Definimos el importe al revisar el alcance' : `${validArea ? `para ${form.m2} m²` : 'hasta 100 m²'} · IVA incluido`}</p>
-                <ul className="text-xs space-y-2">{pack.services.filter(id=>form.propertyType!=='Lote / terreno'||!['planos','tour'].includes(id)).map(id => <li key={id}>{SERVICE_BY_ID[id].name}</li>)}{pack.videos && <li className="font-semibold">{pack.videos} {pack.videos === 1 ? 'video a elección' : 'videos a elección'}</li>}</ul>
+                <ul className="text-xs space-y-2">{pack.services.map(id => <li key={id}>{SERVICE_BY_ID[id].name}</li>)}{pack.videos && <li className="font-semibold">{pack.videos} {pack.videos === 1 ? 'video a elección' : 'videos a elección'}</li>}</ul>
               </label>)}
             <label className="block border-2 rounded-xl p-4 mt-3 cursor-pointer"><input type="radio" name="pack" checked={form.pack === 'custom'} onChange={() => change('pack', 'custom')} className="accent-secondary mr-2" /><strong>A la carta</strong><p className="text-xs mt-2">Elegí solo los servicios que necesitás.</p></label></div>{error('pack')}
           </fieldset>
 
-          {form.pack === 'custom' && <fieldset><legend className="font-bold text-sm mb-3">Tus servicios *</legend><div className="grid sm:grid-cols-2 gap-3">{Object.values(SERVICE_BY_ID).filter(service=>form.propertyType!=='Lote / terreno'||!['planos','tour'].includes(service.id)).map(service => <label key={service.id} className="border border-outline-variant rounded-xl p-4 cursor-pointer text-sm"><input type="checkbox" name="services" checked={form.services.includes(service.id)} onChange={() => toggle('services', service.id)} className="accent-secondary mr-2" /><strong>{service.name}</strong><p className="mt-2 text-secondary">{manual ? 'A cotizar' : money(priceFor({...service,perService:true}, form.m2))}</p><p className="text-xs mt-1 text-on-surface-variant">{service.desc}</p></label>)}</div>{error('services')}</fieldset>}
+          {form.pack === 'custom' && <fieldset><legend className="font-bold text-sm mb-3">Tus servicios *</legend><div className="grid sm:grid-cols-2 gap-3">{Object.values(SERVICE_BY_ID).map(service => <label key={service.id} className="border border-outline-variant rounded-xl p-4 cursor-pointer text-sm"><input type="checkbox" name="services" checked={form.services.includes(service.id)} onChange={() => toggle('services', service.id)} className="accent-secondary mr-2" /><strong>{service.name}</strong><p className="mt-2 text-secondary">{manual ? 'A cotizar' : money(priceFor({...service,perService:true}, form.m2))}</p><p className="text-xs mt-1 text-on-surface-variant">{service.desc}</p></label>)}</div>{error('services')}</fieldset>}
           {!!selected?.videos && <fieldset><legend className="font-bold text-sm mb-3">Elegí {selected.videos} {selected.videos === 1 ? 'video' : 'videos'} *</legend><div className="flex flex-wrap gap-3">{VIDEOS.map(id => <label key={id} className="border border-outline-variant rounded-lg p-3 text-sm flex gap-2 items-center"><input type="checkbox" name="videos" checked={form.videos.includes(id)} disabled={!form.videos.includes(id) && form.videos.length >= selected.videos} onChange={() => toggle('videos', id)} className="accent-secondary" />{SERVICE_BY_ID[id].name}</label>)}</div>{error('videos')}</fieldset>}
-          {canAddExtras && <fieldset><legend className="font-bold text-sm mb-1">Adicionales opcionales</legend><p className="text-xs text-on-surface-variant mb-3">Para videos cinematográficos o reels. Precios por adicional.</p>{ADDONS.filter(addon=>form.propertyType!=='Lote / terreno'||addon.name!=='Tour en Matterport').map(addon => <label key={addon.name} className="flex gap-3 items-start py-2 text-sm"><input type="checkbox" checked={form.addons.includes(addon.name)} onChange={() => toggle('addons', addon.name)} className="accent-secondary mt-1" /><span>{addon.name} <strong className="text-secondary">+ {money(addon.price)}</strong></span></label>)}</fieldset>}
+          {availableAddons.length > 0 && <fieldset><legend className="font-bold text-sm mb-1">Adicionales opcionales</legend><p className="text-xs text-on-surface-variant mb-3">Matterport mejora el tour 360° a un modelo 3D interactivo. Los adicionales de video están disponibles al elegir video cinematográfico o reel.</p>{availableAddons.map(addon => <label key={addon.name} className="flex gap-3 items-start py-2 text-sm"><input type="checkbox" checked={form.addons.includes(addon.name)} onChange={() => toggle('addons', addon.name)} className="accent-secondary mt-1" /><span>{addon.name} <strong className="text-secondary">+ {money(addon.price)}</strong><span className="block text-xs text-on-surface-variant mt-1">{addon.desc}</span></span></label>)}</fieldset>}
           </div>}
           {step === 3 && <><fieldset><legend className="font-headline font-bold mb-4">Datos de contacto</legend><div className="grid md:grid-cols-2 gap-4">
             <div><label htmlFor="budget-name" className="block text-sm font-semibold mb-2">Nombre completo *</label><input {...fieldProps('name')} autoComplete="name" maxLength={120} placeholder="Tu nombre y apellido" className={inputClass} />{error('name')}</div>

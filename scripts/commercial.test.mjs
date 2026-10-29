@@ -127,3 +127,25 @@ test('reservation links preserve private tokens across new popup and legacy emai
  assert.equal(quoteTokenFromHash('#reserva='+token+'?collection_status=approved'),token);
  assert.equal(quoteTokenFromHash('#'+token),token);
 });
+
+test('plans and tours survive old saved catalogs without resetting configured prices',async()=>{
+ const {completeCatalog}=await import('../src/components/pricingData.js');
+ const restored=completeCatalog({services:[{...SERVICES[0],base:190000}],packs:[{...PACKS[0],base:220000,services:['foto']}],addons:[]});
+ assert.equal(restored.services.find(s=>s.id==='foto').base,190000);
+ assert.equal(restored.packs[0].base,220000);
+ assert.ok(restored.services.some(s=>s.id==='planos'));
+ assert.ok(restored.services.some(s=>s.id==='tour'));
+ assert.ok(restored.packs.every(p=>p.services.includes('planos')&&p.services.includes('tour')));
+});
+
+test('Matterport can upgrade a tour in Base and a la carte without requiring video',()=>{
+ for(const propertyType of ['Casa','Lote / terreno']){
+  const base=validateRequest({...request,propertyType,pack:'base',videos:[],addons:['Tour en Matterport']},catalog);
+  assert.ok(base.snapshot.services.includes('Planos 2D'));
+  assert.ok(base.snapshot.services.includes('Tour virtual 360° 4K'));
+  assert.equal(base.snapshot.total,propertyType==='Casa'?250000:225000);
+  const custom=validateRequest({...request,propertyType,pack:'custom',services:['tour','planos'],videos:[],addons:['Tour en Matterport']},catalog);
+  assert.equal(custom.snapshot.addons[0].name,'Tour en Matterport');
+ }
+ assert.throws(()=>validateRequest({...request,pack:'custom',services:['foto'],addons:['Tour en Matterport']},catalog));
+});
