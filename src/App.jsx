@@ -7,6 +7,8 @@ const PortfolioPage = lazy(() => import('./pages/PortfolioPage'));
 const AdminPage = lazy(() => import('./pages/AdminPage'));
 const EjemploPage = lazy(() => import('./pages/EjemploPage'));
 const ServicePage = lazy(() => import('./pages/ServicePage'));
+const PhotographyPage = lazy(() => import('./pages/PhotographyPage'));
+const VideoPage = lazy(() => import('./pages/VideoPage'));
 const ReservationModal = lazy(() => import('./components/ReservationModal'));
 const QuotePage = lazy(() => import('./pages/QuotePage'));
 
@@ -48,6 +50,8 @@ export default function App() {
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/portfolio" element={<PortfolioPage />} />
+          <Route path="/fotografia-inmobiliaria" element={<PhotographyPage />} />
+          <Route path="/video-inmobiliario" element={<VideoPage />} />
           <Route path="/:serviceSlug" element={<ServicePage />} />
           <Route path="/ejemplo" element={<EjemploPage />} />
           <Route path="/admin" element={<AdminPage />} />
