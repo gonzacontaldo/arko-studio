@@ -36,3 +36,8 @@ Thumbs.db
 work/
 tmp/pdfs/
 output/pdf/
+.vercel
+
+# Local prospecting records and scratch files
+prospeccion/
+.tmp-prospeccion/

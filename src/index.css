@@ -74,3 +74,55 @@ html {
   from { opacity: 0; transform: translateY(12px) scale(.98); }
   to   { opacity: 1; transform: translateY(0)    scale(1);   }
 }
+
+/* Equipment rendered on a transparent canvas, integrated into the hero. */
+.studio-hero { background: #f4f3ed; color: #272d2b; position: relative; overflow: hidden; padding: 136px 5.5% 0; }
+.studio-hero-inner { max-width: 1440px; margin: auto; display: grid; grid-template-columns: 1fr 1.05fr; align-items: center; gap: 30px; min-height: min(710px, calc(100svh - 210px)); }
+.studio-copy { position: relative; z-index: 1; padding: 35px 0 60px; }
+.studio-eyebrow { display: flex; align-items: center; gap: 10px; font-size: 10px; letter-spacing: .16em; font-weight: 600; margin-bottom: 32px; color: #75796f; }
+.studio-eyebrow > span { width: 6px; height: 6px; border-radius: 50%; background: #927238; }
+.studio-copy h1 { font-family: Montserrat, sans-serif; font-weight: 500; font-size: clamp(40px, 4.5vw, 72px); line-height: 1.1; letter-spacing: -.065em; margin-bottom: 28px; }
+.studio-copy h1 > span { color: #94733f; }
+.studio-description { font-size: 16px; line-height: 1.85; color: #6c7069; max-width: 420px; }
+.studio-actions { display: flex; flex-wrap: wrap; gap: 22px; align-items: center; margin: 34px 0 42px; }
+.studio-primary { display: flex; gap: 24px; align-items: center; padding: 17px 22px; border-radius: 4px; background: #303b32; color: #fff; font-size: 12px; font-weight: 600; transition: background .2s, transform .2s; }
+.studio-primary:hover { background: #465344; transform: translateY(-2px); }
+.studio-primary span,.studio-secondary span { font-size: 19px; font-weight: 400; }
+.studio-secondary { display: flex; gap: 18px; align-items: center; font-size: 12px; border-bottom: 1px solid #b9bcb0; padding: 12px 0; }
+.studio-location { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; font-size: 8px; letter-spacing: .11em; color: #777d72; }
+.studio-location-mark { font-size: 20px; color: #927238; }
+.studio-location-divider { height: 12px; width: 1px; background: #c8cbbf; margin: 0 3px; }
+.studio-visual { position: relative; width: 100%; height: 610px; min-width: 0; }
+.studio-canvas { position: absolute; inset: 0 -30px; opacity: 0; transition: opacity .8s; }
+.studio-canvas.is-ready { opacity: 1; }
+.studio-canvas canvas { display: block; width: 100%; height: 100%; }
+.studio-pause { position: absolute; bottom: 12px; right: 0; border: 1px solid #cdd0c1; border-radius: 50%; width: 32px; height: 32px; font-size: 11px; color: #697361; background: transparent; transition: background .2s; }
+.studio-pause:hover { background: #e9e9df; }
+.studio-fallback { position: absolute; width: 80%; height: 64%; top: 15%; left: 10%; object-fit: cover; border-radius: 8px; }
+.studio-hero-bottom { max-width: 1440px; margin: 30px auto 0; padding: 24px 0; border-top: 1px solid #dcdfd4; display: flex; justify-content: space-between; gap: 20px; font-size: 8px; letter-spacing: .13em; color: #828778; }
+.studio-hero-bottom a { display: flex; align-items: center; gap: 22px; color: #515e49; }
+.studio-hero button:focus-visible,.studio-hero a:focus-visible { outline: 2px solid #94733f; outline-offset: 5px; }
+@media(min-width: 1600px) { .studio-hero-inner { min-height: 740px; } .studio-visual { height: 660px; } }
+@media(max-width: 900px) {
+  .studio-hero { padding-top: 105px; }
+  .studio-hero-inner { grid-template-columns: 1fr; gap: 0; }
+  .studio-copy { padding: 25px 0 10px; max-width: 630px; }
+  .studio-copy h1 { font-size: clamp(42px,8vw,65px); }
+  .studio-description { max-width: 520px; }
+  .studio-actions { margin: 26px 0; }
+  .studio-visual { height: 490px; max-width: 650px; margin: 0 auto; }
+  .studio-canvas { inset: 0 -15px; }
+  .studio-hero-bottom { margin-top: 10px; }
+}
+@media(max-width: 480px) {
+  .studio-hero { padding-left: 6%; padding-right: 6%; }
+  .studio-eyebrow { font-size: 8px; margin-bottom: 25px; }
+  .studio-copy h1 { font-size: 42px; }
+  .studio-description { font-size: 14px; }
+  .studio-visual { height: 405px; }
+  .studio-canvas { inset: 0 -20px; }
+  .studio-hero-bottom > span { display: none; }
+  .studio-hero-bottom { justify-content: center; }
+  .studio-location { font-size: 7px; gap: 6px; }
+}
+@media(prefers-reduced-motion: reduce) { .studio-canvas,.studio-primary,.studio-pause { transition: none; } }

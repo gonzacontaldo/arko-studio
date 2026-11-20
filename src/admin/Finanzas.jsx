@@ -3,8 +3,11 @@ import { useFinance, useOfficialRate } from './finanzas/useFinance';
 import FinanceEditor from './finanzas/FinanceEditor';
 import { accountStatus, annualSeries, dateLabel, money, MONTHS, METHODS, today, totals, toArs, cents } from './finanzas/model';
 import './finanzas/finanzas.css';
+import Inventory from './finanzas/Inventory';
+import ServiceConfiguration from './finanzas/ServiceConfiguration';
+import Recovery from './finanzas/EquipmentRecovery';
 
-const SECTIONS = [['resumen', 'Resumen'], ['movimientos', 'Movimientos'], ['cobros', 'Por cobrar'], ['recurrentes', 'Recurrentes'], ['categorias', 'Categorías']];
+const SECTIONS = [['resumen', 'Resumen'], ['movimientos', 'Movimientos'], ['cobros', 'Por cobrar'], ['recurrentes', 'Recurrentes'], ['categorias', 'Categorías'], ['inventario', 'Inventario'], ['servicios', 'Costos por servicio'], ['recuperacion', 'Recuperación de equipos']];
 function Empty({ children }) { return <div className="fin-empty">{children}</div>; }
 function Badge({ children, tone = '' }) { return <span className={`fin-badge ${tone}`}>{children}</span>; }
 function Stat({ label, value, tone, hint }) { return <div className={`fin-stat ${tone || ''}`}><p>{label}</p><strong>{money(value)}</strong><span>{hint}</span></div>; }
@@ -42,10 +45,10 @@ export default function Finanzas() {
   const missingSchema = error && ['PGRST202', 'PGRST205', '42P01', '42883'].includes(error.code);
   const newMovement = () => setEditor({ kind: 'movement' });
   return <div className="finances">
-    <div className="fin-heading"><div><p className="fin-eyebrow">ARKO STUDIO / ADMINISTRACIÓN</p><h2>Finanzas</h2><p className="fin-muted">Tu estudio, en números. Todo en pesos argentinos.</p></div><button className="fin-button fin-primary" disabled={loading || !!error} onClick={newMovement}>+ Nuevo movimiento</button></div>
+    <div className="fin-heading"><div><p className="fin-eyebrow">ARKO STUDIO / ADMINISTRACIÓN</p><h2>Finanzas</h2><p className="fin-muted">Tu estudio, en números. Movimientos en ARS; inventario y costos de servicios en USD.</p></div><button className="fin-button fin-primary" disabled={loading || !!error} onClick={newMovement}>+ Nuevo movimiento</button></div>
     <div className="fin-rate"><span className="font-bold" aria-hidden="true">USD ↔ ARS</span><div><strong>Dólar oficial · venta</strong> {rate.quote ? `${money(rate.quote.rate)} por USD` : rate.loading ? 'Consultando…' : 'Sin cotización'}<span className="fin-muted">{rate.quote && ` · Actualizado ${new Date(rate.quote.updated).toLocaleString('es-AR')}`}</span>{rate.error && <p className="text-error">{rate.error}</p>}</div><button className="fin-link ml-auto" disabled={rate.loading} onClick={() => rate.refresh()}>Actualizar</button></div>
     <nav className="fin-tabs" aria-label="Secciones de finanzas">{SECTIONS.map(([key, label]) => <button key={key} onClick={() => setSection(key)} aria-current={section === key ? 'page' : undefined} className={section === key ? 'active' : ''}>{label}{key === 'cobros' && debts.some(a => a.remaining > 0) && <span>{debts.filter(a => a.remaining > 0).length}</span>}</button>)}</nav>
-    {loading ? <Empty>Cargando tus finanzas…</Empty> : error ? <div className="fin-empty" role="alert"><h3 className="font-bold">{missingSchema ? 'Falta activar la base de finanzas' : 'No se pudieron cargar las finanzas'}</h3><p className="mt-2">{missingSchema ? 'La sección ya está preparada. Falta instalar sus tablas en la base de datos del administrador.' : 'Revisá la conexión e intentá nuevamente. No mostramos totales incompletos.'}</p><button className="fin-button mt-4" onClick={load}>Reintentar</button></div> : <>
+    {section === 'inventario' ? <Inventory /> : section === 'servicios' ? <ServiceConfiguration quote={rate.quote} /> : section === 'recuperacion' ? <Recovery /> : loading ? <Empty>Cargando tus finanzas…</Empty> : error ? <div className="fin-empty" role="alert"><h3 className="font-bold">{missingSchema ? 'Falta activar la base de finanzas' : 'No se pudieron cargar las finanzas'}</h3><p className="mt-2">{missingSchema ? 'La sección ya está preparada. Falta instalar sus tablas en la base de datos del administrador.' : 'Revisá la conexión e intentá nuevamente. No mostramos totales incompletos.'}</p><button className="fin-button mt-4" onClick={load}>Reintentar</button></div> : <>
       {(section === 'resumen' || section === 'movimientos') && <div className="fin-toolbar"><label className="flex items-center gap-3 text-sm font-medium">Período<input type="month" aria-label="Período" className="input !w-auto" value={period} onChange={e => { if (e.target.value) setPeriod(e.target.value); }} /></label><span className="fin-muted">El balance incluye únicamente pagos confirmados.</span></div>}
       {section === 'resumen' && <>
         <div className="fin-stats"><Stat label="Entrada del mes" value={monthly.entrada} tone="income" hint="Cobros confirmados" /><Stat label="Salida del mes" value={monthly.salida} tone="expense" hint="Gastos pagados" /><Stat label="Balance del mes" value={monthly.balance} tone="balance" hint="Entrada menos salida" /></div>

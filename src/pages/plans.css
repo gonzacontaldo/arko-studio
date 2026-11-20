@@ -1,0 +1,112 @@
+.plan-service-page { --plan-accent: #a7b494; }
+.plan-hero { gap: 45px; }
+.plan-service-page .plan-hero-scope { border-left: 2px solid #b5a47c; padding-left: 14px; font-size: 12px; color: var(--photo-muted); margin-top: 20px; max-width: 450px; }
+.plan-hero-art { min-width: 0; transform: none; }
+.plan-hero-paper { background: #fafaf5; border: 1px solid #e0e2d8; box-shadow: 0 20px 55px -30px #273a2a44; padding: 22px 18px 20px; }
+.plan-paper-heading,.plan-paper-footer { display: flex; justify-content: space-between; gap: 15px; color: #7f896f; font-size: 8px; letter-spacing: .1em; }
+.plan-paper-heading { padding: 0 9px 12px; border-bottom: 1px solid #e7e9de; }
+.plan-paper-footer { padding: 15px 9px 0; border-top: 1px solid #e7e9de; font-size: 7px; }
+.plan-illustration { display: block; width: 100%; height: auto; }
+.plan-paper-grid { opacity: .6; }
+.plan-room-highlight { transition: opacity .35s; }
+.plan-laser-beam { opacity: 0; }
+.plan-stage-laser .plan-laser-beam { opacity: 1; }
+.plan-stage-laser .plan-laser-beam > path { stroke-dasharray: 1; stroke-dashoffset: calc(1 - var(--plan-progress,1)); }
+.plan-stage-visit .plan-reference-measures,.plan-stage-visit .plan-room-labels,.plan-stage-visit .plan-furniture { opacity: .35; }
+.plan-stage-drawing .plan-walls > path { stroke-dasharray: 1; stroke-dashoffset: calc(1 - var(--plan-progress,1)); }
+.plan-stage-drawing .plan-room-labels,.plan-stage-drawing .plan-reference-measures { opacity: var(--plan-progress,1); }
+.plan-stage-drawing .plan-room-fills { opacity: .4; }
+.plan-service-page .plan-illustration-note { margin-top: 15px; font-size: 10px; color: var(--photo-muted); line-height: 1.7; }
+.plan-hero-art > .plan-illustration-note { text-align: center; }
+.plan-process { padding-top: 100px; padding-bottom: 65px; }
+.plan-process-layout { display: grid; grid-template-columns: 1.12fr 1fr; gap: 8%; align-items: start; }
+.plan-process-visual { position: sticky; top: 130px; --plan-progress: 1; }
+.plan-process-paper { background: #fafaf5; border: 1px solid #e0e3d7; padding: 12px 15px 19px; }
+.plan-process-label { display: flex; align-items: center; justify-content: space-between; gap: 15px; padding: 15px 13px 0; border-top: 1px solid #e0e3d7; text-transform: uppercase; font-size: 8px; letter-spacing: .1em; color: var(--photo-muted); }
+.plan-process-label > span:first-child { color: var(--photo-gold); }
+.plan-process-step { min-height: 64svh; padding-block: 45px 65px; display: flex; flex-direction: column; justify-content: center; }
+.plan-service-page .plan-process-step > .photo-step-label { font-size: 11px; margin-bottom: 22px; }
+.plan-process-step h3 { font-size: clamp(25px,2.3vw,34px); font-weight: 400; line-height: 1.25; margin-bottom: 23px; }
+.plan-process-step > p:not(.photo-step-label) { font-size: 15px; color: var(--photo-muted); }
+.plan-process-step ul { display: grid; gap: 10px; margin-block: 25px; }
+.plan-process-step li { display: flex; gap: 10px; align-items: baseline; font-size: 12px; line-height: 1.7; }
+.plan-process-step li > span { color: var(--photo-gold); }
+.plan-service-page .plan-process-step .plan-step-detail { font-size: 12px; padding-top: 18px; border-top: 1px solid var(--photo-line); }
+.plan-explorer { padding-block: 90px; border-top: 1px solid var(--photo-line); }
+.plan-section-heading { display: flex; justify-content: space-between; align-items: end; gap: 50px; margin-bottom: 50px; }
+.plan-section-heading > p { max-width: 350px; font-size: 15px; color: var(--photo-muted); }
+.plan-explorer-layout { display: grid; grid-template-columns: 1.5fr 1fr; gap: 7%; align-items: center; }
+.plan-example-image { border: 1px solid #e0e3d7; background: #fafaf5; position: relative; padding: 15px 15px 55px; }
+.plan-expand { position: absolute; bottom: 18px; right: 22px; display: inline-flex; align-items: center; gap: 8px; font-size: 11px; border-bottom: 1px solid #b6c2a6; padding-bottom: 4px; color: #5a6950; }
+.plan-expand > span { font-size: 15px; }
+.plan-explorer-controls > div[role=group] { display: grid; gap: 4px; }
+.plan-explorer-controls > div[role=group] > button { display: flex; justify-content: space-between; align-items: center; gap: 15px; padding: 12px 14px; text-align: left; border: 1px solid transparent; border-bottom-color: #d9dfd0; font-size: 14px; }
+.plan-explorer-controls > div[role=group] > button[aria-pressed=true] { background: #e4ead9; border-color: #bdc9ab; }
+.plan-explorer-controls > div[role=group] > button > span { color: var(--photo-gold); }
+.plan-room-description { margin-top: 28px; min-height: 115px; }
+.plan-room-description h3 { font-family: Georgia,serif; font-size: 26px; font-style: italic; font-weight: 400; margin-bottom: 14px; }
+.plan-room-description p { font-size: 14px; color: var(--photo-muted); }
+.plan-scope-section { background: #29382f; color: #f2f2e8; }
+.plan-scope-inner { padding-block: 85px; display: grid; grid-template-columns: 1fr 1fr; gap: 10%; }
+.plan-service-page .plan-scope-inner .photo-kicker,.plan-service-page .plan-scope-inner h2 em { color: #c6b48d; }
+.plan-scope-inner > div:first-child > p:not(.photo-kicker) { color: #c7d1bf; font-size: 15px; margin-top: 27px; }
+.plan-scope-inner article + article { margin-top: 32px; padding-top: 30px; border-top: 1px solid #ffffff20; }
+.plan-scope-inner article > span { color: #c6b48d; font-size: 27px; margin-bottom: 15px; }
+.plan-scope-inner h3 { font-size: 20px; font-weight: 400; line-height: 1.4; margin-bottom: 14px; }
+.plan-scope-inner article p { color: #c7d1bf; font-size: 13px; }
+.plan-service-page #plan-precio { border-top: 1px solid var(--photo-line); }
+.plan-delivery { display: grid; grid-template-columns: 1fr 1fr; gap: 10%; padding-block: 40px 90px; }
+.plan-delivery > div:last-child > p { font-size: 15px; color: var(--photo-muted); }
+.plan-service-page .plan-delivery .photo-small-note { font-size: 12px; margin-top: 20px; }
+.plan-example-dialog { width: min(1040px,calc(100vw - 35px)); max-height: calc(100svh - 35px); padding: 0; border: 1px solid #d5dcce; background: #fafaf5; color: #29352f; }
+.plan-example-dialog::backdrop { background: #18291fcc; backdrop-filter: blur(6px); }
+.plan-dialog-content { padding: 25px; }
+.plan-dialog-content > header { display: flex; justify-content: space-between; align-items: center; gap: 20px; }
+.plan-dialog-content h2 { font-family: Montserrat,sans-serif; font-size: 15px; font-weight: 400; line-height: 1.5; }
+.plan-dialog-content header > button { width: 34px; height: 34px; display: grid; place-items: center; border: 1px solid #c7d0bd; border-radius: 50%; font-size: 23px; flex-shrink: 0; }
+.plan-dialog-viewport { max-height: 73svh; overflow: auto; }
+.plan-dialog-viewport > .plan-illustration { max-height: 73svh; }
+.plan-zoom-tip { display: none; }
+.plan-dialog-content > p { font-size: 11px; color: #666e65; margin-top: 12px; }
+@media(max-width:1100px) { .plan-hero { gap: 35px; } .plan-paper-heading { font-size: 6px; } .plan-paper-footer { font-size: 6px; } .plan-explorer-layout { gap: 5%; } }
+@media(max-width:899px) {
+  .plan-hero-art { max-width: 650px; width: 100%; margin-inline: auto; transform: none; }
+  .plan-hero { gap: 40px; }
+  .plan-paper-heading { font-size: 8px; }
+  .plan-paper-footer { font-size: 7px; }
+  .plan-process { padding-top: 75px; }
+  .plan-process-layout { display: block; }
+  .plan-process-visual { position: sticky; top: 68px; z-index: 5; background: var(--photo-paper); padding-top: 10px; padding-bottom: 12px; }
+  .plan-process-paper { padding: 5px 10px 12px; }
+  .plan-process-paper > .plan-illustration { height: min(31svh,315px); width: 100%; }
+  .plan-process-label { padding: 10px 7px 0; font-size: 7px; }
+  .plan-process-visual > .plan-illustration-note { margin-top: 8px; font-size: 8px; }
+  .plan-process-step { min-height: 67svh; padding-block: 45px 65px; max-width: 650px; }
+  .plan-process-step h3 { font-size: 28px; }
+  .plan-explorer { padding-block: 75px; }
+  .plan-section-heading { display: block; }
+  .plan-section-heading > p { margin-top: 27px; max-width: 550px; }
+  .plan-explorer-layout { grid-template-columns: 1fr; gap: 35px; }
+  .plan-explorer-controls { max-width: 600px; }
+  .plan-scope-inner { grid-template-columns: 1fr; gap: 45px; padding-block: 75px; }
+  .plan-delivery { grid-template-columns: 1fr; gap: 27px; padding-block: 10px 75px; }
+}
+@media(max-width:480px) {
+  .plan-hero h1 { font-size: 41px; }
+  .plan-hero-paper { padding: 15px 8px; }
+  .plan-paper-heading { padding-inline: 5px; font-size: 6px; }
+  .plan-paper-footer { padding-inline: 5px; font-size: 5px; }
+  .plan-service-page .plan-hero-art > .plan-illustration-note { font-size: 9px; }
+  .plan-process-step h3 { font-size: 25px; }
+  .plan-process-step > p:not(.photo-step-label) { font-size: 14px; }
+  .plan-process-step { min-height: 72svh; }
+  .plan-example-image { padding: 5px 5px 48px; }
+  .plan-room-description { min-height: 125px; }
+  .plan-dialog-content { padding: 15px; }
+  .plan-dialog-content h2 { font-size: 12px; }
+  .plan-dialog-viewport > .plan-illustration { width: 680px; max-width: none; max-height: none; }
+  .plan-zoom-tip { display: inline; }
+}
+@media(prefers-reduced-motion:reduce) { .plan-stage-drawing .plan-walls > path { stroke-dashoffset: 0; } .plan-stage-drawing .plan-room-labels,.plan-stage-drawing .plan-reference-measures { opacity: 1; } .plan-stage-laser .plan-laser-beam > path { stroke-dashoffset: 0; } }
+
+.plan-custom-image { display: block; width: 100%; height: auto; object-fit: contain; }

@@ -47,3 +47,5 @@
 .fin-dialog::backdrop { background: #182b2477; backdrop-filter: blur(3px); }.fin-field { display: flex; flex-direction: column; gap: .4rem; font-size: .75rem; color: #5a6061; }.fin-field input:disabled,.fin-field select:disabled { opacity: .6; }.fin-icon { font-size: 1.5rem; width: 2rem; height: 2rem; }
 @media(max-width: 700px) { .fin-stats { gap: .5rem; }.fin-stat { padding: .8rem; }.fin-stat p { font-size: .65rem; }.fin-filters { grid-template-columns: 1fr 1fr; }.fin-rate { flex-wrap: wrap; }.fin-panel { padding: 1rem; }.fin-tabs { gap: 1rem; } }
 @media(max-width: 520px) { .fin-stats { grid-template-columns: 1fr; }.fin-stat strong { font-size: 1.5rem; }.fin-stat { padding: 1rem; } }
+.fin-service-dialog { width: min(780px, calc(100vw - 2rem)); }
+.fin-cost-item { border: 1px solid #dee4df; border-radius: .6rem; padding: 1rem; margin: .75rem 0; min-width: 0; }
