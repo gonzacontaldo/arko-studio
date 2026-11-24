@@ -2,7 +2,7 @@ export const videoFormats = [
   {
     id: 'cine', name: 'Cinematográfico', label: 'PRESENTAR EN DETALLE', videoId: 'ni3x6uBh2ZA', project: 'Casa en Virazón', poster: '/portfolio-web/Virazon/Portada.jpg',
     title: 'Una mirada que se toma su tiempo.',
-    description: 'Un recorrido con encuadres cuidados, movimientos suaves y atención a los detalles. Ideal para presentar la arquitectura y transmitir cómo se vive cada ambiente.',
+    description: 'Un video horizontal con encuadres cuidados, movimientos suaves y atención a los detalles. Ideal para presentar la arquitectura y transmitir cómo se vive cada ambiente.',
     benefits: ['Muestra materiales, luz y terminaciones.', 'Construye una presentación completa y cuidada.', 'Acompaña la web, los portales y las presentaciones comerciales.'],
     channels: 'Web · portales · presentaciones', ratio: '16:9',
     goal: 'Mostrar la propiedad en detalle',
@@ -13,7 +13,7 @@ export const videoFormats = [
   {
     id: 'reel', name: 'Reel', label: 'CAPTAR ATENCIÓN EN REDES', videoId: 'SAIckW_n0g0', project: 'Departamento en Tigre',
     title: 'El primer vistazo tiene otro ritmo.',
-    description: 'Una pieza vertical, breve y dinámica, pensada para el celular. Seleccionamos los puntos más atractivos y los conectamos con una edición que acompaña el lenguaje de las redes.',
+    description: 'Un video vertical para redes, separado del cinematográfico, pensado para el celular. Seleccionamos los puntos más atractivos y los conectamos con una edición que acompaña el lenguaje de las redes.',
     benefits: ['Formato vertical para Reels, TikTok y Shorts.', 'Concentra los puntos fuertes en una pieza ágil.', 'Se puede planificar para una campaña o un llamado a la acción.'],
     channels: 'Instagram · TikTok · YouTube Shorts', ratio: '9:16',
     goal: 'Generar interés en redes sociales',

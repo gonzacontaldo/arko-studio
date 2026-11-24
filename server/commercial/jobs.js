@@ -1,3 +1,4 @@
+import {savedQuoteSummary} from '../../src/lib/quotePresentation.js';
 import {db,rpc,settings} from './db.js';
 import {money,quoteToken,renderTemplate} from './domain.js';
 import {sendZoho,siteUrl,isTestMode} from './providers.js';
@@ -12,11 +13,11 @@ export async function prepareEmail(key,q,r,template){
   text:[`Ingresó una solicitud de ${q.name}.`,`Email: ${q.email}`,`Propiedad: ${q.snapshot.propertyType||'A confirmar'}`,`Zona: ${q.zone}`,`Superficie: ${q.m2} m²`,`Selección: ${q.snapshot.pack}`,
    `Servicios: ${[...q.snapshot.services,...q.snapshot.videos].join(', ')}`,
    ...(q.snapshot.addons||[]).map(a=>`Adicional: ${a.name}`),
-   q.total==null?'Importe pendiente: preparar cotización a medida desde el admin.':`Presupuesto: ${money(q.total)}`,
+   ...savedQuoteSummary(q),
    q.message?`Comentarios: ${q.message}`:'',`Consulta: ${q.id}`].filter(Boolean).join('\n'),
   link:`${siteUrl()}/admin?tab=commercial&quote=${encodeURIComponent(q.id)}`,linkLabel:'Ver consulta en el admin'
  };
- if(key==='received')return {subject:template.subject,text:`Hola ${q.name}, recibimos tu solicitud para ${q.zone}.\n\nUna persona de nuestro equipo se va a poner en contacto con vos para preparar un presupuesto a medida.\n\nARKO Studio`};
+ if(key==='received')return {subject:template.subject,text:`Hola ${q.name}, recibimos tu solicitud para ${q.zone}.\n\nUna persona de nuestro equipo se va a poner en contacto con vos para preparar un presupuesto a medida.\n\n${savedQuoteSummary(q).join('\n')}\n\nARKO Studio`};
  const vars=messageVariables(q,r);
  const rendered=renderTemplate({...template,body:key==='quote'?QUOTE_EMAIL_BODY:template.body},vars);
  return {...rendered,link:vars.enlace,...(key==='quote'?{attachments:[await createQuotePdf(q,{link:vars.enlace})],linkLabel:'Elegir semana y reservar'}:{})};
@@ -25,7 +26,7 @@ export async function prepareEmail(key,q,r,template){
 export function messageVariables(q,r){
  const date=v=>v?new Date(v).toLocaleString('es-AR',{timeZone:'America/Argentina/Buenos_Aires',dateStyle:'medium',timeStyle:'short'}):'Sin elegir';
  const link=`${siteUrl()}/#reserva=${quoteToken(q.id)}`;
- return {codigo:q.id,nombre:q.name,zona:q.zone,total:money(q.total),reserva:money(q.deposit),saldo:money(q.total-q.deposit),vigencia:date(q.valid_until),semana:r?.week_start||'Sin elegir',vencimiento:date(r?.hold_until),condiciones:q.terms,enlace:link,baja:`${link}&baja=1`,detalle:[`Pack ${q.snapshot.pack} · ${q.m2} m²`,...q.snapshot.services,...q.snapshot.videos,...q.snapshot.addons.map(a=>`${a.name}: ${money(a.price)}`)].join('\n')};
+ return {codigo:q.id,nombre:q.name,zona:q.zone,total:q.total==null?'Pendiente de cotización':money(q.total),reserva:money(q.deposit),saldo:q.total==null?'Pendiente de cotización':money(q.total-q.deposit),vigencia:date(q.valid_until),semana:r?.week_start||'Sin elegir',vencimiento:date(r?.hold_until),condiciones:q.terms,enlace:link,baja:`${link}&baja=1`,detalle:savedQuoteSummary(q).join('\n')};
 }
 export function jobEligible(job,q,r,now=Date.now()){
  if(!q||q.is_test!==isTestMode())return false;

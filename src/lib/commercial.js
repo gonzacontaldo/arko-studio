@@ -1,9 +1,10 @@
+import {completeCatalog} from '../components/pricingData';
 import {useEffect,useState} from 'react';
 import {supabase} from './supabase';
 let configPromise;
 export function useCommercialConfig(){
  const [value,setValue]=useState({loading:true,enabled:false});
- useEffect(()=>{let active=true;configPromise ||= fetch('/api/commercial?action=config').then(r=>r.ok?r.json():{enabled:false}).catch(()=>({enabled:false}));configPromise.then(data=>{if(active)setValue({...data,loading:false});});return()=>{active=false;};},[]);
+ useEffect(()=>{let active=true;configPromise ||= fetch('/api/commercial?action=config').then(r=>r.ok?r.json():{enabled:false}).catch(()=>({enabled:false}));configPromise.then(data=>{if(active)setValue({...data,catalog:completeCatalog(data.catalog),loading:false});});return()=>{active=false;};},[]);
  return value;
 }
 export async function commercialApi(action,{method='GET',body,token,admin=false}={}){

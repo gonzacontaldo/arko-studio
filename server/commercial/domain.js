@@ -1,5 +1,6 @@
-import {addonAvailable} from '../../src/components/pricingData.js';
-import {PROPERTY_TYPES,requiresReview,propertyPrice,areaRule} from '../../src/lib/propertyPricing.js';
+import {addonAvailable,completeCatalog,PRICING_VERSION,ADJUSTMENTS,HOSTING_INCLUDED,HOSTING_RENEWAL,HOSTING_EXPIRY} from '../../src/components/pricingData.js';
+import {estimateProduction,selectionFor,quoteSummary} from '../../src/lib/productionQuote.js';
+import {PROPERTY_TYPES} from '../../src/lib/propertyPricing.js';
 import { createHash, createHmac, timingSafeEqual } from 'node:crypto';
 export const TIMINGS = ['Esta semana', 'En las próximas 2 semanas', 'Dentro de un mes', 'Más adelante', 'Todavía no tengo fecha'];
 export const VIDEO_IDS = ['cine', 'fpv', 'reel'];
@@ -9,42 +10,47 @@ export function cleanText(value,max,label) {
  if(typeof value!=='string'||!value.trim()||value.length>max||/[\u0000-\u0008\u000b-\u001f]/.test(value))throw new FlowError(`Revisá ${label}.`);
  return value.trim();
 }
-export function validateRequest(input,catalog) {
+export function validateRequest(input,catalogInput){
+ const catalog=completeCatalog(catalogInput);
  const name=cleanText(input.name,120,'tu nombre'),email=cleanText(input.email,254,'tu email').toLowerCase();
  if(!/^[^\s@,;<>]+@[^\s@,;<>]+\.[^\s@,;<>]+$/.test(email))throw new FlowError('Ingresá un email válido.');
  const zone=cleanText(input.zone,200,'la zona'),timing=input.timing==null||input.timing===''?'A definir al reservar':cleanText(input.timing,80,'el plazo');
  if(timing!=='A definir al reservar'&&!TIMINGS.includes(timing))throw new FlowError('Seleccioná un plazo de producción.');
  const m2=Number(input.m2);if(!Number.isFinite(m2)||m2<1||m2>100000)throw new FlowError('Ingresá una superficie entre 1 y 100.000 m².');
- const custom=input.pack==='custom';
- const services=input.services||[];
- if(custom&&(!Array.isArray(services)||!services.length||new Set(services).size!==services.length||services.some(id=>!catalog.services.some(s=>s.id===id))))throw new FlowError('Elegí al menos un servicio válido.');
- const chosen=custom?catalog.services.filter(s=>services.includes(s.id)):[];
- const pack=custom?{id:'custom',name:'A la carta',services:services.filter(id=>!VIDEO_IDS.includes(id)),videos:services.filter(id=>VIDEO_IDS.includes(id)).length,base:chosen.reduce((sum,s)=>sum+s.base,0),per100:chosen.reduce((sum,s)=>sum+s.per100,0)}:catalog.packs.filter(p=>p.id===input.pack).map(p=>({...p}))[0];if(!pack)throw new FlowError('Seleccioná un pack válido.');
- const propertyTypes=PROPERTY_TYPES;
- const propertyType=input.propertyType==null?'':cleanText(input.propertyType,80,'el tipo de propiedad');
- if(propertyType&&!propertyTypes.includes(propertyType))throw new FlowError('Seleccioná un tipo de propiedad válido.');
- const videos=custom?services.filter(id=>VIDEO_IDS.includes(id)):(input.videos||[]),addons=input.addons||[];
- if(!Array.isArray(videos)||new Set(videos).size!==videos.length||videos.length!==(pack.videos||0)||videos.some(v=>!VIDEO_IDS.includes(v)))throw new FlowError(`Elegí ${pack.videos||0} videos para este pack.`);
- if(!Array.isArray(addons)||new Set(addons).size!==addons.length||addons.some(a=>!catalog.addons.some(x=>x.name===a)))throw new FlowError('Revisá los adicionales.');
- if(catalog.addons.some(a=>addons.includes(a.name)&&!addonAvailable(a,pack.services,videos)))throw new FlowError('Matterport requiere un tour 360°. Los adicionales de video requieren video cinematográfico o reel.');
+ const propertyType=input.propertyType||'Casa';if(!PROPERTY_TYPES.includes(propertyType))throw new FlowError('Seleccioná un tipo de propiedad válido.');
+ const rawServices=input.services||[],rawVideos=input.videos||[],addons=input.addons||[];
+ if(!Array.isArray(rawServices)||new Set(rawServices).size!==rawServices.length||rawServices.some(id=>!catalog.services.some(row=>row.id===id)))throw new FlowError('Revisá los servicios.');
+ if(!Array.isArray(rawVideos)||new Set(rawVideos).size!==rawVideos.length||rawVideos.some(id=>!VIDEO_IDS.includes(id)))throw new FlowError('Revisá los formatos de video.');
+ if(rawServices.includes('tour')&&rawServices.includes('matterport'))throw new FlowError('Elegí una sola plataforma de tour.');
+ const s=selectionFor({...input,propertyType,m2,zone,locationCategory:input.locationCategory||(/\bCABA\b|ciudad aut[oó]noma de buenos aires/i.test(zone)?'caba':'other')});
+ if(!['caba','other'].includes(s.locationCategory))throw new FlowError('Indicá si la propiedad está en CABA o en otra zona.');
+ if(!['kuula','matterport'].includes(s.tourPlatform)||![3,6,12].includes(s.hostingMonths))throw new FlowError('Revisá la plataforma y el hosting.');
+ if(s.pack!=='custom'&&!catalog.packs.some(row=>row.id===s.pack))throw new FlowError('Seleccioná un pack válido.');
+ if(s.pack==='custom'&&!s.services.length)throw new FlowError('Elegí al menos un servicio.');
+ if(!['fpv','cine'].includes(s.variant))throw new FlowError('Revisá la variante de Destacado.');
+ const videos=s.pack==='custom'?s.services.filter(id=>VIDEO_IDS.includes(id)):s.videos;
+ const cineCount=videos.filter(id=>['cine','reel'].includes(id)).length;
+ if((s.pack==='base'&&videos.length)||(s.pack==='destacado'&&(videos.length!==1||(s.variant==='fpv'?!videos.includes('fpv'):cineCount!==1)))||(s.pack==='completo'&&(videos.length!==2||!videos.includes('fpv')||cineCount!==1)))throw new FlowError('Elegí FPV o un cinematográfico/reel en Destacado; Completo incluye FPV + un cinematográfico o un reel.');
+ const serviceIds=s.pack==='custom'?s.services:catalog.packs.find(p=>p.id===s.pack).services;
+ if(!serviceIds.includes('tour')&&s.hostingMonths!==3)throw new FlowError('El hosting extendido requiere contratar un tour.');
+ if(!Array.isArray(addons)||new Set(addons).size!==addons.length||addons.some(name=>!catalog.addons.some(a=>a.name===name&&addonAvailable(a,serviceIds,videos))))throw new FlowError('Revisá los adicionales compatibles con tu selección.');
  if(input.message&&(typeof input.message!=='string'||input.message.length>2000))throw new FlowError('El comentario es demasiado largo.');
- const extras=catalog.addons.filter(a=>addons.includes(a.name));
- const manual=requiresReview(propertyType);
- const total=propertyPrice({...pack,perService:custom},m2,propertyType)+extras.reduce((sum,a)=>sum+a.price,0);
- if(!Number.isSafeInteger(total)||total<=0)throw new FlowError('El precio requiere revisión.',503);
- const rule=areaRule(propertyType,{...pack,perService:custom}),tranches=Math.max(0,Math.ceil((m2-rule.included)/rule.step));
- const item=(description,quantity,unitPrice)=>({description,quantity,unitPrice,total:quantity*unitPrice});
- const lineItems=[item(`${pack.name} - hasta ${rule.included} m²`,1,pack.base),...(tranches?[item(`Tramo adicional de hasta ${rule.step} m²`,tranches,rule.increment)]:[])].concat(extras.map(a=>item(a.name,1,a.price)));
- const serviceDetails=[...pack.services,...videos].map(id=>{const service=catalog.services.find(s=>s.id===id);return {name:service?.name||id,description:service?.desc||''};});
- return {name,email,zone,timing,m2,pack:pack.id,videos,addons,message:(input.message||'').trim(),snapshot:{propertyType,requiresReview:manual,pack:pack.name,services:pack.services.map(id=>catalog.services.find(s=>s.id===id)?.name||id),videos:videos.map(id=>catalog.services.find(s=>s.id===id)?.name||id),serviceDetails,lineItems:manual?[]:lineItems,addons:extras.map(a=>({name:a.name,price:a.price,description:a.desc||''})),total:manual?null:total}};
+ const e=estimateProduction({...s,addons},catalog);
+ if(e.knownSubtotal!=null&&(!Number.isSafeInteger(e.knownSubtotal)||e.knownSubtotal<=0))throw new FlowError('El precio requiere revisión.',503);
+ const allDetails=[...e.services,...e.videos].map(row=>({name:row.name,description:row.desc}));
+ const serviceNames=e.services.filter(row=>!VIDEO_IDS.includes(row.id)).map(row=>row.name);
+ const videoNames=e.videoIds.map(id=>catalog.services.find(row=>row.id===id).name);
+ const commercialConditions=[ADJUSTMENTS,...(e.hasTour?[HOSTING_INCLUDED,HOSTING_RENEWAL,HOSTING_EXPIRY]:[]),'Precios en pesos argentinos.','El tiempo en la propiedad depende de la superficie y los servicios. La edición se realiza después de la producción.'].join('\n');
+ return {name,email,zone,timing,m2,pack:s.pack,variant:s.variant,videos,addons,tourPlatform:e.tourPlatform,hostingMonths:e.hostingMonths,locationCategory:s.locationCategory,message:(input.message||'').trim(),snapshot:{pricingVersion:PRICING_VERSION,propertyType,requiresReview:e.requiresReview,pack:e.pack?.name||'A la carta',variant:s.variant,services:serviceNames,videos:videoNames,serviceDetails:allDetails,lineItems:e.requiresReview?[]:e.lineItems,knownLineItems:e.lineItems,addons:e.extras.map(a=>({name:a.name,price:a.price,description:a.desc})),tourPlatform:e.tourPlatform,hostingMonths:e.hostingMonths,hostingPending:e.hasTour&&e.hostingMonths>3,locationCategory:s.locationCategory,travel:e.travel,productionSubtotal:e.productionSubtotal,knownSubtotal:e.knownSubtotal,pendingReasons:e.reasons,summary:quoteSummary(e),commercialConditions,total:e.total}};
 }
-export function validateCatalog(c) {
- if(!c||!Array.isArray(c.packs)||!Array.isArray(c.services)||!Array.isArray(c.addons))throw new FlowError('Catálogo inválido.');
+export function validateCatalog(c){
+ if(!c||c.pricingVersion!==PRICING_VERSION||!Array.isArray(c.services)||!Array.isArray(c.packs)||!Array.isArray(c.addons))throw new FlowError('Actualizá el catálogo a las nuevas reglas de precios.');
  if(c.packs.length!==3||['base','destacado','completo'].some(id=>!c.packs.some(p=>p.id===id)))throw new FlowError('El catálogo debe tener Base, Destacado y Completo.');
- if(c.services.some(s=>!Number.isInteger(s.base)||s.base<1||!Number.isInteger(s.per100)||s.per100<0))throw new FlowError('Revisá los precios de los servicios.');
- const ids=c.services.map(s=>s.id);if(new Set(ids).size!==ids.length)throw new FlowError('Servicios duplicados.');
- for(const p of c.packs)if(!p.name||!Array.isArray(p.services)||p.services.some(id=>!ids.includes(id))||!Number.isInteger(p.base)||p.base<1||!Number.isInteger(p.per100)||p.per100<0||(p.videos||0)!==({base:0,destacado:1,completo:2})[p.id])throw new FlowError('Revisá los packs y sus precios.');
- if(c.addons.some(a=>!a.name||!Number.isInteger(a.price)||a.price<0)||new Set(c.addons.map(a=>a.name)).size!==c.addons.length)throw new FlowError('Revisá los adicionales.');
+ if(c.services.some(row=>!Number.isSafeInteger(row.base)||row.base<1||(!Number.isSafeInteger(row.per100)||row.per100<0)))throw new FlowError('Revisá la tarifa base y el incremento por bloque de los individuales.');
+ const ids=c.services.map(row=>row.id);if(new Set(ids).size!==ids.length||['foto','fpv','cine','reel','tour','matterport','planos'].some(id=>!ids.includes(id)))throw new FlowError('Revisá los servicios del catálogo.');
+ const validPrice=row=>row&&Number.isSafeInteger(row.base)&&row.base>0&&Number.isSafeInteger(row.per100)&&row.per100>=0;
+ for(const p of c.packs)if(!validPrice(p)||!Array.isArray(p.services)||['foto','planos','tour'].some(id=>!p.services.includes(id))||(p.videos||0)!==({base:0,destacado:1,completo:2})[p.id]||(p.id==='destacado'&&(!validPrice(p.variants?.fpv)||!validPrice(p.variants?.cine))))throw new FlowError('Revisá los paquetes y las variantes.');
+ if(c.addons.some(a=>!a.name||!Number.isSafeInteger(a.price)||a.price<0||a.name==='Tour en Matterport')||new Set(c.addons.map(a=>a.name)).size!==c.addons.length)throw new FlowError('Revisá los adicionales. Matterport se elige por separado.');
  return c;
 }
 function secret(){const s=process.env.QUOTE_LINK_SECRET;if(!s||s.length<32)throw new FlowError('Falta configurar los enlaces privados.',503);return s;}

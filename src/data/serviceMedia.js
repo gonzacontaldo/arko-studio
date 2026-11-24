@@ -1,3 +1,4 @@
+import {validatePortfolioSelection} from '../lib/portfolioSelection';
 import {normalizeMediaValue} from '../lib/serviceMediaValidation';
 export {youtubeId,normalizeMediaValue} from '../lib/serviceMediaValidation';
 import hero from '../assets/portfolio-web/Yacht/Frente-arquitectura.jpg';
@@ -32,10 +33,11 @@ export const SERVICE_MEDIA = [
  ]),image('processImage','Foto del proceso animado',tourFrame)]},
  {id:'drone-inmobiliario',name:'Tomas aéreas',fields:[image('heroImage','Foto principal',aerial),text('heroAlt','Descripción de la foto principal','Fotografía aérea de un lote y sus alrededores'),text('heroCaption','Nombre del trabajo principal','CARPINCHOS / VISTA CENITAL'),image('exampleImage','Ejemplo de fotografía aérea',aerial),text('exampleAlt','Descripción del ejemplo fotográfico','Vista aérea de un terreno y su entorno'),image('processImage','Foto del proceso animado',aerial),video('exampleVideo','Ejemplo de video aéreo','z5cWA53iPu0'),image('videoPoster','Portada del video aéreo',panorama),text('videoProject','Nombre del trabajo de video','Lote en Carpinchos')]},
 ];
-export const mediaDefinition=id=>SERVICE_MEDIA.find(s=>s.id===id);
+export const mediaDefinition=id=>id==='portfolio'?{id,name:'Portfolio',fields:[]}:SERVICE_MEDIA.find(s=>s.id===id);
 export const mediaDefaults=id=>Object.fromEntries((mediaDefinition(id)?.fields||[]).map(f=>[f.key,f.value]));
 
 export function normalizeServiceMedia(id,values={}){
+ if(id==='portfolio')return validatePortfolioSelection(values);
  const def=mediaDefinition(id);if(!def)throw new Error('Servicio desconocido.');
  const data={};for(const f of def.fields)if(Object.hasOwn(values,f.key)){const value=normalizeMediaValue(f,values[f.key]);data[f.key]=f.type==='image'&&!value&&!f.key.endsWith('Poster')&&f.key!=='planImage'?f.value:value;}
  if(def.portfolio){if(!Array.isArray(values.portfolioIds||[])||(values.portfolioIds||[]).some(v=>typeof v!=='string'||v.length>100))throw new Error('Selección de trabajos inválida.');data.portfolioIds=[...new Set((values.portfolioIds||[]).filter(Boolean))].slice(0,3);}

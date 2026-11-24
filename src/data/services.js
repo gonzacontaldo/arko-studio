@@ -56,7 +56,7 @@ export const services = {
     heroImage: '/portfolio-web/DuplexOlivos/Portada.jpg',
     benefits: ['Recorrido desde cualquier dispositivo', 'Lectura completa de los ambientes', 'Complemento para publicaciones'],
     h1: 'Tour virtual 360° para propiedades',
-    intro: 'Creamos recorridos interactivos en Kuula y Matterport para explorar propiedades a tu ritmo. El precio incluye tres meses de hosting desde la publicación.',
+    intro: 'Creamos recorridos interactivos en Kuula y Matterport para explorar propiedades a tu ritmo. El precio incluye tres meses de hosting desde la entrega del tour.',
     sections: [
       ['Visitas online más completas', 'Un tour 360° permite comprender la circulación y la relación entre ambientes antes de coordinar una visita presencial.'],
       ['Integración en la comunicación', 'El recorrido puede complementar fotografías, videos y planos dentro de una presentación digital más informativa.'],

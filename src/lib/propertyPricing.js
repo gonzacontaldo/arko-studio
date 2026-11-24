@@ -1,19 +1,17 @@
-export const PROPERTY_TYPES = ['Casa', 'Departamento / oficina', 'Lote / terreno', 'Local comercial', 'Galpón / nave industrial / hangar', 'Complejo de departamentos / oficinas', 'Campo / establecimiento rural', 'Otra propiedad'];
-export const requiresReview = type => PROPERTY_TYPES.slice(5).includes(type);
-export const largeArea = type => ['Lote / terreno', 'Galpón / nave industrial / hangar'].includes(type);
-export function areaRule(type, item) {
- return largeArea(type) ? {included:500, step:500, increment:50000} : {included:100, step:100, increment:type==='Departamento / oficina' && !item.perService ? 25000 : item.per100};
+export const PROPERTY_TYPES=['Casa','Departamento / oficina','Lote / terreno','Local comercial','Galpón / nave industrial / hangar','Complejo de departamentos / oficinas','Campo / establecimiento rural','Otra propiedad'];
+export const requiresReview=type=>!!type&&!['Casa','Departamento / oficina'].includes(type);
+export const largeArea=type=>['Lote / terreno','Galpón / nave industrial / hangar'].includes(type);
+export const extraBlocks=m2=>Math.max(0,Math.ceil(Number(m2)/100)-1);
+export function areaRule(type,item){return {included:100,step:100,increment:item.per100};}
+export function propertyPrice(item,m2,type){
+ const area=Number(m2);if(!item||!Number.isFinite(area)||area<1||requiresReview(type))return null;
+ if(area>100&&(item.per100==null||item.perService))return null;
+ return item.base+extraBlocks(area)*(item.per100||0);
 }
-export function propertyPrice(item, m2, type) {
- const rule=areaRule(type,item);
- return item.base + Math.max(0,Math.ceil((Number(m2)-rule.included)/rule.step))*rule.increment;
-}
-export const scopeQuestions = type => type==='Complejo de departamentos / oficinas' ? [
- ['units','Cantidad total de unidades'],['shownUnits','Cantidad de unidades a mostrar'],['typologies','¿Son iguales, de distintas tipologías o todas diferentes? Detallá cuáles se muestran.'],['commonAreas','Espacios comunes a mostrar: recepción, pasillos, cocheras, amenities y exteriores'],['floors','Cantidad de edificios y pisos a recorrer']
-] : type==='Campo / establecimiento rural' ? [
- ['hectares','Superficie total del campo en hectáreas'],['buildings','Construcciones a mostrar y sus superficies aproximadas'],['outdoors','Sectores exteriores, cultivos, instalaciones y puntos de interés'],['distances','Distancias entre sectores y cómo se puede circular dentro del campo']
-] : type==='Otra propiedad' ? [
- ['description','¿Qué tipo de propiedad es y para qué se utiliza?'],['spaces','Cantidad y tipo de espacios a mostrar'],['outdoors','Exteriores e instalaciones especiales a incluir']
-] : [];
-export const commonQuestions = [['access','Accesos, permisos y restricciones de ingreso o vuelo'],['occupancy','¿Está ocupada? ¿Hay que coordinar con residentes, inquilinos o personal?'],['delivery','Objetivo del material y fecha deseada de entrega']];
-export const questionsFor = type => requiresReview(type) ? [...scopeQuestions(type),...commonQuestions] : [];
+export const scopeQuestions=type=>type==='Complejo de departamentos / oficinas'?[
+ ['units','Cantidad total de unidades'],['shownUnits','Cantidad de unidades a mostrar'],['typologies','Tipologías y unidades incluidas'],['commonAreas','Espacios comunes, amenities y exteriores'],['floors','Cantidad de edificios y pisos']
+]:type==='Campo / establecimiento rural'?[
+ ['hectares','Superficie total en hectáreas'],['buildings','Construcciones y superficies a mostrar'],['outdoors','Sectores exteriores e instalaciones'],['distances','Distancias y circulación entre sectores']
+]:[['description','Tipo de inmueble y alcance'],['spaces','Ambientes y sectores a mostrar'],['outdoors','Exteriores e instalaciones']];
+export const commonQuestions=[['access','Accesos, permisos y restricciones'],['occupancy','Ocupación y coordinación'],['delivery','Objetivo del material y fecha deseada']];
+export const questionsFor=type=>requiresReview(type)?[...scopeQuestions(type),...commonQuestions]:[];

@@ -1,189 +1,69 @@
 import {useNavigate} from 'react-router-dom';
-import { useState, useEffect, useRef } from 'react';
-import { PACKS as DEFAULT_PACKS, SERVICE_BY_ID as DEFAULT_SERVICES, ADDONS as DEFAULT_ADDONS, addonAvailable } from './pricingData';
-import { useCommercialConfig, commercialApi } from '../lib/commercial';
-
-import {PROPERTY_TYPES,requiresReview,propertyPrice,largeArea} from '../lib/propertyPricing';
-const STEPS = ['Propiedad', 'Ubicación', 'Servicios', 'Contacto'];
-const VIDEOS = ['cine', 'fpv', 'reel'];
-const emptyForm = () => ({ propertyType: '', services: [], pack: '', m2: '', name: '', email: '', zone: '', videos: [], addons: [], message: '' });
-
-const money = n => `$ ${n.toLocaleString('es-AR')}`;
-
-export default function BudgetModal({ isOpen, onClose, initialSelection }) {
-  const navigate=useNavigate();
-  const config = useCommercialConfig();
-  const PACKS = config.catalog?.packs || DEFAULT_PACKS;
-  const ADDONS = config.catalog?.addons || DEFAULT_ADDONS;
-  const SERVICE_BY_ID = config.catalog ? Object.fromEntries(config.catalog.services.map(s => [s.id, s])) : DEFAULT_SERVICES;
-  const requestKey = useRef(crypto.randomUUID());
-  const [step, setStep] = useState(0);
-  const [sending, setSending] = useState(false);
-  const [submitError, setSubmitError] = useState('');
-  const [reservationUrl, setReservationUrl] = useState('');
-  const [pending,setPending]=useState(false);
-  useEffect(() => { if (reservationUrl) { panel.current?.scrollTo(0, 0); panel.current?.focus(); } }, [reservationUrl]);
-  const [form, setForm] = useState(emptyForm);
-  const [errors, setErrors] = useState({});
-  const panel = useRef(null);
-  const stepTitle = useRef(null);
-  useEffect(() => { if (isOpen) { stepTitle.current?.focus(); panel.current?.scrollTo(0, 0); } }, [step, isOpen]);
-  const manual=requiresReview(form.propertyType);
-  const automaticSubmission=config.enabled && (!manual || config.manualQuotes);
-  const priceFor=(item,m2)=>propertyPrice(item,m2,form.propertyType);
-  const selected = PACKS.find(p => p.id === form.pack);
-  const activeVideos = form.pack === 'custom' ? form.services : form.videos;
-  const includedServices=form.pack==='custom'?form.services:(selected?.services||[]);
-  const availableAddons=ADDONS.filter(a=>addonAvailable(a,includedServices,activeVideos));
-  const validArea = Number(form.m2) >= 1 && Number(form.m2) <= 100000 && Number.isFinite(Number(form.m2));
-  const customServices = Object.values(SERVICE_BY_ID).filter(s => form.services.includes(s.id));
-  const estimate = !manual && validArea && (selected || customServices.length) ? (form.pack === 'custom' ? priceFor({base:customServices.reduce((n,s)=>n+s.base,0),per100:customServices.reduce((n,s)=>n+s.per100,0),perService:true},form.m2) : priceFor(selected, form.m2)) + ADDONS.filter(a => form.addons.includes(a.name)).reduce((sum, a) => sum + a.price, 0) : null;
-
-  useEffect(() => {
-    if (!isOpen) return;
-    setStep(0);
-    if (initialSelection) {
-      setForm(prev => ({ ...prev, pack: initialSelection.pack || '', m2: initialSelection.m2 ? String(initialSelection.m2) : '', videos: [], addons: [] }));
-      setErrors({});
-    }
-    const previousFocus = document.activeElement;
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
-    panel.current?.focus();
-    const handler = e => {
-      if (e.key === 'Escape') onClose();
-      if (e.key !== 'Tab') return;
-      const fields = [...(panel.current?.querySelectorAll('button, input, select, textarea, a[href]') || [])].filter(el => !el.disabled && el.getClientRects().length);
-      if (!fields.length) return;
-      const first = fields[0], last = fields[fields.length - 1];
-      if (e.shiftKey && (document.activeElement === first || document.activeElement === panel.current)) { e.preventDefault(); last.focus(); }
-      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
-    };
-    document.addEventListener('keydown', handler);
-    return () => { document.body.style.overflow = previousOverflow; document.removeEventListener('keydown', handler); previousFocus?.focus(); };
-  }, [isOpen, onClose, initialSelection]);
-
-  if (!isOpen) return null;
-  const change = (field, value) => {
-    requestKey.current = crypto.randomUUID();
-    setForm(prev => {
-      const next={...prev,[field]:value,...(field==='propertyType'?{services:[],pack:'',videos:[],addons:[]}:{}),...(field==='pack'?{services:[],videos:[],addons:[]}: {})};
-      const services=next.pack==='custom'?next.services:(PACKS.find(p=>p.id===next.pack)?.services||[]);
-      const videos=next.pack==='custom'?next.services:next.videos;
-      next.addons=next.addons.filter(name=>ADDONS.some(a=>a.name===name&&addonAvailable(a,services,videos)));
-      return next;
-    });
-    setErrors(prev => ({ ...prev, [field]: undefined }));
-  };
-  const toggle = (field, value) => change(field, form[field].includes(value) ? form[field].filter(v => v !== value) : [...form[field], value]);
-  const submit = async e => {
-    e.preventDefault();
-    const next = {};
-    if (!form.propertyType) next.propertyType = 'Elegí el tipo de propiedad.';
-    if (!selected && form.pack !== 'custom') next.pack = 'Elegí un pack o servicios a la carta.';
-    if (form.pack === 'custom' && !form.services.length) next.services = 'Elegí al menos un servicio.';
-    if (!validArea) next.m2 = 'Ingresá una superficie entre 1 y 100.000 m².';
-    if (!form.name.trim()) next.name = 'Ingresá tu nombre.';
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())) next.email = 'Ingresá un email válido.';
-    if (!form.zone.trim()) next.zone = 'Indicá el barrio o localidad de la propiedad.';
-    if (selected?.videos && form.videos.length !== selected.videos) next.videos = `Elegí ${selected.videos} ${selected.videos === 1 ? 'video' : 'videos'}.`;
-    const groups = [['propertyType', 'm2'], ['zone'], ['pack', 'services', 'videos'], ['name', 'email']];
-    if (step < 3) {
-      const current = Object.fromEntries(Object.entries(next).filter(([key]) => groups[step].includes(key)));
-      setErrors(current);
-      if (!Object.keys(current).length) setStep(step + 1);
-      else panel.current?.querySelector(`[name="${Object.keys(current)[0]}"]`)?.focus();
-      return;
-    }
-    setErrors(next);
-    if (Object.keys(next).length) setStep(groups.findIndex(fields => fields.some(key => next[key])));
-    if (Object.keys(next).length) {
-      panel.current?.querySelector(`[name="${Object.keys(next)[0]}"]`)?.focus();
-      return;
-    }
-    if (automaticSubmission) {
-      setSending(true); setSubmitError('');
-      try {
-        const result = await commercialApi('submit', { method:'POST', body:{ ...form, website:e.currentTarget.elements.website.value, requestKey:requestKey.current } });
-        setPending(result.stage==='pending_review');
-        setReservationUrl('/#reserva=' + result.token);
-        setSending(false);
-      } catch (error) { setSubmitError(error.message); setSending(false); }
-      return;
-    }
-    const text = [
-      '¡Hola! Quiero solicitar un presupuesto para una producción.',
-      `Nombre: ${form.name.trim()}`, `Email: ${form.email.trim()}`,
-      `Servicio: ${selected?.name || 'A la carta'}`, `Tipo de propiedad: ${form.propertyType}`, form.pack === 'custom' ? `Servicios: ${customServices.map(s => s.name).join(', ')}` : '', `Superficie: ${form.m2} m²`,
-      `Zona de la propiedad: ${form.zone.trim()}`,
-      form.videos.length ? `Videos: ${form.videos.map(id => SERVICE_BY_ID[id].name).join(', ')}` : '',
-      form.addons.length ? `Adicionales: ${form.addons.join(', ')} (${ADDONS.filter(a => form.addons.includes(a.name)).map(a => money(a.price)).join(' / ')})` : '',
-      estimate!==null ? `Precio estimado: ${money(estimate)}` : 'Solicitud de cotización personalizada',
-      form.message.trim() ? `Comentarios: ${form.message.trim()}` : '',
-    ].filter(Boolean).join('\n');
-    window.open(`https://wa.me/5491176498888?text=${encodeURIComponent(text)}`, '_blank', 'noopener,noreferrer');
-  };
-  const inputClass = 'w-full bg-surface-container border border-outline-variant rounded-lg px-4 py-3 text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-secondary';
-  const error = field => errors[field] && <p id={`budget-${field}-error`} role="alert" className="text-error text-xs mt-1">{errors[field]}</p>;
-  const fieldProps = field => ({ id: `budget-${field}`, name: field, value: form[field], onChange: e => change(field, e.target.value), required: true, 'aria-invalid': !!errors[field], 'aria-describedby': errors[field] ? `budget-${field}-error` : undefined });
-
-  return (
-    <div className="fixed inset-0 z-[200] flex items-center justify-center p-3 md:p-6" onClick={onClose}>
-      <div className="absolute inset-0 bg-on-surface/60 backdrop-blur-sm" />
-      <div ref={panel} role="dialog" aria-modal="true" aria-labelledby="budget-title" tabIndex={-1} className="relative bg-white w-full max-w-4xl max-h-[90dvh] overflow-y-auto rounded-2xl shadow-2xl" onClick={e => e.stopPropagation()}>
-        <div className="editorial-gradient px-5 md:px-8 py-6 flex justify-between items-start gap-4">
-          <div><p className="text-white/70 text-xs uppercase tracking-widest mb-2">Arko Studio</p><h2 id="budget-title" className="font-headline font-extrabold text-2xl text-white">{reservationUrl ? 'Recibimos tu consulta' : 'Armá tu producción'}</h2><p className="text-white/80 text-sm mt-2">{reservationUrl ? pending ? 'Vamos a revisar el alcance y preparar tu cotización.' : 'Primero, revisá tu presupuesto con tranquilidad.' : 'Contanos qué necesitás, un paso a la vez.'}</p></div>
-          <button type="button" onClick={onClose} aria-label="Cerrar" className="text-white p-2"><span className="material-symbols-outlined">close</span></button>
-        </div>
-        {reservationUrl ? <section className="p-5 md:p-8 space-y-5" aria-live="polite">
-          {pending ? <p>Gracias, {form.name.trim()}. Recibimos tu solicitud. Una persona de nuestro equipo se va a poner en contacto con vos a través de <strong>{form.email.trim()}</strong> para preparar un presupuesto a medida.</p> : <><p>Gracias, {form.name.trim()}. Te enviaremos un mail a <strong>{form.email.trim()}</strong> con el presupuesto en PDF y el detalle de cuánto costaría la producción que elegiste.</p>
-          <p>Revisalo con tiempo y tranquilidad. Cuando estés conforme con la propuesta y quieras avanzar, hacé clic en <strong>Elegir semana y reservar</strong> desde el mail. Podés volver a ese enlace cuando estés listo.</p>
-          <p className="text-sm text-on-surface-variant">Si no encontrás el mail, revisá la carpeta de spam o correo no deseado.</p>
-          <div className="border-t border-outline-variant/50 pt-4 space-y-3">
-            <p className="text-sm text-on-surface-variant">¿Ya revisaste la propuesta y estás conforme? También podés continuar desde acá.</p>
-            <a href={reservationUrl} onClick={e=>{e.preventDefault();onClose();navigate(reservationUrl);}} className="inline-flex items-center justify-center border border-outline-variant text-on-surface-variant text-sm font-medium px-4 py-2 rounded-lg hover:border-secondary hover:text-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-secondary">Elegir semana y reservar</a>
-            <p className="text-xs text-on-surface-variant">La retención del cupo empieza recién cuando elegís una semana. La reserva se confirma con el pago de la seña.</p>
-          </div>
-          </>}<button type="button" onClick={onClose} className="text-sm underline text-secondary">Seguir recorriendo la web</button>
-        </section> : <form onSubmit={submit} noValidate className="p-5 md:p-8 space-y-7">
-          <nav aria-label="Progreso de la solicitud"><ol className="grid grid-cols-4 gap-2">{STEPS.map((label, i) => <li key={label}><button type="button" disabled={i > step} aria-current={i === step ? 'step' : undefined} onClick={() => setStep(i)} className={`w-full border-b-2 pb-3 text-xs sm:text-sm text-left ${i <= step ? 'border-secondary text-secondary font-bold' : 'border-outline-variant text-on-surface-variant'}`}>{i + 1}. {label}</button></li>)}</ol></nav>
-          <div ref={stepTitle} key={step} tabIndex={-1} className="outline-none"><p className="text-xs text-secondary uppercase tracking-widest mb-2">Paso {step + 1} de 4</p><h3 className="font-headline font-bold text-xl">{['¿Qué propiedad vamos a mostrar?', '¿Dónde está la propiedad?', 'Elegí cómo mostrarla', '¿A quién enviamos la propuesta?'][step]}</h3></div>
-          {step === 0 && <div className="space-y-6"><fieldset><legend className="font-bold text-sm mb-3">Tipo de propiedad *</legend><div className="grid grid-cols-2 sm:grid-cols-3 gap-3">{PROPERTY_TYPES.map(type => <label key={type} className={`border-2 rounded-xl p-4 cursor-pointer text-sm ${form.propertyType === type ? 'border-secondary bg-secondary/5' : 'border-outline-variant/50'}`}><input type="radio" name="propertyType" checked={form.propertyType === type} onChange={() => change('propertyType', type)} className="accent-secondary mr-2" />{type}</label>)}</div>{error('propertyType')}</fieldset>
-          <div><label htmlFor="budget-m2" className="block text-sm font-bold mb-2">Superficie de la propiedad (m²) *</label><input {...fieldProps('m2')} type="number" min="1" max="100000" step="any" placeholder="Ej: 150" className={inputClass} />{error('m2')}<p className="text-xs text-on-surface-variant mt-2">{manual ? 'Indicá la superficie aproximada de los espacios a mostrar.' : `El precio se calcula por tramos de ${largeArea(form.propertyType)?500:100} m², redondeando al tramo siguiente.`}</p></div>
-
-<p className="text-xs text-on-surface-variant">Indicá la superficie total a relevar. El tipo de inmueble, sus ambientes y amenities se tienen en cuenta al confirmar la propuesta formal.</p></div>}
-          {step === 1 && <div><label htmlFor="budget-zone" className="block text-sm font-semibold mb-2">Barrio o localidad *</label><input {...fieldProps('zone')} maxLength={200} placeholder="Ej: Palermo, CABA / Nordelta, Tigre" className={inputClass} />{error('zone')}<p className="text-xs text-on-surface-variant mt-3">Con el barrio y la localidad podemos evaluar el traslado. Coordinamos la dirección exacta al reservar.</p></div>}
-          {step === 2 && <div className="space-y-6">
-          <fieldset><legend className="font-headline font-bold mb-3">Elegí un pack o armá tu selección *</legend>
-            <div className="grid md:grid-cols-3 gap-3">
-              {PACKS.map(pack => <label key={pack.id} className={`relative border-2 rounded-xl p-4 cursor-pointer ${form.pack === pack.id ? 'border-secondary bg-secondary/5' : 'border-outline-variant/50'}`}>
-                <div className="flex gap-2 items-center mb-2"><input type="radio" name="pack" value={pack.id} checked={form.pack === pack.id} onChange={() => change('pack', pack.id)} className="accent-secondary" /><span className="font-headline font-bold">{pack.name}</span></div>
-                <p className="font-bold text-secondary mb-1">{manual ? 'A cotizar según alcance' : money(priceFor(pack, validArea ? form.m2 : 100))}</p>
-                <p className="text-xs text-on-surface-variant mb-3">{manual ? 'Definimos el importe al revisar el alcance' : `${validArea ? `para ${form.m2} m²` : 'hasta 100 m²'} · IVA incluido`}</p>
-                <ul className="text-xs space-y-2">{pack.services.map(id => <li key={id}>{SERVICE_BY_ID[id].name}</li>)}{pack.videos && <li className="font-semibold">{pack.videos} {pack.videos === 1 ? 'video a elección' : 'videos a elección'}</li>}</ul>
-              </label>)}
-            <label className="block border-2 rounded-xl p-4 mt-3 cursor-pointer"><input type="radio" name="pack" checked={form.pack === 'custom'} onChange={() => change('pack', 'custom')} className="accent-secondary mr-2" /><strong>A la carta</strong><p className="text-xs mt-2">Elegí solo los servicios que necesitás.</p></label></div>{error('pack')}
-          </fieldset>
-
-          {form.pack === 'custom' && <fieldset><legend className="font-bold text-sm mb-3">Tus servicios *</legend><div className="grid sm:grid-cols-2 gap-3">{Object.values(SERVICE_BY_ID).map(service => <label key={service.id} className="border border-outline-variant rounded-xl p-4 cursor-pointer text-sm"><input type="checkbox" name="services" checked={form.services.includes(service.id)} onChange={() => toggle('services', service.id)} className="accent-secondary mr-2" /><strong>{service.name}</strong><p className="mt-2 text-secondary">{manual ? 'A cotizar' : money(priceFor({...service,perService:true}, form.m2))}</p><p className="text-xs mt-1 text-on-surface-variant">{service.desc}</p></label>)}</div>{error('services')}</fieldset>}
-          {!!selected?.videos && <fieldset><legend className="font-bold text-sm mb-3">Elegí {selected.videos} {selected.videos === 1 ? 'video' : 'videos'} *</legend><div className="flex flex-wrap gap-3">{VIDEOS.map(id => <label key={id} className="border border-outline-variant rounded-lg p-3 text-sm flex gap-2 items-center"><input type="checkbox" name="videos" checked={form.videos.includes(id)} disabled={!form.videos.includes(id) && form.videos.length >= selected.videos} onChange={() => toggle('videos', id)} className="accent-secondary" />{SERVICE_BY_ID[id].name}</label>)}</div>{error('videos')}</fieldset>}
-          {availableAddons.length > 0 && <fieldset><legend className="font-bold text-sm mb-1">Adicionales opcionales</legend><p className="text-xs text-on-surface-variant mb-3">Matterport mejora el tour 360° a un modelo 3D interactivo. Los adicionales de video están disponibles al elegir video cinematográfico o reel.</p>{availableAddons.map(addon => <label key={addon.name} className="flex gap-3 items-start py-2 text-sm"><input type="checkbox" checked={form.addons.includes(addon.name)} onChange={() => toggle('addons', addon.name)} className="accent-secondary mt-1" /><span>{addon.name} <strong className="text-secondary">+ {money(addon.price)}</strong><span className="block text-xs text-on-surface-variant mt-1">{addon.desc}</span></span></label>)}</fieldset>}
-          </div>}
-          {step === 3 && <><fieldset><legend className="font-headline font-bold mb-4">Datos de contacto</legend><div className="grid md:grid-cols-2 gap-4">
-            <div><label htmlFor="budget-name" className="block text-sm font-semibold mb-2">Nombre completo *</label><input {...fieldProps('name')} autoComplete="name" maxLength={120} placeholder="Tu nombre y apellido" className={inputClass} />{error('name')}</div>
-            <div><label htmlFor="budget-email" className="block text-sm font-semibold mb-2">Email *</label><input {...fieldProps('email')} type="email" autoComplete="email" maxLength={254} placeholder="tu@email.com" className={inputClass} />{error('email')}</div>
-
-          </div></fieldset>
-          <div><label htmlFor="budget-message" className="block text-sm font-semibold mb-2">Comentarios (opcional)</label><textarea id="budget-message" value={form.message} onChange={e => change('message', e.target.value)} rows={3} maxLength={2000} placeholder="Ambientes, amenities, accesos u otros detalles…" className={inputClass} /></div>
-          </>}
-          <div className="bg-surface rounded-xl p-4">{form.propertyType && <p className="text-sm mb-2">{form.propertyType} · {form.m2 || '—'} m²{form.zone ? ` · ${form.zone}` : ''}</p>}<p className="font-bold">{estimate !== null ? `Total estimado: ${money(estimate)}` : manual ? 'Prepararemos un presupuesto a medida para tu propiedad.' : 'Elegí tus servicios en el paso 3 para ver el estimado.'}</p><p className="text-xs text-on-surface-variant mt-2">IVA incluido. El valor final se confirma según locación, terreno, amenities y requerimientos de producción. La fecha está sujeta a disponibilidad.</p></div>
-          <input name="website" tabIndex={-1} autoComplete="off" aria-hidden="true" className="hidden" />
-          {submitError && <p role="alert" className="text-error text-sm">{submitError}</p>}
-          <div className="flex gap-3">{step > 0 && <button type="button" disabled={sending} onClick={() => setStep(step - 1)} className="border border-outline-variant rounded-lg px-5 text-sm">Atrás</button>}<button type="submit" disabled={sending || config.loading} className="w-full editorial-gradient text-white font-bold text-sm py-4 rounded-lg disabled:opacity-50">{step < 3 ? 'Continuar' : sending ? 'Guardando tu consulta…' : automaticSubmission ? 'Enviar solicitud de presupuesto' : 'Continuar por WhatsApp'}</button>
-          </div>
-          {step === 3 && <p className="text-center text-on-surface-variant text-xs">{!automaticSubmission && manual ? 'Te conectaremos por WhatsApp con todos los detalles para preparar tu cotización.' : config.enabled && manual ? 'Una persona de nuestro equipo se va a poner en contacto con vos para preparar un presupuesto a medida.' : config.enabled ? 'Guardaremos tu solicitud y te enviaremos la propuesta por email. Al terminar, te mostraremos un botón para elegir tu semana. Los recordatorios se pueden detener desde cada mensaje.' : 'Se abrirá WhatsApp con todos los datos y el precio estimado. Enviá el mensaje para que recibamos tu consulta. Usaremos tu email para contactarte sobre este pedido.'}</p>}
-        </form>}
-      </div>
-    </div>
-  );
+import {useState,useEffect,useRef} from 'react';
+import {completeCatalog,addonAvailable,HOSTING_INCLUDED,ADJUSTMENTS} from './pricingData';
+import {useCommercialConfig,commercialApi} from '../lib/commercial';
+import {PROPERTY_TYPES,propertyPrice} from '../lib/propertyPricing';
+import {estimateProduction,selectionFor,defaultVideos,quoteSummary,money} from '../lib/productionQuote';
+import {PackOptions,TourOptions,CommercialConditions} from './QuoteOptions';
+const STEPS=['Propiedad','Ubicación','Servicios','Contacto'];
+const emptyForm=()=>({propertyType:'',services:[],pack:'',m2:'100',name:'',email:'',zone:'',locationCategory:'',variant:'fpv',videos:[],addons:[],tourPlatform:'kuula',hostingMonths:3,message:''});
+export default function BudgetModal({isOpen,onClose,initialSelection}){
+ const navigate=useNavigate(),config=useCommercialConfig(),catalog=completeCatalog(config.catalog);
+ const [form,setForm]=useState(emptyForm),[step,setStep]=useState(0),[sending,setSending]=useState(false),[errors,setErrors]=useState({}),[submitError,setSubmitError]=useState(''),[reservationUrl,setReservationUrl]=useState(''),[pending,setPending]=useState(false);
+ const panel=useRef(null),stepTitle=useRef(null),opened=useRef(false),requestKey=useRef(crypto.randomUUID());
+ const e=estimateProduction(form,catalog),selected=catalog.packs.find(p=>p.id===form.pack),hasSelection=!!form.pack&&e.hasSelection;
+ const automaticSubmission=config.enabled&&(!e.requiresReview||config.manualQuotes);
+ useEffect(()=>{
+  if(!isOpen){opened.current=false;return;}
+  if(opened.current)return;opened.current=true;
+  const initial=selectionFor(initialSelection||{});
+  setForm(prev=>({...emptyForm(),name:prev.name,email:prev.email,zone:prev.zone,locationCategory:prev.locationCategory,...initial,pack:initialSelection?.pack||'',m2:String(initialSelection?.m2||100),propertyType:initialSelection?.propertyType||'',services:initial.services||[]}));
+  setStep(0);setErrors({});setSubmitError('');setReservationUrl('');setPending(false);requestKey.current=crypto.randomUUID();
+ },[isOpen,initialSelection]);
+ useEffect(()=>{if(!isOpen)return;stepTitle.current?.focus();panel.current?.scrollTo(0,0);},[isOpen,step,reservationUrl]);
+ useEffect(()=>{
+  if(!isOpen)return;const previous=document.activeElement,overflow=document.body.style.overflow;document.body.style.overflow='hidden';
+  const handler=event=>{if(event.key==='Escape')onClose();if(event.key!=='Tab')return;const fields=[...(panel.current?.querySelectorAll('button,input,select,textarea,a[href]')||[])].filter(el=>!el.disabled&&el.getClientRects().length);const first=fields[0],last=fields.at(-1);if(event.shiftKey&&(document.activeElement===first||document.activeElement===panel.current)){event.preventDefault();last?.focus();}else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first?.focus();}};
+  document.addEventListener('keydown',handler);return()=>{document.body.style.overflow=overflow;document.removeEventListener('keydown',handler);previous?.focus();};
+ },[isOpen,onClose]);
+ if(!isOpen)return null;
+ const update=patch=>{requestKey.current=crypto.randomUUID();setForm(prev=>{const next={...prev,...patch};const pack=catalog.packs.find(p=>p.id===next.pack),services=next.pack==='custom'?next.services:pack?.services||[],videos=next.pack==='custom'?next.services:next.videos;next.addons=next.addons.filter(name=>catalog.addons.some(a=>a.name===name&&addonAvailable(a,services,videos)));if(!services.includes('tour'))next.hostingMonths=3;return next;});setErrors({});};
+ const choosePack=id=>update({pack:id,services:[],variant:'fpv',videos:defaultVideos(id)});
+ const toggle=(field,value)=>update({[field]:form[field].includes(value)?form[field].filter(v=>v!==value):[...form[field],value]});
+ const inputClass='w-full bg-surface-container border border-outline-variant rounded-lg px-4 py-3 text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-secondary';
+ const field=(id,required=true)=>({id:`budget-${id}`,name:id,value:form[id],onChange:event=>update({[id]:event.target.value}),required,'aria-invalid':!!errors[id],'aria-describedby':errors[id]?`budget-${id}-error`:undefined});
+ const error=id=>errors[id]&&<p id={`budget-${id}-error`} role="alert" className="text-error text-xs mt-2">{errors[id]}</p>;
+ const submit=async event=>{
+  event.preventDefault();const next={};
+  if(!PROPERTY_TYPES.includes(form.propertyType))next.propertyType='Elegí el tipo de propiedad.';
+  if(!e.validArea)next.m2='Ingresá una superficie entre 1 y 100.000 m².';
+  if(!form.zone.trim())next.zone='Indicá el barrio o localidad.';
+  if(!['caba','other'].includes(form.locationCategory))next.locationCategory='Indicá si es CABA u otra zona.';
+  if(!hasSelection)next.pack='Elegí un paquete o al menos un servicio.';
+  if(!form.name.trim())next.name='Ingresá tu nombre.';
+  if(!/^[^\s@,;<>]+@[^\s@,;<>]+\.[^\s@,;<>]+$/.test(form.email.trim()))next.email='Ingresá un email válido.';
+  const groups=[['propertyType','m2'],['zone','locationCategory'],['pack'],['name','email']];
+  const relevant=step<3?Object.fromEntries(Object.entries(next).filter(([key])=>groups[step].includes(key))):next;
+  setErrors(relevant);if(Object.keys(relevant).length){if(step===3)setStep(groups.findIndex(keys=>keys.some(key=>next[key])));return;}
+  if(step<3){setStep(step+1);return;}
+  if(automaticSubmission){setSending(true);setSubmitError('');try{const result=await commercialApi('submit',{method:'POST',body:{...form,website:event.currentTarget.elements.website.value,requestKey:requestKey.current}});setPending(result.stage==='pending_review');setReservationUrl('/#reserva='+result.token);}catch(err){setSubmitError(err.message);}finally{setSending(false);}return;}
+  const text=['¡Hola! Quiero solicitar un presupuesto para una producción.',`Nombre: ${form.name.trim()}`,`Email: ${form.email.trim()}`,`Tipo de propiedad: ${form.propertyType}`,`Ubicación: ${form.zone.trim()}`,...quoteSummary(e),form.message.trim()?`Comentarios: ${form.message.trim()}`:''].filter(Boolean).join('\n');
+  window.open(`https://wa.me/5491176498888?text=${encodeURIComponent(text)}`,'_blank','noopener,noreferrer');
+ };
+ const serviceIds=form.pack==='custom'?form.services:selected?.services||[],activeVideos=form.pack==='custom'?form.services:form.videos;
+ const availableAddons=catalog.addons.filter(a=>addonAvailable(a,serviceIds,activeVideos));
+ return <div className="fixed inset-0 z-[200] flex items-center justify-center p-3 md:p-6" onClick={onClose}><div className="absolute inset-0 bg-on-surface/60 backdrop-blur-sm"/><div ref={panel} role="dialog" aria-modal="true" aria-labelledby="budget-title" tabIndex={-1} className="relative bg-white w-full max-w-4xl max-h-[90dvh] overflow-y-auto rounded-2xl shadow-2xl" onClick={event=>event.stopPropagation()}>
+ <header className="editorial-gradient px-5 md:px-8 py-6 flex justify-between items-start gap-4"><div><p className="text-white/70 text-xs uppercase tracking-widest mb-2">ARKO STUDIO</p><h2 id="budget-title" className="font-headline font-bold text-2xl text-white">{reservationUrl?'Recibimos tu consulta':'Armá tu producción'}</h2><p className="text-white/80 text-sm mt-2">{reservationUrl?'Revisaremos la selección y el alcance de tu pedido.':'Contanos qué necesitás, un paso a la vez.'}</p></div><button type="button" onClick={onClose} aria-label="Cerrar" className="text-white p-2 text-2xl">×</button></header>
+ {reservationUrl?<section className="p-5 md:p-8 space-y-5" aria-live="polite"><p>Gracias, {form.name.trim()}. {pending?'Vamos a revisar los conceptos pendientes y contactarte por email para preparar una cotización completa.':`Te enviaremos la propuesta y el presupuesto en PDF a ${form.email.trim()}. Revisalo con tranquilidad antes de elegir semana y reservar.`}</p>{!pending&&<a className="text-secondary underline" href={reservationUrl} onClick={event=>{event.preventDefault();onClose();navigate(reservationUrl);}}>Elegir semana y reservar</a>}<p className="text-xs text-on-surface-variant">Si no encontrás el mail, revisá spam o correo no deseado. La reserva se confirma según las condiciones de la propuesta.</p><button onClick={onClose} className="underline text-secondary text-sm">Seguir recorriendo la web</button></section>:<form onSubmit={submit} noValidate className="p-5 md:p-8 space-y-6"><nav aria-label="Progreso de la solicitud"><ol className="grid grid-cols-4 gap-2">{STEPS.map((label,i)=><li key={label}><button type="button" disabled={i>step} aria-current={step===i?'step':undefined} onClick={()=>setStep(i)} className={`w-full border-b-2 pb-3 text-xs text-left ${i<=step?'border-secondary text-secondary font-bold':'border-outline-variant text-on-surface-variant'}`}>{i+1}. {label}</button></li>)}</ol></nav><div tabIndex={-1} ref={stepTitle} className="outline-none"><p className="text-xs text-secondary uppercase tracking-widest mb-2">Paso {step+1} de 4</p><h3 className="font-headline font-bold text-xl">{['¿Qué propiedad vamos a mostrar?','¿Dónde está la propiedad?','Elegí cómo mostrarla','¿A quién enviamos la propuesta?'][step]}</h3></div>
+ {step===0&&<div className="space-y-5"><fieldset><legend className="font-bold text-sm mb-3">Tipo de propiedad *</legend><div className="grid grid-cols-2 sm:grid-cols-3 gap-3">{PROPERTY_TYPES.map(type=><label key={type} className={`border-2 rounded-xl p-3 cursor-pointer text-sm ${form.propertyType===type?'border-secondary bg-secondary/5':'border-outline-variant/50'}`}><input type="radio" name="propertyType" checked={form.propertyType===type} onChange={()=>update({propertyType:type})} className="accent-secondary mr-2"/>{type}</label>)}</div>{error('propertyType')}</fieldset><div><label className="block text-sm font-semibold mb-2" htmlFor="budget-m2">Superficie a relevar (m²) *</label><input {...field('m2')} type="number" min="1" max="100000" step="any" className={inputClass}/>{error('m2')}<p className="text-xs text-on-surface-variant mt-3">Los paquetes y servicios individuales se calculan por bloques adicionales iniciados de 100 m². Para terrenos y producciones especiales evaluamos el alcance; no equivalen automáticamente a superficie interior.</p></div></div>}
+ {step===1&&<div className="space-y-5"><div><label htmlFor="budget-zone" className="block text-sm font-semibold mb-2">Barrio o localidad *</label><input {...field('zone')} maxLength={200} placeholder="Barrio y localidad de la propiedad" className={inputClass}/>{error('zone')}</div><div><label htmlFor="budget-locationCategory" className="block text-sm font-semibold mb-2">Traslado de la producción *</label><select {...field('locationCategory')} className={inputClass}><option value="">Elegí la ubicación</option><option value="caba">CABA · +$25.000 desde Béccar por producción</option><option value="other">Otra zona · confirmar traslado según ubicación</option></select>{error('locationCategory')}</div><p className="text-xs text-on-surface-variant">El traslado se cobra una vez por producción, independientemente de la cantidad de servicios. Para otras zonas, su importe queda pendiente de confirmación.</p></div>}
+ {step===2&&<div className="space-y-6"><fieldset><legend className="font-semibold text-sm mb-3">Paquete o servicios individuales *</legend><div className="grid md:grid-cols-3 gap-3">{catalog.packs.map(p=>{const variant=form.pack===p.id?form.variant:'fpv',sample=estimateProduction({...form,pack:p.id,services:[],variant,videos:form.pack===p.id?form.videos:defaultVideos(p.id),addons:[]},catalog);return <label key={p.id} className={`border-2 rounded-xl p-4 cursor-pointer ${form.pack===p.id?'border-secondary bg-secondary/5':'border-outline-variant/50'}`}><input type="radio" name="pack" checked={form.pack===p.id} onChange={()=>choosePack(p.id)} className="accent-secondary mr-2"/><strong>{p.name}</strong><p className="font-bold text-secondary mt-2">{money(sample.productionSubtotal)}</p><p className="text-xs text-on-surface-variant mt-2">Hasta {form.m2} m² · producción</p><p className="text-xs mt-2">{p.tagline}</p></label>;})}</div><label className="block border rounded-xl p-4 mt-3 text-sm"><input type="radio" name="pack" checked={form.pack==='custom'} onChange={()=>choosePack('custom')} className="accent-secondary mr-2"/><strong>A la carta</strong> · elegí los servicios que necesitás.</label>{error('pack')}</fieldset>
+ {form.pack==='custom'&&<fieldset><legend className="text-sm font-bold mb-3">Servicios individuales</legend><div className="grid sm:grid-cols-2 gap-3">{catalog.services.filter(s=>s.id!=='matterport').map(s=>{const priceService=s.id==='tour'&&form.tourPlatform==='matterport'?catalog.services.find(row=>row.id==='matterport'):s;return <label key={s.id} className="border rounded-xl p-4 text-sm"><input type="checkbox" checked={form.services.includes(s.id)} onChange={()=>toggle('services',s.id)} className="accent-secondary mr-2"/><strong>{s.id==='tour'?'Tour 360°':s.name}</strong><p className="text-secondary font-semibold mt-2">{money(propertyPrice(priceService,form.m2,form.propertyType))}</p><p className="text-xs text-on-surface-variant mt-1">{priceService.desc}</p><p className="text-xs mt-2">+ {money(priceService.per100)} por bloque adicional iniciado de 100 m².</p></label>;})}</div></fieldset>}
+ {selected&&<PackOptions pack={form.pack} selection={form} onChange={update} prefix="budget"/>}
+ {e.hasTour&&<fieldset className="border-t pt-5"><legend className="text-sm font-semibold mb-3">Tour y hosting</legend><TourOptions selection={form} onChange={update} prefix="budget" individual={form.pack==='custom'}/><p className="text-xs text-on-surface-variant mt-3">{form.pack==='custom'?`Matterport individual: ${money(catalog.services.find(s=>s.id==='matterport').base)} hasta 100 m².`:'En paquetes, Matterport reemplaza Kuula por +$75.000 una sola vez por producción; no se entregan ambos tours.'}</p></fieldset>}
+ {availableAddons.length>0&&<fieldset><legend className="text-sm font-semibold mb-3">Adicionales opcionales compatibles</legend>{availableAddons.map(a=><label key={a.name} className="flex items-start gap-3 py-2 text-sm"><input type="checkbox" checked={form.addons.includes(a.name)} onChange={()=>toggle('addons',a.name)} className="accent-secondary mt-1"/><span>{a.name} <strong className="text-secondary">+ {money(a.price)}</strong><span className="block text-xs text-on-surface-variant mt-1">{a.desc}</span></span></label>)}</fieldset>}<p className="text-xs text-on-surface-variant">Cinematográfico: horizontal. Reel: vertical. Son entregables separados. FPV: recorrido con drone sujeto a viabilidad del inmueble. Cinematográfico + reel sin FPV: consultar combinación a medida.</p></div>}
+ {step===3&&<><div className="grid md:grid-cols-2 gap-4"><div><label htmlFor="budget-name" className="block text-sm font-semibold mb-2">Nombre completo *</label><input {...field('name')} autoComplete="name" maxLength={120} className={inputClass}/>{error('name')}</div><div><label htmlFor="budget-email" className="block text-sm font-semibold mb-2">Email *</label><input {...field('email')} type="email" autoComplete="email" maxLength={254} className={inputClass}/>{error('email')}</div></div><div><label htmlFor="budget-message" className="block text-sm font-semibold mb-2">Comentarios (opcional)</label><textarea {...field('message',false)} rows={3} maxLength={2000} className={inputClass}/></div></>}
+ <section className="bg-surface rounded-xl p-4 space-y-3" aria-label="Resumen de presupuesto" aria-live="polite"><p className="text-sm">{form.propertyType||'Propiedad a definir'} · {form.m2} m²{form.zone?` · ${form.zone}`:''}</p><strong className="block">{!hasSelection?'Elegí tus servicios para ver el estimado.':e.knownSubtotal==null?'Solicitar cotización personalizada.':`${e.total==null?'Subtotal conocido':'Total estimado'}: ${money(e.knownSubtotal)}`}</strong>{hasSelection&&<><p className="text-xs">{e.pack?.name||'Servicios individuales'} · {[...e.services,...e.videos].map(row=>row.name).join(' · ')}</p>{e.hasTour&&<p className="text-xs">{e.tourPlatform==='matterport'?'Matterport reemplaza Kuula':'Kuula'} · {HOSTING_INCLUDED} {e.hostingMonths>3?`${e.hostingMonths} meses solicitados: hosting extendido pendiente de cotización.`:''}</p>}{e.travel>0&&<p className="text-xs">Traslado a CABA: +{money(e.travel)}, una vez por producción.</p>}{e.extras.map(a=><p key={a.name} className="text-xs">{a.name}: +{money(a.price)}</p>)}{e.reasons.map(reason=><p key={reason} className="text-xs font-medium text-secondary">{reason}</p>)}<details><summary className="text-xs underline cursor-pointer">Ver el detalle de la consulta</summary><ul className="text-xs space-y-2 mt-3">{quoteSummary(e).map((line,i)=><li key={i}>{line}</li>)}</ul></details></>}<p className="text-xs text-on-surface-variant">Precios en pesos argentinos. El presupuesto final se confirma según alcance y ubicación. {ADJUSTMENTS}</p></section>
+ <details><summary className="cursor-pointer text-xs text-on-surface-variant">Condiciones de producción, hosting y traslado</summary><div className="mt-3"><CommercialConditions tour={e.hasTour}/></div></details><input name="website" tabIndex={-1} autoComplete="off" aria-hidden="true" className="hidden"/>{submitError&&<p role="alert" className="text-error text-sm">{submitError}</p>}<div className="flex gap-3">{step>0&&<button type="button" disabled={sending} onClick={()=>setStep(step-1)} className="border rounded-lg px-5 text-sm">Atrás</button>}<button type="submit" disabled={sending||config.loading} className="w-full editorial-gradient text-white font-bold text-sm py-4 rounded-lg disabled:opacity-50">{step<3?'Continuar':sending?'Guardando tu consulta…':automaticSubmission?'Enviar solicitud de presupuesto':'Continuar por WhatsApp'}</button></div>{step===3&&<p className="text-xs text-center text-on-surface-variant">{e.requiresReview?'Los conceptos pendientes se revisan antes de emitir un presupuesto completo. ':''}{automaticSubmission?'Guardaremos tu consulta para enviarte una propuesta por email.':'Se abrirá WhatsApp con la selección y el resumen. Enviá el mensaje para que recibamos tu consulta.'}</p>}</form>}
+ </div></div>;
 }

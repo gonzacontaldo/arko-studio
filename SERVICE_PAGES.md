@@ -21,3 +21,9 @@ Se guardan solamente las diferencias con los originales, para que las URLs de re
 En desarrollo, Vite adapta el mismo handler. Las variables privadas deben estar en el entorno del proceso de Vite. No usar prefijo `VITE_` para secretos. En producción Vercel ejecuta la función directamente.
 
 Pruebas: `node --test scripts/service-media.test.mjs` y `npm run build`.
+
+## Portfolio editorial
+
+En `/admin?tab=portfolio-web` → **Portfolio / revista**, marcar los trabajos publicados que se quieren incluir y ordenarlos con las flechas. El primero abre la revista. **Guardar selección** aplica los cambios. Guardar una selección vacía deja el portfolio sin propiedades; nunca vuelve a mostrar todas.
+
+La selección es independiente de los destacados de la home y de las páginas de servicios. Si aún no se guardó una edición, se muestran inicialmente hasta tres destacados. Las fotos y videos de cada trabajo siguen editándose en Producción. La edición se guarda en `service-pages/portfolio.json` mediante el mismo endpoint autenticado, sin cambios de esquema ni permisos.

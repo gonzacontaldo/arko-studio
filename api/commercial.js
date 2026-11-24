@@ -129,7 +129,7 @@ export default async function handler(req,res){
    }
    if(action==='admin_test_email'&&req.method==='POST'){
     const key=String(body.key||''),[t]=await db(`com_templates?key=eq.${encodeURIComponent(key)}`);if(!t)throw new FlowError('Plantilla inexistente.');
-    const s=await settings(),data=validateRequest({name:'Cliente de prueba',email:user.email,zone:'Palermo',propertyType:'Casa',m2:150,pack:'destacado',videos:['cine'],addons:[]},catalog(s));
+    const s=await settings(),data=validateRequest({name:'Cliente de prueba',email:user.email,zone:'Palermo, CABA',locationCategory:'caba',propertyType:'Casa',m2:150,pack:'destacado',videos:['cine'],addons:[]},catalog(s));
     const sample={...data,id:randomUUID(),total:data.snapshot.total,deposit:s.deposit,created_at:new Date().toISOString(),is_test:true,valid_until:new Date(Date.now()+s.quote_days*86400000).toISOString(),terms:s.terms};
     const rendered=await prepareEmail(key,sample,{week_start:'2026-11-09',hold_until:new Date(Date.now()+72*3600000).toISOString()},{subject:t.draft_subject??t.subject,body:t.draft_body??t.body});
     await sendZoho({to:process.env.COMMERCIAL_TEST_EMAIL||user.email,...rendered,subject:`PRUEBA DE PLANTILLA: ${rendered.subject}`});

@@ -1,0 +1,15 @@
+.pe-scope { padding: 15px 18px; background: #edf0e5; border-radius: 8px; font-size: 12px; color: #617058; line-height: 1.7; margin-bottom: 28px; }
+.pe-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; align-items: start; }
+.portfolio-editor h3 { font-size: 17px; font-weight: 600; }
+.pe-search { display: block; font-size: 12px; margin-top: 20px; }.pe-search input { margin-top: 8px; }
+.pe-library-list { max-height: 640px; overflow-y: auto; padding-right: 8px; }
+.pe-choice { display: flex; align-items: center; gap: 12px; border: 1px solid #dce0d5; border-radius: 8px; padding: 12px; margin-bottom: 10px; cursor: pointer; }
+.service-pages-admin .pe-choice input { width: 17px; height: 17px; flex-shrink: 0; accent-color: #3b4d37; }
+.pe-choice img { width: 72px; height: 62px; object-fit: cover; border-radius: 4px; }
+.pe-choice strong { font-size: 12px; font-weight: 500; }.pe-choice > span > span { display: block; font-size: 10px; color: #6b7565; margin-top: 6px; }
+.pe-choice.is-selected { border-color: #718760; background: #eef3e7; }
+.pe-selection { position: sticky; top: 85px; }.pe-selection-heading { display: flex; align-items: center; justify-content: space-between; gap: 15px; }.pe-selection-heading h3 span { color: #8b7445; margin-left: 8px; }
+.pe-selection li { display: flex; align-items: center; gap: 10px; border-bottom: 1px solid #dce0d5; padding-block: 18px; }.pe-selection li img { width: 55px; height: 65px; object-fit: cover; }.pe-selection li > div:not(.pe-order-actions) { flex: 1; min-width: 0; }.pe-selection li strong { font-size: 12px; font-weight: 500; }.pe-selection li div > span { display: block; font-size: 10px; color: #6b7565; margin-top: 6px; }
+.pe-order { color: #9a8255; font-family: Georgia,serif; font-size: 22px; }.pe-order-actions { display: flex; flex-direction: column; }.pe-order-actions button { min-width: 34px; min-height: 30px; color: #43523b; border: 1px solid #dce0d5; }.pe-order-actions button:disabled { opacity: .3; }
+.pe-empty { margin-top: 25px; padding: 30px; border: 1px dashed #bdc7b2; font-size: 13px; line-height: 1.7; color: #65715c; }
+@media(max-width:850px){.pe-layout { grid-template-columns: 1fr; }.pe-selection { position: static; }.pe-library-list { max-height: 420px; }.pe-choice img { width: 60px; }.pe-order-actions { flex-direction: row; }.pe-order-actions button { min-height: 40px; }}

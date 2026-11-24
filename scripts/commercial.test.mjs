@@ -7,14 +7,14 @@ import {validateRequest,validateCatalog,quoteToken,quoteId,verifyMpSignature,pay
 import {jobEligible} from '../server/commercial/jobs.js';
 import handler from '../api/commercial.js';
 const catalog={packs:PACKS,services:SERVICES,addons:ADDONS};
-const request={name:'Martín',email:'MARTIN@example.com',zone:'Palermo',m2:150,timing:'En las próximas 2 semanas',pack:'destacado',videos:['cine'],addons:[ADDONS[0].name]};
+const request={name:'Martín',email:'MARTIN@example.com',zone:'Palermo, CABA',locationCategory:'caba',propertyType:'Casa',m2:150,timing:'En las próximas 2 semanas',pack:'destacado',videos:['cine'],addons:[ADDONS[0].name]};
 process.env.QUOTE_LINK_SECRET='test-only-secret-with-more-than-32-characters';
 process.env.COMMERCIAL_MODE='test';
 process.env.COMMERCIAL_SITE_URL='https://www.arkostudio.com.ar';
 test('server recalculates prices and snapshots against its own catalog',()=>{
- const q=validateRequest({...request,total:1},catalog);assert.equal(q.snapshot.total,385000);assert.equal(q.email,'martin@example.com');
- assert.equal(validateRequest({...request,m2:100,addons:[]},catalog).snapshot.total,285000);
- assert.equal(validateRequest({...request,m2:100.1,addons:[]},catalog).snapshot.total,335000);
+ const q=validateRequest({...request,total:1},catalog);assert.equal(q.snapshot.total,550000);assert.equal(q.email,'martin@example.com');
+ assert.equal(validateRequest({...request,m2:100,addons:[]},catalog).snapshot.total,400000);
+ assert.equal(validateRequest({...request,m2:100.1,addons:[]},catalog).snapshot.total,500000);
 });
 test('invalid emails, area, duplicated/unknown videos and extras are rejected',()=>{
  for(const patch of [{email:'a@b.com,attacker@x.com'},{m2:0},{m2:Infinity},{videos:['cine','cine']},{videos:['unknown']},{videos:['fpv']},{addons:['Inventado']},{addons:[ADDONS[0].name,ADDONS[0].name]},{pack:'fake'},{timing:'whatever'}])assert.throws(()=>validateRequest({...request,...patch},catalog));
@@ -111,8 +111,8 @@ test('quote submission does not require a production date before choosing a week
 });
 
 test('a la carte uses catalog prices, saves property type and separates video deliverables',()=>{
- const q=validateRequest({...request,pack:'custom',propertyType:'Lote / terreno',services:['foto','cine'],videos:[]},catalog);
- assert.equal(q.snapshot.total,300000);assert.equal(q.snapshot.propertyType,'Lote / terreno');
+ const q=validateRequest({...request,pack:'custom',propertyType:'Casa',m2:100,services:['foto','cine'],videos:[]},catalog);
+ assert.equal(q.snapshot.total,375000);assert.equal(q.snapshot.propertyType,'Casa');
  assert.deepEqual(q.snapshot.services,['Fotografía HDR']);assert.deepEqual(q.snapshot.videos,['Video cinematográfico']);
  for(const services of [[],['fake'],['foto','foto']])assert.throws(()=>validateRequest({...request,pack:'custom',services},catalog));
  assert.throws(()=>validateRequest({...request,pack:'custom',services:['foto'],addons:[ADDONS[0].name]},catalog));
@@ -128,26 +128,21 @@ test('reservation links preserve private tokens across new popup and legacy emai
  assert.equal(quoteTokenFromHash('#'+token),token);
 });
 
-test('plans and tours survive old saved catalogs without resetting configured prices',async()=>{
+test('new catalog revision replaces legacy prices and retains plans and tours',async()=>{
  const {completeCatalog}=await import('../src/components/pricingData.js');
  const restored=completeCatalog({services:[{...SERVICES[0],base:190000}],packs:[{...PACKS[0],base:220000,services:['foto']}],addons:[]});
- assert.equal(restored.services.find(s=>s.id==='foto').base,190000);
- assert.equal(restored.packs[0].base,220000);
+ assert.equal(restored.services.find(s=>s.id==='foto').base,125000);
+ assert.equal(restored.packs[0].base,225000);
  assert.ok(restored.services.some(s=>s.id==='planos'));
  assert.ok(restored.services.some(s=>s.id==='tour'));
  assert.ok(restored.packs.every(p=>p.services.includes('planos')&&p.services.includes('tour')));
 });
 
-test('Matterport can upgrade a tour in Base and a la carte without requiring video',()=>{
- for(const propertyType of ['Casa','Lote / terreno']){
-  const base=validateRequest({...request,propertyType,pack:'base',videos:[],addons:['Tour en Matterport']},catalog);
-  assert.ok(base.snapshot.services.includes('Planos 2D'));
-  assert.ok(base.snapshot.services.includes('Tour virtual 360° 4K'));
-  assert.equal(base.snapshot.total,propertyType==='Casa'?250000:225000);
-  const custom=validateRequest({...request,propertyType,pack:'custom',services:['tour','planos'],videos:[],addons:['Tour en Matterport']},catalog);
-  assert.equal(custom.snapshot.addons[0].name,'Tour en Matterport');
- }
- assert.throws(()=>validateRequest({...request,pack:'custom',services:['foto'],addons:['Tour en Matterport']},catalog));
+test('Matterport replaces Kuula in Base without requiring video',()=>{
+ const base=validateRequest({...request,pack:'base',m2:100,videos:[],tourPlatform:'matterport',addons:[]},catalog);
+ assert.ok(base.snapshot.services.includes('Planos 2D'));assert.ok(base.snapshot.services.includes('Tour Matterport'));assert.ok(!base.snapshot.services.includes('Tour Kuula'));assert.equal(base.snapshot.total,325000);
+ const custom=validateRequest({...request,pack:'custom',m2:100,services:['tour','planos'],tourPlatform:'matterport',addons:[]},catalog);assert.equal(custom.snapshot.total,235000);
+ assert.throws(()=>validateRequest({...request,addons:['Tour en Matterport']},catalog));
 });
 
 test('new inquiry alerts target the studio and open the authenticated admin detail',async()=>{
@@ -164,7 +159,7 @@ test('new inquiry alerts target the studio and open the authenticated admin deta
   const email=await prepareEmail('admin_notice',q,null,{});
   assert.ok(email.subject.includes('Presupuesto a medida'));
   assert.ok(email.text.includes(q.email));
-  assert.ok(email.text.includes('Importe pendiente'));
+  assert.ok(email.text.includes('pendiente de cotización'));
   assert.equal(email.link,`https://www.arkostudio.com.ar/admin?tab=commercial&quote=${q.id}`);
   assert.equal(email.attachments,undefined);
  }finally{if(original===undefined)delete process.env.COMMERCIAL_SITE_URL;else process.env.COMMERCIAL_SITE_URL=original;}

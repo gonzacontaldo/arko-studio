@@ -79,6 +79,11 @@ test('server requires an administrator and validates media and uploaded images',
   assert.equal((await call({body:JSON.stringify({media:{heroVideo:'https://evil.test/video'}})})).code,400);
   assert.equal((await call({body:JSON.stringify({media:{heroVideo:'https://youtu.be/SAIckW_n0g0',unexpected:'discard'}})})).code,200);
   assert.deepEqual(JSON.parse(uploaded.body.toString()).media,{heroVideo:'SAIckW_n0g0'});
+  assert.equal((await call({service:'portfolio',body:JSON.stringify({media:{selectedIds:['b','a']}})})).code,200);
+  assert.deepEqual(JSON.parse(uploaded.body.toString()).media,{selectedIds:['b','a']});
+  assert.equal((await call({service:'portfolio',body:JSON.stringify({media:{selectedIds:[]}})})).code,200);
+  assert.deepEqual(JSON.parse(uploaded.body.toString()).media,{selectedIds:[]});
+  assert.equal((await call({service:'portfolio',body:JSON.stringify({media:{selectedIds:'all'}})})).code,400);
   assert.equal((await call({action:'upload',type:'image/png',body:'<svg/>'})).code,400);
   const png=Buffer.from([137,80,78,71,13,10,26,10]);
   const result=await call({action:'upload',type:'image/png',body:png});assert.equal(result.code,201);assert.match(result.body.url,/service-pages\/images\/video-inmobiliario\/[\w-]+\.png$/);

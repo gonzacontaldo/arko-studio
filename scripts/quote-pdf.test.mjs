@@ -8,15 +8,15 @@ import { prepareEmail, processJobs } from '../server/commercial/jobs.js';
 import { sendZoho } from '../server/commercial/providers.js';
 import handler from '../api/commercial.js';
 const catalog = { packs: PACKS.map(p => ({ ...p })), services: SERVICES, addons: ADDONS };
-const request = { name: 'María', email: 'cliente@example.com', zone: 'Tigre', m2: 250, propertyType: 'Casa', pack: 'destacado', videos: ['cine'], addons: [ADDONS[0].name] };
+const request = { name: 'María', email: 'cliente@example.com', zone: 'Palermo, CABA', locationCategory: 'caba', m2: 250, propertyType: 'Casa', pack: 'destacado', videos: ['cine'], addons: [ADDONS[0].name] };
 const quote = input => { const data = validateRequest({ ...request, ...input }, catalog); return { ...data, id: '12345678-1234-4123-8123-123456789abc', total: data.snapshot.total, deposit: 15000, created_at: '2026-10-28T15:00:00Z', valid_until: '2030-11-11T15:00:00Z', approved_at: '2026-10-28T15:00:00Z', terms: 'La reserva confirma el cupo de producción. Coordinamos el día según clima y acceso.', stage: 'ready', is_test: true }; };
 Object.assign(process.env, { COMMERCIAL_MODE: 'test', COMMERCIAL_SITE_URL: 'https://www.arkostudio.com.ar', QUOTE_LINK_SECRET: 'test-only-secret-with-more-than-32-characters', ZOHO_CLIENT_ID: 'test', ZOHO_CLIENT_SECRET: 'test', ZOHO_REFRESH_TOKEN: 'test', ZOHO_ACCOUNT_ID: '123', COMMERCIAL_TEST_EMAIL: 'owner@example.com', SUPABASE_URL: 'https://db.test', SUPABASE_SERVICE_ROLE_KEY: 'test' });
 
 test('pack and a la carte breakdowns reconcile and keep original catalog prices', () => {
   const q = quote();
-  assert.deepEqual(q.snapshot.lineItems.map(r => [r.quantity, r.unitPrice, r.total]), [[1, 285000, 285000], [2, 50000, 100000], [1, 50000, 50000]]);
-  assert.equal(q.total, 435000);
-  for (const input of [{ m2: 100 }, { m2: 100.1 }, { pack: 'custom', services: ['foto', 'cine'] }, { pack: 'base', videos: [], addons: [] }]) {
+  assert.deepEqual(q.snapshot.lineItems.map(r => [r.quantity, r.unitPrice, r.total]), [[1, 375000, 375000], [2, 100000, 200000], [1, 50000, 50000], [1, 25000, 25000]]);
+  assert.equal(q.total, 650000);
+  for (const input of [{ m2: 100 }, { m2: 100.1 }, { pack: 'custom', m2:100, services: ['foto', 'cine'] }, { pack: 'base', videos: [], addons: [] }]) {
     const q = quote(input); assert.equal(quoteLineItems(q).reduce((sum, row) => sum + row.total, 0), q.total);
   }
   const saved = JSON.stringify(q.snapshot); catalog.packs[1] = { ...catalog.packs[1], base: 1 };
@@ -25,7 +25,7 @@ test('pack and a la carte breakdowns reconcile and keep original catalog prices'
 });
 
 test('older quotes preserve agreed amounts without guessing historical service prices', () => {
-  const q = quote(); delete q.snapshot.lineItems;
+  const q = quote(); q.total=435000; delete q.snapshot.lineItems; delete q.snapshot.pricingVersion;
   const rows = quoteLineItems(q);
   assert.equal(rows.length, 2); assert.equal(rows[0].total, 385000);
   assert.equal(rows.reduce((sum, r) => sum + r.total, 0), q.total);
@@ -48,7 +48,7 @@ test('generated PDF is readable, paginated and has a working private booking lin
 
 test('formal email replaces old verbose templates and always includes a PDF', async () => {
   const result = await prepareEmail('quote', quote(), null, { subject: 'Propuesta {nombre}', body: '{detalle} {total} {condiciones}' });
-  assert.ok(result.text.includes('adjunto')); assert.ok(!result.text.includes('435.000'));
+  assert.ok(result.text.includes('adjunto')); assert.ok(!result.text.includes('650.000'));
   assert.equal(result.attachments.length, 1); assert.equal(result.linkLabel, 'Elegir semana y reservar');
   const reminder = await prepareEmail('reminder', quote(), null, { subject: 'Recordatorio', body: 'Reservá: {enlace}' });
   assert.equal(reminder.attachments, undefined);

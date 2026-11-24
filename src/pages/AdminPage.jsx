@@ -12,6 +12,7 @@ import Procedimientos from '../admin/Procedimientos';
 import Finanzas from '../admin/Finanzas';
 import Commercial from '../admin/Commercial';
 import ServicePages from '../admin/ServicePages';
+import PortfolioEditor from '../admin/PortfolioEditor';
 import HubLogo from '../admin/HubLogo';
 import Seo from '../components/Seo';
 
@@ -21,6 +22,7 @@ const TABS = [
   { key: 'commercial', label: 'Consultas y reservas', icon: 'event_available' },
   { key: 'leads',        label: 'Leads',         icon: 'contacts' },
   { key: 'clientes',     label: 'Clientes',      icon: 'group'    },
+  { key: 'portfolio-web', label: 'Portfolio / revista', icon: 'auto_stories' },
   { key: 'service-pages', label: 'Páginas de servicios', icon: 'web' },
   { key: 'produccion',   label: 'Producción',    icon: 'movie'    },
   { key: 'finanzas', label: 'Finanzas', icon: 'account_balance_wallet' },
@@ -65,7 +67,7 @@ export default function AdminPage() {
           {TABS.map(t => (
             <button
               key={t.key}
-              onClick={() => {if(tab==='service-pages'&&servicePagesDirty&&t.key!==tab&&!window.confirm('Tenés cambios sin guardar. ¿Querés descartarlos?'))return;setTab(t.key);}}
+              onClick={() => {if(['service-pages','portfolio-web'].includes(tab)&&servicePagesDirty&&t.key!==tab&&!window.confirm('Tenés cambios sin guardar. ¿Querés descartarlos?'))return;setTab(t.key);}}
               className={`flex shrink-0 items-center gap-2 font-headline font-bold text-xs uppercase tracking-widest px-4 py-2 rounded-full border transition-all ${
                 tab === t.key
                   ? 'bg-secondary text-on-secondary border-secondary'
@@ -84,6 +86,7 @@ export default function AdminPage() {
           {tab === 'agenda'     && <Agenda onGo={setTab} />}
           {tab === 'commercial' && <Commercial />}
           {tab === 'service-pages' && <ServicePages onDirtyChange={setServicePagesDirty} />}
+          {tab === 'portfolio-web' && <PortfolioEditor onDirtyChange={setServicePagesDirty} />}
           {tab === 'leads'      && <Leads />}
           {tab === 'finanzas' && <Finanzas />}
           {tab === 'clientes'   && <Clientes />}

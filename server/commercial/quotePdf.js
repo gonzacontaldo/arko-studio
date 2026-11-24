@@ -9,6 +9,7 @@ export const quoteNumber = q => `ARKO-${String(q.id).slice(0, 8).toUpperCase()}`
 
 // Older quotes intentionally use their saved total; never rebuild them with today's catalog.
 export function quoteLineItems(q) {
+  if(q.total==null)throw new FlowError('El presupuesto está pendiente de cotización.',409);
   if (q.snapshot.lineItems?.length) {
     const rows = q.snapshot.lineItems;
     if (rows.some(r => !Number.isSafeInteger(r.quantity) || r.quantity < 1 || !Number.isSafeInteger(r.unitPrice) || r.unitPrice < 0 || r.total !== r.quantity * r.unitPrice) || rows.reduce((sum, r) => sum + r.total, 0) !== Number(q.total)) throw new FlowError('El desglose del presupuesto requiere revisión.', 503);
@@ -97,7 +98,7 @@ export async function createQuotePdf(q, { link } = {}) {
   const totalLabel = `${money(q.total)} ARS`;
   text(totalLabel, W - M - 14 - bold.widthOfTextAtSize(clean(totalLabel), 18), y + 11, 18, bold, '#ffffff');
   y += 56;
-  block('Precios finales en pesos argentinos. IVA incluido.', { size: 9, ink: colors.muted });
+  block('Precios en pesos argentinos.', { size: 9, ink: colors.muted });
   block(`Seña para confirmar la reserva: ${money(q.deposit)}\nSaldo restante: ${money(q.total - q.deposit)}`, { size: 10, font: bold });
   if (!q.snapshot.lineItems) block('Propuesta anterior: el importe acordado incluye la superficie indicada. Se conservan los valores originales.', { size: 9, ink: colors.muted });
   block('El alcance de los servicios y las condiciones se detallan a continuación. Este documento es un presupuesto, no una factura.', { size: 9, ink: colors.muted });
@@ -114,7 +115,9 @@ export async function createQuotePdf(q, { link } = {}) {
     ensure(50); block(`Adicional: ${addon.name}`, { size: 10, font: bold, gap: 0 });
     if (addon.description) block(addon.description, { size: 9, ink: colors.muted });
   }
+  if(q.snapshot.tourPlatform)block(`Plataforma: ${q.snapshot.tourPlatform==='matterport'?'Matterport (reemplaza Kuula)':'Kuula'}. Hosting solicitado: ${q.snapshot.hostingMonths||3} meses desde la entrega del tour.`,{size:9});
   heading('04 / CONDICIONES Y RESERVA');
+  if(q.snapshot.commercialConditions)block(q.snapshot.commercialConditions,{size:9});
   block(q.terms, { size: 9 });
   if(q.snapshot.scopeOfWork) block(`Alcance acordado: ${q.snapshot.scopeOfWork}`, {size:9});
   block('La reserva corresponde a un cupo dentro de la semana elegida. El día y horario se coordinan según disponibilidad, clima y acceso a la propiedad.', { size: 9 });

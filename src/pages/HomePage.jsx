@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import Navbar from '../components/Navbar';
 import Hero from '../components/Hero';
 import ValueSection from '../components/ValueSection';
@@ -19,10 +19,11 @@ import Seo, { SITE_URL } from '../components/Seo';
 export default function HomePage() {
   const [modalOpen, setModalOpen] = useState(false);
   const [budgetSelection, setBudgetSelection] = useState(null);
-  const open = (selection) => {
+  const open = useCallback((selection) => {
     setBudgetSelection(selection?.pack ? selection : null);
     setModalOpen(true);
-  };
+  }, []);
+  const close = useCallback(() => setModalOpen(false), []);
 
   return (
     <div className="bg-surface text-on-surface font-body selection:bg-secondary/30">
@@ -49,7 +50,7 @@ export default function HomePage() {
       <FadeIn direction="none"><Footer /></FadeIn>
 
       <WhatsAppFAB />
-      <BudgetModal isOpen={modalOpen} onClose={() => setModalOpen(false)} initialSelection={budgetSelection} />
+      <BudgetModal isOpen={modalOpen} onClose={close} initialSelection={budgetSelection} />
     </div>
   );
 }

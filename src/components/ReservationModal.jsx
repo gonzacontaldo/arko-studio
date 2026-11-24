@@ -1,3 +1,4 @@
+import {savedQuoteSummary} from '../lib/quotePresentation';
 import {useEffect,useRef,useState} from 'react';
 import {useLocation,useNavigate} from 'react-router-dom';
 import {commercialApi} from '../lib/commercial';
@@ -44,6 +45,7 @@ export default function ReservationModal(){
     {data.testMode&&<p className="text-sm bg-amber-50 p-3 rounded-lg">Entorno de prueba. No confirma una producción real.</p>}
     {!confirmed&&!review&&<p>Hola, {q.name}. Elegís un cupo dentro de una <strong>semana</strong>, porque el día de producción depende de la disponibilidad, el clima y el acceso a la propiedad. Después coordinamos con vos el día y horario exactos.</p>}
     {!q.approved&&q.stage!=='closed'&&<p>Estamos preparando tu propuesta. Te contactaremos y enviaremos el presupuesto antes de habilitar la reserva.</p>}
+    <details className="border border-outline-variant rounded-xl p-4"><summary className="cursor-pointer text-sm font-semibold">Detalle de tu producción</summary><ul className="text-xs mt-3 space-y-2">{savedQuoteSummary(q).map((line,i)=><li key={i}>{line}</li>)}</ul>{q.snapshot.commercialConditions&&<p className="whitespace-pre-line text-xs mt-3">{q.snapshot.commercialConditions}</p>}</details>
     {q.stage==='closed'&&<p>Esta solicitud está cerrada. Contactanos para retomarla.</p>}
     {expired&&!confirmed&&!holding&&<p>Tu propuesta venció. Respondé al mail para actualizar el presupuesto y la disponibilidad.</p>}
     {choose&&<>
