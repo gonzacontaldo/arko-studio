@@ -170,3 +170,9 @@ Ejecutar `supabase/12_admin_notifications.sql` después de la migración 11. Cad
 - Los presupuestos anteriores conservan su snapshot e importe acordados: no se recalculan con el catálogo nuevo. Los PDFs se emiten a partir del desglose guardado, luego de completar los conceptos pendientes.
 
 Comprobación local: `node --test scripts/*.test.mjs`, `npm run build`. `node scripts/preview-quote-pdf.mjs` genera un ejemplo local sin enviar correos ni registrar solicitudes. La batería incluye los límites 100/101/200/201/300 y el ejemplo de 500 m², reemplazo de plataforma, traslado único, hosting pendiente y resúmenes coherentes. Siguen pendientes de definición comercial las tarifas de hosting extendido/renovación y traslados fuera de CABA.
+
+## Consulta pública por WhatsApp
+
+El presupuestador público usa una sola pantalla: tipo de inmueble, superficie, localidad, categoría de traslado, selección y opciones compatibles. No pide nombre ni email y no llama a `submit`: siempre abre WhatsApp con un borrador para el número del estudio. El visitante debe enviar el mensaje desde WhatsApp; abrir el borrador no confirma una recepción ni genera una reserva. El catálogo se sigue leyendo para mantener los precios del administrador. `src/lib/whatsappQuote.js` valida los datos esenciales y arma el mensaje usando el mismo estimador y resumen compartidos.
+
+Este cambio no modifica presupuestos existentes, correos programados, reservas ni herramientas administrativas. Las nuevas consultas de este flujo no se guardan ni disparan correos automáticos. Las instrucciones anteriores sobre recepción de solicitudes por email describen el circuito comercial administrativo existente y no el presupuestador público actual.
