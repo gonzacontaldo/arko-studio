@@ -5,8 +5,6 @@ import ValueSection from '../components/ValueSection';
 import Portfolio from '../components/Portfolio';
 import Services from '../components/Services';
 import Pricing from '../components/Pricing';
-import BeforeAfter from '../components/BeforeAfter';
-import InteractivePreview from '../components/InteractivePreview';
 import Process from '../components/Process';
 import About from '../components/About';
 import FinalCTA from '../components/FinalCTA';
@@ -39,10 +37,7 @@ export default function HomePage() {
 
       <FadeIn><ValueSection /></FadeIn>
       <FadeIn><Portfolio /></FadeIn>
-      <FadeIn><Services onOpenBudget={open} /></FadeIn>
-      <FadeIn><BeforeAfter /></FadeIn>
-      {/* <FadeIn><DevelopersSection /></FadeIn> */}
-      <FadeIn><InteractivePreview /></FadeIn>
+      <FadeIn><Services /></FadeIn>
       <FadeIn><Pricing onOpenModal={open} /></FadeIn>
       <FadeIn><Process /></FadeIn>
       <FadeIn><About /></FadeIn>
