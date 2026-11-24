@@ -57,6 +57,7 @@ export default function Services() {
           </Link>
         ))}
       </div>
+      <p className="text-center text-sm text-on-surface-variant mt-8"><Link to="/contenido-inmobiliario" className="text-secondary underline underline-offset-4">Cómo elegir contenido inmobiliario para tu próxima propiedad ↗</Link></p>
     </section>
   );
 }

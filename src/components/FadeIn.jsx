@@ -18,11 +18,15 @@ export default function FadeIn({
 }) {
   const ref     = useRef(null);
   const [seen, setSeen] = useState(false);
+  const [animate, setAnimate] = useState(false);
 
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
 
+    if (!('IntersectionObserver' in window)) return;
+    // Keep server-rendered content visible; animate only offscreen content after JS loads.
+    if (el.getBoundingClientRect().top > window.innerHeight) setAnimate(true);
     const obs = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
@@ -48,7 +52,7 @@ export default function FadeIn({
   return (
     <Tag
       ref={ref}
-      className={`transition-all duration-700 ease-out ${seen ? 'opacity-100 translate-y-0 translate-x-0' : initial} ${className}`}
+      className={`transition-all duration-700 ease-out ${!animate || seen ? 'opacity-100 translate-y-0 translate-x-0' : initial} ${className}`}
       style={delay ? { transitionDelay: `${delay}ms` } : undefined}
     >
       {children}

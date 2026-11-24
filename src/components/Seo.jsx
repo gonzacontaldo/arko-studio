@@ -1,7 +1,6 @@
 import { useEffect } from 'react';
 
-const SITE_URL = 'https://www.arkostudio.com.ar';
-const DEFAULT_IMAGE = `${SITE_URL}/portfolio-web/Civis/Portada.jpg`;
+import {SITE_URL,DEFAULT_IMAGE,absoluteImage,pageSchema} from '../lib/seo';
 
 function setMeta(selector, attributes) {
   let element = document.head.querySelector(selector);
@@ -13,6 +12,7 @@ function setMeta(selector, attributes) {
 }
 
 export default function Seo({ title, description, path = '/', image = DEFAULT_IMAGE, noindex = false, schema }) {
+  const imageUrl=absoluteImage(image);
   useEffect(() => {
     const canonicalUrl = `${SITE_URL}${path === '/' ? '/' : path}`;
     document.title = title;
@@ -22,11 +22,11 @@ export default function Seo({ title, description, path = '/', image = DEFAULT_IM
     setMeta('meta[property="og:title"]', { property: 'og:title', content: title });
     setMeta('meta[property="og:description"]', { property: 'og:description', content: description });
     setMeta('meta[property="og:url"]', { property: 'og:url', content: canonicalUrl });
-    setMeta('meta[property="og:image"]', { property: 'og:image', content: image });
+    setMeta('meta[property="og:image"]', { property: 'og:image', content: imageUrl });
     setMeta('meta[name="twitter:card"]', { name: 'twitter:card', content: 'summary_large_image' });
     setMeta('meta[name="twitter:title"]', { name: 'twitter:title', content: title });
     setMeta('meta[name="twitter:description"]', { name: 'twitter:description', content: description });
-    setMeta('meta[name="twitter:image"]', { name: 'twitter:image', content: image });
+    setMeta('meta[name="twitter:image"]', { name: 'twitter:image', content: imageUrl });
 
     let canonical = document.head.querySelector('link[rel="canonical"]');
     if (!canonical) {
@@ -38,14 +38,14 @@ export default function Seo({ title, description, path = '/', image = DEFAULT_IM
 
     const previousSchema = document.head.querySelector('#page-schema');
     if (previousSchema) previousSchema.remove();
-    if (schema) {
+    if (!noindex || schema) {
       const script = document.createElement('script');
       script.id = 'page-schema';
       script.type = 'application/ld+json';
-      script.textContent = JSON.stringify(schema);
+      script.textContent = JSON.stringify(pageSchema({path,title,description,schema}));
       document.head.appendChild(script);
     }
-  }, [title, description, path, image, noindex, schema]);
+  }, [title, description, path, imageUrl, noindex, schema]);
 
   return null;
 }

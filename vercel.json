@@ -1,6 +1,14 @@
 {
   "rewrites": [
     {
+      "source": "/fpv-inmobiliario",
+      "destination": "/fpv-inmobiliario/index.html"
+    },
+    {
+      "source": "/contenido-inmobiliario",
+      "destination": "/contenido-inmobiliario/index.html"
+    },
+    {
       "source": "/portfolio",
       "destination": "/portfolio/index.html"
     },
@@ -46,6 +54,24 @@
         }
       ],
       "source": "/presupuesto"
+    },
+    {
+      "source": "/admin",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        }
+      ]
+    },
+    {
+      "source": "/ejemplo",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        }
+      ]
     }
   ]
 }

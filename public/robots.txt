@@ -3,4 +3,4 @@ Allow: /
 Disallow: /admin
 Disallow: /ejemplo
 
-Sitemap: https://www.arkostudio.com.ar/sitemap.xml
+Sitemap: https://arkostudio.com.ar/sitemap.xml

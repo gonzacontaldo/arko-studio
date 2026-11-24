@@ -14,4 +14,4 @@ function serviceMediaApi(){
   });
  }};
 }
-export default defineConfig({plugins:[react(),serviceMediaApi()]});
+export default defineConfig({build:{manifest:true},plugins:[react(),serviceMediaApi()]});

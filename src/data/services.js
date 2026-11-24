@@ -16,8 +16,8 @@ export const services = {
     ],
   },
   'video-inmobiliario': {
-    title: 'Video Inmobiliario en Buenos Aires | ARKO Studio',
-    description: 'Producción de video inmobiliario horizontal y vertical para propiedades, inmobiliarias y desarrolladoras en Buenos Aires y Zona Norte.',
+    title: 'Video Inmobiliario: Cinematográfico, Reel y FPV | ARKO Studio',
+    description: 'Video inmobiliario cinematográfico, reels para redes y recorridos FPV. Ejemplos, proceso y precios para propiedades en CABA y Zona Norte de Buenos Aires.',
     eyebrow: 'Producción audiovisual',
     icon: 'movie',
     portfolioType: 'video',
@@ -32,8 +32,8 @@ export const services = {
     ],
   },
   'drone-inmobiliario': {
-    title: 'Drone Inmobiliario en Buenos Aires | ARKO Studio',
-    description: 'Sumá tomas aéreas a fotografía o video por $50.000 adicionales por servicio. Fotos editadas y tomas integradas en la edición. FPV sin este extra.',
+    title: 'Drone para Inmobiliarias en Buenos Aires | ARKO Studio',
+    description: 'Drone para inmobiliarias: fotografías y tomas aéreas de propiedades, terrenos y exteriores en CABA y Zona Norte. Extra de foto o video, sujeto a viabilidad.',
     eyebrow: 'Perspectivas aéreas',
     icon: 'flight_takeoff',
     portfolioType: 'dron',
@@ -64,8 +64,8 @@ export const services = {
     ],
   },
   'planos-2d': {
-    title: 'Planos 2D Esquemáticos con Medición Láser | ARKO Studio',
-    description: 'Medimos con láser el día del servicio y después elaboramos un plano esquemático 2D para publicaciones inmobiliarias. No es un plano arquitectónico.',
+    title: 'Planos 2D para Inmobiliarias en Buenos Aires | ARKO Studio',
+    description: 'Planos 2D esquemáticos para inmobiliarias y propiedades en CABA y Zona Norte. Relevamiento con láser y elaboración posterior. No son planos arquitectónicos.',
     eyebrow: 'Distribución del espacio',
     icon: 'architecture',
     portfolioType: null,

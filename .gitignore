@@ -41,3 +41,6 @@ output/pdf/
 # Local prospecting records and scratch files
 prospeccion/
 .tmp-prospeccion/
+
+# Temporary static rendering bundle
+.prerender/

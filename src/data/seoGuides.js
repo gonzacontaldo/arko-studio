@@ -1,0 +1,45 @@
+export const seoGuides={
+ 'fpv-inmobiliario':{
+  title:'Drone FPV Inmobiliario en Buenos Aires | ARKO Studio',
+  description:'Recorridos con drone FPV por interiores y exteriores de propiedades. Conocé ejemplos, preparación y precios en CABA y Zona Norte. Sujeto a viabilidad.',
+  h1:'FPV inmobiliario.',eyebrow:'RECORRIDOS CON DRONE / CABA Y ZONA NORTE',
+  lead:'Un recorrido que conecta los espacios.',
+  intro:'El video FPV inmobiliario recorre una propiedad con drone y ayuda a entender cómo se conectan sus ambientes, accesos y exteriores. En ARKO Studio planificamos la ruta y la edición según el inmueble y el objetivo de tu publicación.',
+  sections:[
+   ['Qué aporta un recorrido FPV','A diferencia de una sucesión de encuadres, el FPV permite seguir el movimiento entre los espacios. Puede ser útil para mostrar la circulación de una casa, la relación con el jardín o el paso entre sectores de un inmueble. La ruta depende de los accesos y del espacio disponible; se revisa antes de confirmar la producción.'],
+   ['FPV, cinematográfico o reel: cuál elegir','Elegí FPV si querés destacar la conexión entre ambientes. El cinematográfico horizontal trabaja encuadres y movimientos de cámara para presentar la arquitectura y sus detalles. El reel es un video vertical para redes. Son formatos y entregables diferentes: se eligen según el mensaje, el canal de publicación y las características de la propiedad.'],
+   ['Cómo preparamos el vuelo por interiores','Necesitamos conocer la propiedad, los accesos y las restricciones. Coordinamos un recorrido despejado, sin personas ni mascotas en la ruta. Hacemos las revisiones y pasadas necesarias con tranquilidad. La duración de la sesión depende de la superficie y los servicios contratados; la edición se realiza después.'],
+   ['Interiores y exteriores, según viabilidad','No todas las propiedades permiten el mismo recorrido. Evaluamos las dimensiones de paso, los obstáculos y las condiciones de operación. En exteriores también revisamos clima, ubicación y restricciones de vuelo. La autorización de acceso a un inmueble no reemplaza las coordinaciones o autorizaciones aeronáuticas que correspondan.'],
+   ['Cómo se entrega el video','Planificamos la captura y editamos el material para que el recorrido tenga continuidad y una terminación coherente. El formato y el uso se acuerdan al preparar la propuesta. Entregamos el archivo final mediante un enlace privado; descargalo desde allí para evitar la compresión de la mensajería.'],
+  ],
+  questions:[
+   ['¿Qué significa FPV?','FPV significa first person view, o vista en primera persona. En un video inmobiliario se usa para recorrer el inmueble con la cámara del drone y transmitir el desplazamiento entre los espacios.'],
+   ['¿Se puede hacer un video FPV en un departamento?','Se evalúa caso por caso. La distribución, los pasos, los obstáculos y los accesos determinan si una ruta es viable. Compartinos la ubicación y las características del inmueble antes de coordinar.'],
+   ['¿FPV incluye el cinematográfico o el reel?','No. El video FPV es un entregable propio. El paquete Completo combina FPV con un cinematográfico horizontal o un reel vertical; el cinematográfico y el reel no se entregan juntos por el precio de uno.'],
+   ['¿Al FPV se le suma el adicional de tomas aéreas?','No se cobra ese adicional al FPV. Las tomas aéreas como extra de fotografía o de cinematográfico/reel se contratan de manera independiente.'],
+  ],
+  links:[['/video-inmobiliario','Comparar FPV, video cinematográfico y reel'],['/drone-inmobiliario','Tomas aéreas con drone para inmobiliarias'],['/contenido-inmobiliario','Combinar FPV con fotografía, planos y tour virtual']],
+ },
+ 'contenido-inmobiliario':{
+  title:'Contenido Inmobiliario para Inmobiliarias | ARKO Studio',
+  description:'Fotografía HDR, video inmobiliario, drone FPV, planos 2D y tours 360 para propiedades. Compará servicios y paquetes en CABA y Zona Norte de Buenos Aires.',
+  h1:'Contenido inmobiliario.',eyebrow:'PRODUCCIÓN AUDIOVISUAL / BUENOS AIRES',
+  lead:'Una producción. Distintas formas de mostrar.',
+  intro:'Creamos contenido para inmobiliarias, propietarios y desarrolladoras en CABA y Zona Norte de Buenos Aires. Fotografía, video, drone, planos y tours virtuales responden a preguntas diferentes de quien evalúa una propiedad. Acá podés elegir qué necesitás antes de coordinar la producción.',
+  sections:[
+   ['Fotografía inmobiliaria para el primer vistazo','Las imágenes permiten reconocer ambientes, luz, materiales y exteriores. La fotografía HDR se selecciona y edita para construir una presentación consistente. Podés acordar una marca de agua y descargar la entrega mediante enlace privado.'],
+   ['Videos para presentar, recorrer o comunicar en redes','El cinematográfico horizontal presenta la propiedad con encuadres cuidados. El reel vertical se prepara para redes sociales. El FPV conecta interiores y exteriores mediante un recorrido con drone, sujeto a viabilidad. Cinematográfico y reel son entregables separados: definimos cuál necesitás según lo que buscás comunicar.'],
+   ['Planos 2D para explicar la distribución','Medimos con láser el día del servicio y luego elaboramos un plano esquemático. Ayuda a relacionar los ambientes y complementa las fotos; no es un plano arquitectónico ni documentación para obra o trámites.'],
+   ['Tour virtual o tour 360 para explorar a tu ritmo','Un tour virtual permite mirar alrededor y avanzar entre ambientes. Kuula conecta panorámicas mediante puntos; Matterport agrega una lectura tridimensional del conjunto según las vistas disponibles. Ambos incluyen tres meses de hosting desde la entrega. La continuidad online requiere renovación y los períodos de seis o doce meses se cotizan aparte.'],
+   ['Drone para mostrar la propiedad y su entorno','Las tomas aéreas ayudan a leer exteriores, accesos y relación con el entorno. Se ofrecen como extra de fotografía o de video cinematográfico/reel, sujeto a viabilidad de vuelo. El FPV es un formato de video distinto y no lleva ese adicional.'],
+   ['Cómo combinar los servicios','Los paquetes incluyen fotografía HDR, planos 2D y Kuula. Destacado suma FPV o un cinematográfico/reel; Completo combina FPV con un cinematográfico o un reel. Matterport puede reemplazar Kuula, también en Base. Si necesitás otra combinación, se prepara una propuesta a medida.'],
+  ],
+  questions:[
+   ['¿Qué contenido conviene para publicar una propiedad?','Depende del objetivo. Las fotos presentan los ambientes; los planos explican distribución; el video aporta movimiento; el tour permite explorar. No necesitás elegir todo: contanos qué inmueble es y dónde lo vas a publicar para acordar la selección.'],
+   ['¿Cómo cambia el presupuesto según los metros cuadrados?','Los precios se calculan por cada bloque adicional iniciado de 100 m² de superficie a relevar. Cada servicio y paquete tiene su incremento. Lotes, campos, complejos y producciones especiales requieren evaluar el alcance; la superficie del terreno no equivale automáticamente a superficie interior.'],
+   ['¿Se puede coordinar todo en una misma producción?','Coordinamos los servicios elegidos al preparar la propuesta. El tiempo y los accesos necesarios dependen del inmueble y del alcance. La edición y elaboración de los archivos se hacen después de la captura.'],
+   ['¿Trabajan en CABA y Zona Norte?','Sí. Coordinamos producciones en CABA y Zona Norte de Buenos Aires. El traslado a CABA desde Béccar se suma una vez por producción; para otras zonas se confirma según ubicación.'],
+  ],
+  links:[['/fotografia-inmobiliaria','Fotografía inmobiliaria HDR'],['/video-inmobiliario','Video inmobiliario: cinematográfico y reel'],['/fpv-inmobiliario','Recorridos con drone FPV inmobiliario'],['/planos-2d','Planos 2D para inmobiliarias'],['/tour-virtual-360','Tours virtuales 360 en Kuula y Matterport'],['/drone-inmobiliario','Drone para inmobiliarias y tomas aéreas']],
+ },
+};

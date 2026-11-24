@@ -11,6 +11,8 @@ const serviceLinks = [
   { label: 'Drone inmobiliario', href: '/drone-inmobiliario' },
   { label: 'Tour virtual 360°', href: '/tour-virtual-360' },
   { label: 'Planos 2D', href: '/planos-2d' },
+  { label: 'Drone FPV inmobiliario', href: '/fpv-inmobiliario' },
+  { label: 'Contenido para inmobiliarias', href: '/contenido-inmobiliario' },
 ];
 
 const coverageZones = [

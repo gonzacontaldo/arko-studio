@@ -2,6 +2,7 @@ import { lazy, Suspense, useEffect } from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
 import { SpeedInsights } from '@vercel/speed-insights/react';
 
+const ContentGuidePage = lazy(() => import('./pages/ContentGuidePage'));
 const HomePage = lazy(() => import('./pages/HomePage'));
 const PortfolioPage = lazy(() => import('./pages/PortfolioPage'));
 const AdminPage = lazy(() => import('./pages/AdminPage'));
@@ -58,6 +59,8 @@ export default function App() {
           <Route path="/planos-2d" element={<PlansPage />} />
           <Route path="/tour-virtual-360" element={<ToursPage />} />
           <Route path="/drone-inmobiliario" element={<AerialPage />} />
+          <Route path="/fpv-inmobiliario" element={<ContentGuidePage slug="fpv-inmobiliario" />} />
+          <Route path="/contenido-inmobiliario" element={<ContentGuidePage slug="contenido-inmobiliario" />} />
           <Route path="/:serviceSlug" element={<ServicePage />} />
           <Route path="/ejemplo" element={<EjemploPage />} />
           <Route path="/admin" element={<AdminPage />} />
