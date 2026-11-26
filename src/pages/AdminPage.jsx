@@ -5,6 +5,7 @@ import { useSession } from '../admin/useSession';
 import Login from '../admin/Login';
 import Dashboard from '../admin/Dashboard';
 import Leads from '../admin/Leads';
+import ColdCalling from '../admin/ColdCalling';
 import Producciones from '../admin/Producciones';
 import Clientes from '../admin/Clientes';
 import Agenda from '../admin/Agenda';
@@ -18,6 +19,7 @@ import Seo from '../components/Seo';
 
 const TABS = [
   { key: 'dashboard',    label: 'Inicio',        icon: 'dashboard' },
+  { key: 'cold-calling', label: 'Cold calling', icon: 'phone_in_talk' },
   { key: 'agenda',       label: 'Agenda',        icon: 'calendar_month' },
   { key: 'commercial', label: 'Consultas y reservas', icon: 'event_available' },
   { key: 'leads',        label: 'Leads',         icon: 'contacts' },
@@ -88,6 +90,7 @@ export default function AdminPage() {
           {tab === 'service-pages' && <ServicePages onDirtyChange={setServicePagesDirty} />}
           {tab === 'portfolio-web' && <PortfolioEditor onDirtyChange={setServicePagesDirty} />}
           {tab === 'leads'      && <Leads />}
+          {tab === 'cold-calling' && <ColdCalling />}
           {tab === 'finanzas' && <Finanzas />}
           {tab === 'clientes'   && <Clientes />}
           {tab === 'produccion' && <Producciones />}
